@@ -59,7 +59,19 @@ def sol1(draws, boards):
                 return ret
 
 def sol2(draws, boards):
-    pass
+    num_boards = len(boards)
+    for d in draws:
+        for i, b in enumerate(boards):
+            if not b:
+                continue
+            ret = b.draw(d)
+            if ret:
+                # print(f"board {101 - num_boards} complete!")
+                if num_boards == 1:
+                    # print(b)
+                    return ret
+                boards[i] = None
+                num_boards -= 1
 
 def main():
     test_draws, test_boards = parse_input(TEST_INPUT.splitlines())
