@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 def main():
     moves = read_file('input.txt')
 
