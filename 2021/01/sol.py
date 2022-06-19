@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def main():
     depths = read_file('input.txt')
 
