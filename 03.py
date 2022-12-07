@@ -1,11 +1,11 @@
-EXAMPLE = """vJrwpWtwJgWrhcsFMMfFFhFp
+TEST_INPUT = """vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw"""
 
-EXAMPLE_SOL = [157, 70]
+TEST_SOL = [157, 70]
 
 def part1(lines):
 
