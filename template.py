@@ -1,10 +1,13 @@
-EXAMPLE = """
+def part1(ll):
+    pass
+
+def part2(ll):
+    pass
+
+TEST_INPUT = """
 """
 
-EXAMPLE_SOL = [,]
+TEST_SOL = [0, 0]
 
-def part1(lines):
-    pass
-
-def part2(lines):
-    pass
+FULL_INPUT = """
+"""
