@@ -26,8 +26,7 @@ def main():
     if args.test:
         ll = mod.TEST_INPUT.splitlines()
     else:
-        f = open(f"{day}.txt", 'r')
-        ll = f.read().splitlines()
+        ll = mod.FULL_INPUT.splitlines()
 
     if 1 in parts:
         sol1 = mod.part1(ll)
