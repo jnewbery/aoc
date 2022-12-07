@@ -1,7 +1,34 @@
-def part1(lines):
-    pass
+import re
 
-def part2(lines):
+def part1(ll):
+    stacks = [[] for n in range((len(ll[0]) + 1) // 4)]
+    # print(stacks)
+    while ll and ll[0][:2] != " 1":
+        l = ll[0]
+        # print(l)
+        for i, s in enumerate(stacks):
+            c = l[4 * i + 1]
+            # print(i, c)
+            if c != " ":
+                s.append(c)
+        ll.pop(0)
+    # print(stacks)
+
+    # pop the next two lines
+    del ll[:2]
+    # print(ll)
+
+    for l in ll:
+        repeat, from_stack, to_stack = (int(n) for n in re.findall('[0-9]+', l))
+        for r in range(repeat):
+            stacks[to_stack - 1].insert(0, stacks[from_stack - 1].pop(0))
+
+    # print(stacks)
+
+    sol = ''.join(a[0] for a in stacks if a)
+    return sol
+
+def part2(ll):
     pass
 
 TEST_INPUT = """    [D]    
@@ -14,7 +41,7 @@ move 3 from 1 to 3
 move 2 from 2 to 1
 move 1 from 1 to 2"""
 
-TEST_SOL = [0, 0]
+TEST_SOL = ["CMZ", 0]
 
 FULL_INPUT = """                [V]     [C]     [M]
 [V]     [J]     [N]     [H]     [V]
