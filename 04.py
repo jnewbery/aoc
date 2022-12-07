@@ -9,10 +9,13 @@ EXAMPLE = """2-4,6-8
 
 EXAMPLE_SOL = [2,4]
 
+def get_numbers(l):
+    return (int(a) for a in re.split(",|-", l))
+
 def part1(lines):
     sol = 0
     for l in lines:
-        a_low, a_high, b_low, b_high = (int(a) for a in re.split(",|-", l))
+        a_low, a_high, b_low, b_high = get_numbers(l)
         if a_low <= b_low and a_high >= b_high:
             # print(f"b inside a: {l}")
             sol += 1
@@ -23,4 +26,11 @@ def part1(lines):
     return sol
 
 def part2(lines):
-    pass
+    sol = 0
+    for l in lines:
+        a_low, a_high, b_low, b_high = get_numbers(l)
+        if not (a_high < b_low or b_high < a_low):
+            # print(f"overlap: {l}")
+            sol += 1
+
+    return sol
