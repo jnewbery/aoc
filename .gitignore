@@ -50,3 +50,6 @@ tags
 
 ## build directory typically used with cmake
 build
+
+# Python
+__pycache__
