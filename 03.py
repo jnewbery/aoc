@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
-
 EXAMPLE = """vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw"""
+
+EXAMPLE_SOL = [157, 70]
 
 def part1(lines):
 
@@ -25,7 +25,7 @@ def part1(lines):
         # print(pts)
         sol += pts
 
-    print(f"Part 1: {sol}")
+    return sol
 
 def part2(lines):
     sol = 0
@@ -46,15 +46,4 @@ def part2(lines):
         # print(pts)
         sol += pts
 
-    print(f"Part 2: {sol}")
-    pass
-
-if __name__ == "__main__":
-    f = open('03.txt', 'r')
-    if False:
-        gen = EXAMPLE.splitlines
-    else:
-        gen = f.read().splitlines
-
-    part1(gen())
-    part2(gen())
+    return sol
