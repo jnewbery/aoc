@@ -1,6 +1,6 @@
 import re
 
-def part1(ll):
+def make_stacks(ll):
     stacks = [[] for n in range((len(ll[0]) + 1) // 4)]
     # print(stacks)
     while ll and ll[0][:2] != " 1":
@@ -18,18 +18,33 @@ def part1(ll):
     del ll[:2]
     # print(ll)
 
+    return stacks
+
+def part1(ll):
+    stacks = make_stacks(ll)
+
     for l in ll:
         repeat, from_stack, to_stack = (int(n) for n in re.findall('[0-9]+', l))
         for r in range(repeat):
             stacks[to_stack - 1].insert(0, stacks[from_stack - 1].pop(0))
 
-    # print(stacks)
-
     sol = ''.join(a[0] for a in stacks if a)
     return sol
 
 def part2(ll):
-    pass
+    stacks = make_stacks(ll)
+
+    for l in ll:
+        repeat, from_stack, to_stack = (int(n) for n in re.findall('[0-9]+', l))
+        # stacks list is zero indexed
+        from_stack -= 1
+        to_stack -= 1
+        to_move = stacks[from_stack][:repeat]
+        del stacks[from_stack][:repeat]
+        stacks[to_stack] = to_move + stacks[to_stack]
+
+    sol = ''.join(a[0] for a in stacks if a)
+    return sol
 
 TEST_INPUT = """    [D]    
 [N] [C]    
@@ -41,7 +56,7 @@ move 3 from 1 to 3
 move 2 from 2 to 1
 move 1 from 1 to 2"""
 
-TEST_SOL = ["CMZ", 0]
+TEST_SOL = ["CMZ", "MCD"]
 
 FULL_INPUT = """                [V]     [C]     [M]
 [V]     [J]     [N]     [H]     [V]

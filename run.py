@@ -29,13 +29,13 @@ def main():
         ll = mod.FULL_INPUT.splitlines()
 
     if 1 in parts:
-        sol1 = mod.part1(ll)
+        sol1 = mod.part1(ll.copy())
         print(f"Part1 : {sol1}")
         if args.test:
             assert(sol1 == mod.TEST_SOL[0])
 
     if 2 in parts:
-        sol2 = mod.part2(ll)
+        sol2 = mod.part2(ll.copy())
         print(f"Part2 : {sol2}")
         if args.test:
             assert(sol2 == mod.TEST_SOL[1])
