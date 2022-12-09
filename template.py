@@ -1,8 +1,8 @@
 def part1(ll):
-    pass
+    raise NotImplementedError
 
 def part2(ll):
-    pass
+    raise NotImplementedError
 
 TEST_INPUT = """
 """

@@ -1,44 +1,50 @@
 #!/usr/bin/env python3
 import argparse
 import importlib
+import os
+import re
 
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-d", "--day",  type=int, help="Advent of code day")
+    parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
-    parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts")
+    parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
 
     args = parser.parse_args()
 
-    day = f"{args.day:02}"
+    if not args.day:
+        regex = re.compile(r"^\d{2}\.py$")
+        days = sorted([f[0:2] for f in os.listdir() if regex.match(f)])
+    else:
+        days = [f"{args.day:02}"]
+
     if not args.part:
         parts = [1, 2]
     else:
         parts = [args.part]
 
-    print(f"day: {day}")
+    print(f"days: {days}")
     print(f"test: {args.test}")
     print(f"parts: {parts}")
 
-    mod = importlib.import_module(f"{day}")
+    for day in days:
+        mod = importlib.import_module(f"{day}")
 
-    if args.test:
-        ll = mod.TEST_INPUT.splitlines()
-    else:
-        ll = mod.FULL_INPUT.splitlines()
-
-    if 1 in parts:
-        sol1 = mod.part1(ll.copy())
-        print(f"Part1 : {sol1}")
         if args.test:
-            assert(sol1 == mod.TEST_SOL[0])
+            ll = mod.TEST_INPUT.splitlines()
+        else:
+            ll = mod.FULL_INPUT.splitlines()
 
-    if 2 in parts:
-        sol2 = mod.part2(ll.copy())
-        print(f"Part2 : {sol2}")
-        if args.test:
-            assert(sol2 == mod.TEST_SOL[1])
+        for part in parts:
+            func = getattr(mod, f"part{part}")
+            try:
+                sol = func(ll.copy())
+                print(f"Part{part} : {sol}")
+                if args.test:
+                    assert(sol == mod.TEST_SOL[part - 1])
+            except NotImplementedError:
+                print("Not implemented yet!")
 
 if __name__ == "__main__":
     main()

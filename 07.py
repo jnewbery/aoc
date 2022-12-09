@@ -1,8 +1,8 @@
 def part1(ll):
-    pass
+    raise NotImplementedError
 
 def part2(ll):
-    pass
+    raise NotImplementedError
 
 TEST_INPUT = """$ cd /
 $ ls
@@ -30,7 +30,7 @@ $ ls
 
 TEST_SOL = [95437, 0]
 
-FULL_INPUT = "$ cd /
+FULL_INPUT = """$ cd /
 $ ls
 dir drblq
 133789 fjf
