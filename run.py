@@ -4,9 +4,12 @@ import importlib
 import os
 import re
 
+from tabulate import tabulate
+
 def main():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("-a", "--args",  action="store_true", help="Print args")
     parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
     parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
@@ -24,11 +27,14 @@ def main():
     else:
         parts = [args.part]
 
-    print(f"days: {days}")
-    print(f"test: {args.test}")
-    print(f"parts: {parts}")
+    if args.args:
+        print(f"days: {days}")
+        print(f"test: {args.test}")
+        print(f"parts: {parts}")
 
+    results = []
     for day in days:
+        result = {'Day': f'Day {day}'}
         mod = importlib.import_module(f"{day}")
 
         if args.test:
@@ -40,11 +46,15 @@ def main():
             func = getattr(mod, f"part{part}")
             try:
                 sol = func(ll.copy())
-                print(f"Part{part} : {sol}")
+                result[f"Part {part}"] = sol
                 if args.test:
                     assert(sol == mod.TEST_SOL[part - 1])
             except NotImplementedError:
-                print("Not implemented yet!")
+                result[f'Part {part}'] = "Not implemented"
+
+        results.append(result)
+
+    print(tabulate(results, headers='keys', tablefmt="github"))
 
 if __name__ == "__main__":
     main()
