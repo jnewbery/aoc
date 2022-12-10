@@ -1,5 +1,60 @@
+import re
+
 def part1(ll):
-    raise NotImplementedError
+    sol = 0
+    dirs = []
+    current_dir = []
+    current_size = 0
+    current_subdirs = []
+    listing = False
+    cd_regex = re.compile(r"^\$ cd (.*)$")
+    dir_regex = re.compile(r"^dir (.*)$")
+    file_regex = re.compile(r"^(\d*) .*$")
+    for l in ll:
+        # print(f"reading line: {l}")
+        if (m := cd_regex.match(l)) is not None:
+            if listing:
+                # print(f"appending {[tuple(current_dir), current_size, current_subdirs.copy()]}")
+                dirs.append([tuple(current_dir), current_size, current_subdirs.copy()])
+            current_size = 0
+            current_subdirs = []
+            listing = False
+            if m.group(1) == "/":
+                current_dir = []
+            elif m.group(1) == "..":
+                current_dir.pop()
+            else:
+                current_dir += [m.group(1)]
+            # print(f"new current_dir: {current_dir}")
+        elif l == "$ ls":
+            if listing:
+                dirs.append([tuple(current_dir), current_size, current_subdirs.copy()])
+            current_size = 0
+            current_subdirs = []
+            listing = True
+        elif (m := dir_regex.match(l)) is not None:
+            current_subdirs.append(m.group(1))
+            # print(f"new current_subdirs: {current_subdirs}")
+        elif (m := file_regex.match(l)) is not None:
+            current_size +=int( m.group(1))
+            # print(f"new current_size: {current_size}")
+    if listing:
+        dirs.append([tuple(current_dir), current_size, current_subdirs.copy()])
+
+    dirs.sort(key = lambda x: len(x[0]), reverse=True)
+
+    d = dict((x[0], x[1:]) for x in dirs)
+
+    for k, v in d.items():
+        print(k, v)
+        if v[0] <= 100000:
+            sol += v[0]
+        if len(k):
+            print(d[k[:-1]])
+            d[k[:-1]][0] += v[0]
+            d[k[:-1]][1].remove(k[-1])
+
+    return sol
 
 def part2(ll):
     raise NotImplementedError
