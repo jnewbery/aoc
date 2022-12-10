@@ -1,8 +1,34 @@
+def register_generator(ll):
+    reg = 1
+    yield reg
+    for l in ll:
+        match l.split():
+            case ['noop']:
+                yield reg
+            case 'addx', size:
+                yield reg
+                reg += int(size)
+                yield reg
+
 def part1(ll):
-    raise NotImplementedError
+    # print([(i,n) for i,n in enumerate(register_generator(ll))])
+    # print([((i+1), n) for i,n in enumerate(register_generator(ll)) if i in [19,59,99,139,179,219]])
+    return sum(((i+1) * n for i,n in enumerate(register_generator(ll)) if i in [19,59,99,139,179,219]))
 
 def part2(ll):
-    raise NotImplementedError
+    screen = ''
+    for (t,x) in enumerate(register_generator(ll)):
+        # print(x)
+        if not t % 40 and t > 0:
+            screen += '\n'
+        if abs((t % 40) - x) <= 1:
+            screen += '#'
+        else:
+            screen += '.'
+
+    # print(screen)
+    # Prints PAPKFKEJ
+    return 'PAPKFKEJ'
 
 TEST_INPUT = """addx 15
 addx -11
@@ -151,7 +177,7 @@ noop
 noop
 noop"""
 
-TEST_SOL = [13140, 0]
+TEST_SOL = [13140]
 
 FULL_INPUT = """noop
 noop

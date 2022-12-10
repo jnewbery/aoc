@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.11
 import argparse
 import importlib
 import os
@@ -47,7 +47,7 @@ def main():
             try:
                 sol = func(ll.copy())
                 result[f"Part {part}"] = sol
-                if args.test:
+                if args.test and len(mod.TEST_SOL) >= part:
                     assert(sol == mod.TEST_SOL[part - 1])
             except NotImplementedError:
                 result[f'Part {part}'] = "Not implemented"
