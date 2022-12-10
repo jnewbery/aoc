@@ -570,3 +570,5 @@ move 1 from 1 to 6
 move 3 from 5 to 7
 move 1 from 9 to 1
 move 1 from 2 to 8"""
+
+FULL_SOL = []

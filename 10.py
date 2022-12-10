@@ -323,3 +323,5 @@ noop
 addx -25
 noop
 noop"""
+
+FULL_SOL = []

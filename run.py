@@ -6,6 +6,26 @@ import re
 
 from tabulate import tabulate
 
+if os.name == 'posix':
+    GREEN = "\033[0;32m"
+    RED = "\033[1;31m"
+    CYAN = "\033[0;36m"
+    RESET = "\033[0;0m"
+else:
+    GREEN = ""
+    RED = ""
+    CYAN = ""
+    RESET = ""
+
+def success(string):
+    return GREEN + str(string) + RESET
+
+def failure(string):
+    return RED + str(string) + RESET
+
+def inconclusive(string):
+    return CYAN + str(string) + RESET
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -47,10 +67,15 @@ def main():
             try:
                 sol = func(ll.copy())
                 result[f"Part {part}"] = sol
-                if args.test and len(mod.TEST_SOL) >= part:
-                    assert(sol == mod.TEST_SOL[part - 1])
+                sols = mod.TEST_SOL if args.test else mod.FULL_SOL
+                if len(sols) < part:
+                    result[f'Part {part}'] = inconclusive(sol)
+                elif sols[part - 1] == sol:
+                    result[f'Part {part}'] = success(sol)
+                else:
+                    result[f'Part {part}'] = failure(sol)
             except NotImplementedError:
-                result[f'Part {part}'] = "Not implemented"
+                result[f'Part {part}'] = inconclusive("Not implemented")
 
         results.append(result)
 

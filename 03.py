@@ -348,3 +348,5 @@ GsWhdGtPWpghJRqhtNPmClczSlDglHMlczmwCH
 TzRpjVRjFpVLTTdgrTgrGsZwrZZwgg
 vQfSBdbDbMbQNBJrlhmGnrgrgwZhvm
 SHSCbdbddcVWqqFPCLqR"""
+
+FULL_SOL = []

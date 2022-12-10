@@ -1,72 +1,42 @@
+from collections import defaultdict
+from itertools import accumulate
 import re
 
 def get_directories(ll):
-    dirs = []
-    current_dir = []
-    current_size = 0
-    current_subdirs = []
-    listing = False
-    cd_regex = re.compile(r"^\$ cd (.*)$")
-    dir_regex = re.compile(r"^dir (.*)$")
-    file_regex = re.compile(r"^(\d*) .*$")
+    counted_files = set()
+    dirs = defaultdict(int)
+     
     for l in ll:
-        # print(f"reading line: {l}")
-        if (m := cd_regex.match(l)) is not None:
-            if listing:
-                # print(f"appending {[tuple(current_dir), current_size, current_subdirs.copy()]}")
-                dirs.append([tuple(current_dir), current_size, current_subdirs.copy()])
-            current_size = 0
-            current_subdirs = []
-            listing = False
-            if m.group(1) == "/":
-                current_dir = []
-            elif m.group(1) == "..":
-                current_dir.pop()
-            else:
-                current_dir += [m.group(1)]
-            # print(f"new current_dir: {current_dir}")
-        elif l == "$ ls":
-            if listing:
-                dirs.append([tuple(current_dir), current_size, current_subdirs.copy()])
-            current_size = 0
-            current_subdirs = []
-            listing = True
-        elif (m := dir_regex.match(l)) is not None:
-            current_subdirs.append(m.group(1))
-            # print(f"new current_subdirs: {current_subdirs}")
-        elif (m := file_regex.match(l)) is not None:
-            current_size +=int( m.group(1))
-            # print(f"new current_size: {current_size}")
-    if listing:
-        dirs.append([tuple(current_dir), current_size, current_subdirs.copy()])
+        match l.split():
+            case '$', 'cd', '/': curr = ['/']
+            case '$', 'cd', '..': curr.pop()
+            case '$', 'cd', x: curr.append(x+'/')
+            case '$', 'ls': pass
+            case 'dir', _: pass
+            case size, filename:
+                full_filename = "".join(curr) + filename
+                if full_filename not in counted_files:
+                    counted_files.add(full_filename)
+                    for p in accumulate(curr):
+                        dirs[p] += int(size)
 
-    dirs.sort(key = lambda x: len(x[0]), reverse=True)
-
-    d = dict((x[0], x[1:]) for x in dirs)
-
-    for k, v in d.items():
-        if len(k):
-            d[k[:-1]][0] += v[0]
-            d[k[:-1]][1].remove(k[-1])
-
-    # print(d)
-    return d
+    return dirs
 
 def part1(ll):
     directories = get_directories(ll)
 
     sol = 0
     for k, v in directories.items():
-        if v[0] <= 100000:
-            sol += v[0]
+        if v <= 100000:
+            sol += v
 
     return sol
 
 def part2(ll):
     directories = get_directories(ll)
 
-    target = directories[()][0] - 40000000
-    sol = min(x[0] for x in directories.values() if x[0] > target)
+    target = directories[("/")] - 40000000
+    sol = min(x for x in directories.values() if x > target)
     return sol
 
 TEST_INPUT = """$ cd /
@@ -1125,3 +1095,5 @@ $ cd ..
 $ cd vtzvf
 $ ls
 43248 jwdv.qct"""
+
+FULL_SOL = []

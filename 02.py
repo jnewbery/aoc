@@ -2536,3 +2536,5 @@ A Y
 A Z
 B Y
 A Y"""
+
+FULL_SOL = []
