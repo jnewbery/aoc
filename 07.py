@@ -1,7 +1,6 @@
 import re
 
-def part1(ll):
-    sol = 0
+def get_directories(ll):
     dirs = []
     current_dir = []
     current_size = 0
@@ -46,18 +45,29 @@ def part1(ll):
     d = dict((x[0], x[1:]) for x in dirs)
 
     for k, v in d.items():
-        print(k, v)
-        if v[0] <= 100000:
-            sol += v[0]
         if len(k):
-            print(d[k[:-1]])
             d[k[:-1]][0] += v[0]
             d[k[:-1]][1].remove(k[-1])
+
+    # print(d)
+    return d
+
+def part1(ll):
+    directories = get_directories(ll)
+
+    sol = 0
+    for k, v in directories.items():
+        if v[0] <= 100000:
+            sol += v[0]
 
     return sol
 
 def part2(ll):
-    raise NotImplementedError
+    directories = get_directories(ll)
+
+    target = directories[()][0] - 40000000
+    sol = min(x[0] for x in directories.values() if x[0] > target)
+    return sol
 
 TEST_INPUT = """$ cd /
 $ ls
@@ -83,7 +93,7 @@ $ ls
 5626152 d.ext
 7214296 k"""
 
-TEST_SOL = [95437, 0]
+TEST_SOL = [95437, 24933642]
 
 FULL_INPUT = """$ cd /
 $ ls
