@@ -324,4 +324,4 @@ addx -25
 noop
 noop"""
 
-FULL_SOL = []
+FULL_SOL = [14060, "PAPKFKEJ"]

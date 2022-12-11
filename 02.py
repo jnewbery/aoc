@@ -2537,4 +2537,4 @@ A Z
 B Y
 A Y"""
 
-FULL_SOL = []
+FULL_SOL = [13052, 13693]

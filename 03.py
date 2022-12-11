@@ -1,5 +1,4 @@
 def part1(lines):
-
     sol = 0
     for l in lines:
         line_len = len(l)
@@ -349,4 +348,4 @@ TzRpjVRjFpVLTTdgrTgrGsZwrZZwgg
 vQfSBdbDbMbQNBJrlhmGnrgrgwZhvm
 SHSCbdbddcVWqqFPCLqR"""
 
-FULL_SOL = []
+FULL_SOL = [7850, 2581]

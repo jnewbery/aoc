@@ -1096,4 +1096,4 @@ $ cd vtzvf
 $ ls
 43248 jwdv.qct"""
 
-FULL_SOL = []
+FULL_SOL = [1367870, 549173]
