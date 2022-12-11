@@ -7,7 +7,9 @@ def part2(ll):
 TEST_INPUT = """
 """
 
-TEST_SOL = [0, 0]
+TEST_SOL = []
 
 FULL_INPUT = """
 """
+
+FULL_SOL = []
