@@ -29,9 +29,9 @@ def part1(ll):
                 elif h[coord] < t[coord]:
                     t[coord] -= 1
         t_visited.add(tuple(t))
-        print(f"head: {h}, tail: {tuple(t)}")
+        # print(f"head: {h}, tail: {tuple(t)}")
 
-    return len(t_visited)
+    return len(t_visited) - 1
 
 def part2(ll):
     raise NotImplementedError
@@ -2048,4 +2048,4 @@ L 1
 U 1
 D 17"""
 
-FULL_SOL = []
+FULL_SOL = [6266]
