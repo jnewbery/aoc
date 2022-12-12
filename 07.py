@@ -1,11 +1,10 @@
 from collections import defaultdict
 from itertools import accumulate
-import re
 
 def get_directories(ll):
     counted_files = set()
     dirs = defaultdict(int)
-     
+
     for l in ll:
         match l.split():
             case '$', 'cd', '/': curr = ['/']

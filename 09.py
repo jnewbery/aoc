@@ -1,5 +1,5 @@
 def head_generator(ll):
-    h = (0,0)
+    h = (0, 0)
     for l in ll:
         direction, repeat = l.split()
         for r in range(int(repeat)):
@@ -15,7 +15,7 @@ def head_generator(ll):
             yield h
 
 def part1(ll):
-    t  = [0,0]
+    t = [0, 0]
     t_visited = set(tuple(t))
     for h in head_generator(ll):
         if abs(t[0] - h[0]) <= 1 and abs(t[1] - h[1]) <= 1:
@@ -23,7 +23,7 @@ def part1(ll):
             pass
         else:
             # tail moves towards head
-            for coord in [0,1]:
+            for coord in [0, 1]:
                 if h[coord] > t[coord]:
                     t[coord] += 1
                 elif h[coord] < t[coord]:
