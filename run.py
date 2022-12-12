@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.11
+#!/usr/bin/env python3
 import argparse
 import importlib
 import os
@@ -9,12 +9,12 @@ from tabulate import tabulate
 if os.name == 'posix':
     GREEN = "\033[0;32m"
     RED = "\033[1;31m"
-    CYAN = "\033[0;36m"
+    BLUE = "\033[0;34m"
     RESET = "\033[0;0m"
 else:
     GREEN = ""
     RED = ""
-    CYAN = ""
+    BLUE = ""
     RESET = ""
 
 def success(string):
@@ -24,7 +24,7 @@ def failure(string):
     return RED + str(string) + RESET
 
 def inconclusive(string):
-    return CYAN + str(string) + RESET
+    return BLUE + str(string) + RESET
 
 def main():
     parser = argparse.ArgumentParser()
