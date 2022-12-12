@@ -1,40 +1,44 @@
 def head_generator(ll):
-    h = (0, 0)
+    h = [0, 0]
     for l in ll:
         direction, repeat = l.split()
         for r in range(int(repeat)):
             match direction:
                 case "U":
-                    h = (h[0], h[1] + 1)
+                    h = [h[0], h[1] + 1]
                 case "R":
-                    h = (h[0] + 1, h[1])
+                    h = [h[0] + 1, h[1]]
                 case "D":
-                    h = (h[0], h[1] - 1)
+                    h = [h[0], h[1] - 1]
                 case "L":
-                    h = (h[0] - 1, h[1])
+                    h = [h[0] - 1, h[1]]
             yield h
 
-def part1(ll):
-    t = [0, 0]
-    t_visited = set(tuple(t))
+def solve(ll, tail_len):
+    tail = [[0, 0] for _ in range(tail_len + 1)]
+    t_visited = set([tuple(tail[-1])])
     for h in head_generator(ll):
-        if abs(t[0] - h[0]) <= 1 and abs(t[1] - h[1]) <= 1:
-            # tail doesn't move
-            pass
-        else:
-            # tail moves towards head
-            for coord in [0, 1]:
-                if h[coord] > t[coord]:
-                    t[coord] += 1
-                elif h[coord] < t[coord]:
-                    t[coord] -= 1
-        t_visited.add(tuple(t))
-        # print(f"head: {h}, tail: {tuple(t)}")
+        tail[0] = tuple(h)
+        for i in range(1, len(tail)):
+            if abs(tail[i][0] - tail[i - 1][0]) <= 1 and abs(tail[i][1] - tail[i - 1][1]) <= 1:
+                # tail doesn't move
+                pass
+            else:
+                # tail moves towards head
+                for coord in [0, 1]:
+                    if tail[i - 1][coord] > tail[i][coord]:
+                        tail[i][coord] += 1
+                    elif tail[i - 1][coord] < tail[i][coord]:
+                        tail[i][coord] -= 1
+        t_visited.add(tuple(tail[-1]))
 
-    return len(t_visited) - 1
+    return len(t_visited)
+
+def part1(ll):
+    return solve(ll, 1)
 
 def part2(ll):
-    raise NotImplementedError
+    return solve(ll, 9)
 
 TEST_INPUT = """R 4
 U 4
@@ -45,7 +49,7 @@ D 1
 L 5
 R 2"""
 
-TEST_SOL = [13, 0]
+TEST_SOL = [13, 1]
 
 FULL_INPUT = """D 2
 U 1
@@ -2048,4 +2052,4 @@ L 1
 U 1
 D 17"""
 
-FULL_SOL = [6266]
+FULL_SOL = [6266, 2369]
