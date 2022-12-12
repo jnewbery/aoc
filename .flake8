@@ -5,4 +5,3 @@ extend-ignore =
     E741 # ambiguous variable name
     E305 # expected 2 blank lines after class or function definition, found 1
     W291 # trailing whitespace (some test inputs have trailing whitespace)
-
