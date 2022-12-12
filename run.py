@@ -64,18 +64,19 @@ def main():
 
         for part in parts:
             func = getattr(mod, f"part{part}")
+            input_str = "test input" if args.test else "full input"
+            result_header = f"Part {part} ({input_str})"
             try:
                 sol = func(ll.copy())
-                result[f"Part {part}"] = sol
                 sols = mod.TEST_SOL if args.test else mod.FULL_SOL
                 if len(sols) < part:
-                    result[f'Part {part}'] = inconclusive(sol)
+                    result[result_header] = inconclusive(sol)
                 elif sols[part - 1] == sol:
-                    result[f'Part {part}'] = success(sol)
+                    result[result_header] = success(sol)
                 else:
-                    result[f'Part {part}'] = failure(sol)
+                    result[result_header] = failure(sol)
             except NotImplementedError:
-                result[f'Part {part}'] = inconclusive("Not implemented")
+                result[result_header] = inconclusive("Not implemented")
 
         results.append(result)
 
