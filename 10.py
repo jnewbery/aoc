@@ -1,3 +1,4 @@
+import hashlib
 def register_generator(ll):
     reg = 1
     yield reg
@@ -12,12 +13,12 @@ def register_generator(ll):
 
 def part1(ll):
     # print([(i,n) for i,n in enumerate(register_generator(ll))])
-    # print([((i+1), n) for i,n in enumerate(register_generator(ll)) if i in [19,59,99,139,179,219]])
-    return sum(((i+1) * n for i,n in enumerate(register_generator(ll)) if i in [19,59,99,139,179,219]))
+    # print([((i+1), n) for i,n in enumerate(register_generator(ll)) if i in range(19, 220, 40)])
+    return sum(((i+1) * n for i, n in enumerate(register_generator(ll)) if i in range(19, 220, 40)))
 
 def part2(ll):
     screen = ''
-    for (t,x) in enumerate(register_generator(ll)):
+    for (t, x) in enumerate(register_generator(ll)):
         # print(x)
         if not t % 40 and t > 0:
             screen += '\n'
@@ -26,9 +27,9 @@ def part2(ll):
         else:
             screen += '.'
 
-    # print(screen)
-    # Prints PAPKFKEJ
-    return 'PAPKFKEJ'
+    # The solution is a string rendering of an image, so return
+    # the hash to check correctness.
+    return hashlib.sha256(screen.encode("utf-8")).hexdigest()[0:8]
 
 TEST_INPUT = """addx 15
 addx -11
@@ -177,7 +178,7 @@ noop
 noop
 noop"""
 
-TEST_SOL = [13140]
+TEST_SOL = [13140, "67702651"]
 
 FULL_INPUT = """noop
 noop
@@ -324,4 +325,4 @@ addx -25
 noop
 noop"""
 
-FULL_SOL = [14060, "PAPKFKEJ"]
+FULL_SOL = [14060, "9e9c7512"]
