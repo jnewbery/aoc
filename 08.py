@@ -1,5 +1,47 @@
 def part1(ll):
-    raise NotImplementedError
+    grid = []
+    for l in ll:
+        grid += [[int(i) for i in l]]
+    width = len(grid[0])
+    height = len(grid)
+
+    # for l in grid:
+    #     print(l)
+
+    visible = set()
+    for y in range(height):
+        tallest = -1
+        for x in range(width):
+            if grid[y][x] > tallest:
+                tallest = grid[y][x]
+                visible.add((x, y))
+    # print(sorted(list(visible)))
+
+    for y in range(height):
+        tallest = -1
+        for x in reversed(range(width)):
+            if grid[y][x] > tallest:
+                tallest = grid[y][x]
+                visible.add((x, y))
+    # print(sorted(list(visible)))
+
+    for x in range(width):
+        tallest = -1
+        for y in range(height):
+            if grid[y][x] > tallest:
+                tallest = grid[y][x]
+                visible.add((x, y))
+    # print(sorted(list(visible)))
+
+    for x in range(width):
+        tallest = -1
+        for y in reversed(range(height)):
+            if grid[y][x] > tallest:
+                tallest = grid[y][x]
+                visible.add((x, y))
+    # print(sorted(list(visible)))
+
+    return len(visible)
 
 def part2(ll):
     raise NotImplementedError
