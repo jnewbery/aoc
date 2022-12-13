@@ -6,6 +6,8 @@ import re
 
 from tabulate import tabulate
 
+YEAR = 2022
+
 if os.name == 'posix':
     GREEN = "\033[0;32m"
     RED = "\033[1;31m"
@@ -33,7 +35,7 @@ def main():
     parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
     parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
-    parser.add_argument("-y", "--year", type=int, help="Which year to run.")
+    parser.add_argument("-y", "--year", type=int, default=YEAR, help=f"Which year to run. Default is {YEAR}")
 
     args = parser.parse_args()
 
