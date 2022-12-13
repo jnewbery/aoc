@@ -1,47 +1,37 @@
+def visible(row):
+    # Return set of all trees visible along a line of sight
+    vis = set()
+    tallest = -1
+    for tree in row:
+        if tree[2] > tallest:
+            tallest = tree[2]
+            vis.add(tree)
+
+    return vis
+
 def part1(ll):
+    # Construct grid of (x,y,z) coordinates
     grid = []
-    for l in ll:
-        grid += [[int(i) for i in l]]
-    width = len(grid[0])
-    height = len(grid)
+    for y, l in enumerate(ll):
+        grid.append([])
+        for x, c in enumerate(l):
+            grid[-1] += [(x, y, int(c))]
 
     # for l in grid:
     #     print(l)
 
-    visible = set()
-    for y in range(height):
-        tallest = -1
-        for x in range(width):
-            if grid[y][x] > tallest:
-                tallest = grid[y][x]
-                visible.add((x, y))
-    # print(sorted(list(visible)))
+    vis = set()
 
-    for y in range(height):
-        tallest = -1
-        for x in reversed(range(width)):
-            if grid[y][x] > tallest:
-                tallest = grid[y][x]
-                visible.add((x, y))
-    # print(sorted(list(visible)))
+    for row in grid:
+        vis |= visible(row)
+        vis |= visible(reversed(row))
+    transposed_grid = list(map(list, zip(*grid)))
+    for row in transposed_grid:
+        vis |= visible(row)
+        vis |= visible(reversed(row))
 
-    for x in range(width):
-        tallest = -1
-        for y in range(height):
-            if grid[y][x] > tallest:
-                tallest = grid[y][x]
-                visible.add((x, y))
-    # print(sorted(list(visible)))
-
-    for x in range(width):
-        tallest = -1
-        for y in reversed(range(height)):
-            if grid[y][x] > tallest:
-                tallest = grid[y][x]
-                visible.add((x, y))
-    # print(sorted(list(visible)))
-
-    return len(visible)
+    # print(sorted(list(vis)))
+    return len(vis)
 
 def part2(ll):
     raise NotImplementedError
@@ -154,4 +144,4 @@ FULL_INPUT = """2221122122130123012111342000020324243011421022315535144432013414
 202100221111033202310310014120314313424245224554332212352354242541454431213130404221010021102320022
 210120011112003123423244304300221413244525315153255555432535313221224211034403142213223310310310011"""
 
-FULL_SOL = []
+FULL_SOL = [1798]
