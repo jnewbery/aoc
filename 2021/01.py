@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 def main():
-    depths = read_file('input.txt')
+    depths = read_file('01.in')
 
     print(sol1(depths, 1))
     print(sol1(depths, 3))
