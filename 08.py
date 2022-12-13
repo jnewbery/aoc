@@ -1,15 +1,6 @@
-def visible(row):
-    # Return set of all trees visible along a line of sight
-    vis = set()
-    tallest = -1
-    for tree in row:
-        if tree[2] > tallest:
-            tallest = tree[2]
-            vis.add(tree)
+import itertools
 
-    return vis
-
-def part1(ll):
+def construct_grid(ll):
     # Construct grid of (x,y,z) coordinates
     grid = []
     for y, l in enumerate(ll):
@@ -20,12 +11,41 @@ def part1(ll):
     # for l in grid:
     #     print(l)
 
+    return grid
+
+def visible(row):
+    # Return set of all trees visible along a line of sight
+    vis = set()
+    tallest = -1
+    for tree in row:
+        if tree[2] > tallest:
+            tallest = tree[2]
+            vis.add(tree)
+
+    # print(vis)
+    return vis
+
+def visible_from(row):
+    # Return number of trees visible along a line from a height
+    # print(row)
+    height = row.pop(0)[2]
+    ret = 0
+    for tree in row:
+        ret += 1
+        if tree[2] >= height:
+            break
+
+    # print(ret)
+    return ret
+
+def part1(ll):
+    grid = construct_grid(ll)
     vis = set()
 
     for row in grid:
         vis |= visible(row)
         vis |= visible(reversed(row))
-    transposed_grid = list(map(list, zip(*grid)))
+    transposed_grid = list(zip(*grid))
     for row in transposed_grid:
         vis |= visible(row)
         vis |= visible(reversed(row))
@@ -34,7 +54,21 @@ def part1(ll):
     return len(vis)
 
 def part2(ll):
-    raise NotImplementedError
+    grid = construct_grid(ll)
+
+    sol = 0
+    for x, y in itertools.product(range(1, len(grid[0]) - 1), range(1, len(grid) - 1)):
+        # print(f"({x},{y})")
+        scenic = visible_from(grid[y][x:])
+        scenic *= visible_from(list(reversed(grid[y][:x + 1])))
+        scenic *= visible_from([grid[i][x] for i in range(y, len(grid))])
+        scenic *= visible_from(list(reversed([grid[i][x] for i in range(y + 1)])))
+
+        # print(f"({x},{y}): {scenic}")
+        if scenic > sol:
+            sol = max(sol, scenic)
+
+    return sol
 
 TEST_INPUT = """30373
 25512
@@ -42,7 +76,7 @@ TEST_INPUT = """30373
 33549
 35390"""
 
-TEST_SOL = [21, 0]
+TEST_SOL = [21, 8]
 
 FULL_INPUT = """222112212213012301211134200002032424301142102231553514443201341400212230204230401120330131220022210
 102112111222233101031402012403201222213455312422432144422311112420034421043440034112120031011001111
@@ -144,4 +178,4 @@ FULL_INPUT = """2221122122130123012111342000020324243011421022315535144432013414
 202100221111033202310310014120314313424245224554332212352354242541454431213130404221010021102320022
 210120011112003123423244304300221413244525315153255555432535313221224211034403142213223310310310011"""
 
-FULL_SOL = [1798]
+FULL_SOL = [1798, 259308]
