@@ -1,3 +1,6 @@
+from functools import reduce
+import operator
+
 class Monkey:
     def __init__(self, items, operation, test_divisor, true_to, false_to):
         self.items = items
@@ -27,33 +30,45 @@ def get_monkeys(ll):
 
     return monkeys
 
+def monkey_round(monkeys, worry_operation):
+    for i, monkey in enumerate(monkeys):
+        # print(f"monkey {i}, items: {monkey.items}")
+        while monkey.items:
+            monkey.inspections += 1
+            old = monkey.items.pop(0)  # noqa: F841 (`old` is used in the eval)
+            # print(old)
+            # print(monkey.operation)
+            new = int(eval(monkey.operation))
+            # print(new)
+            new = worry_operation(new)
+            # print(new)
+            to_monkey = monkey.true_to if (new % monkey.test_divisor) == 0 else monkey.false_to
+            # print(to_monkey)
+            monkeys[to_monkey].items.append(new)
+
+    # for monkey in monkeys:
+    #     print(monkey)
+
 def part1(ll):
     monkeys = get_monkeys(ll)
     for _ in range(20):
-        for i, monkey in enumerate(monkeys):
-            # print(f"monkey {i}, items: {monkey.items}")
-            while monkey.items:
-                monkey.inspections += 1
-                old = monkey.items.pop(0)  # noqa: F841 (`old` is used in the eval)
-                # print(old)
-                # print(monkey.operation)
-                new = int(eval(monkey.operation))
-                # print(new)
-                new //= 3
-                # print(new)
-                to_monkey = monkey.true_to if (new % monkey.test_divisor) == 0 else monkey.false_to
-                # print(to_monkey)
-                monkeys[to_monkey].items.append(new)
-
-        # for monkey in monkeys:
-        #     print(monkey)
+        monkey_round(monkeys, lambda x: x // 3)
 
     inspections = sorted([m.inspections for m in monkeys])
-    print(inspections)
+    # print(inspections)
 
     return inspections[-2] * inspections[-1]
 
 def part2(ll):
+    monkeys = get_monkeys(ll)
+    divisor = reduce(operator.mul, [monkey.test_divisor for monkey in monkeys], 1)
+    for _ in range(10000):
+        monkey_round(monkeys, lambda x: x % divisor)
+
+    inspections = sorted([m.inspections for m in monkeys])
+    # print(inspections)
+
+    return inspections[-2] * inspections[-1]
     raise NotImplementedError
 
 TEST_INPUT = """Monkey 0:
@@ -84,7 +99,7 @@ Monkey 3:
     If true: throw to monkey 0
     If false: throw to monkey 1"""
 
-TEST_SOL = [10605]
+TEST_SOL = [10605, 2713310158]
 
 FULL_INPUT = """Monkey 0:
   Starting items: 65, 78
@@ -142,4 +157,4 @@ Monkey 7:
     If true: throw to monkey 6
     If false: throw to monkey 0"""
 
-FULL_SOL = [110264]
+FULL_SOL = [110264, 23612457316]
