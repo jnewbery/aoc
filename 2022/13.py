@@ -1,5 +1,44 @@
+def get_pairs(ll):
+    while ll:
+        a = eval(ll.pop(0))
+        b = eval(ll.pop(0))
+        if ll:
+            ll.pop(0)  # empty line
+        yield a, b
+
+def compare(a, b):
+    # print(f"comparing {a} and {b}")
+    if type(a) == int and type(b) == int:
+        if a < b:
+            return -1
+        elif a > b:
+            return 1
+        else:
+            return 0
+    elif type(a) == list and type(b) == list:
+        for i in range(min(len(a), len(b))):
+            comp = compare(a[i], b[i])
+            if comp != 0:
+                return comp
+        if len(a) < len(b):
+            return -1
+        elif len(a) > len(b):
+            return 1
+        else:
+            return 0
+    elif type(a) == list and type(b) == int:
+        return compare(a, [b])
+    elif type(b) == list and type(a) == int:
+        return compare([a], b)
+
 def part1(ll):
-    raise NotImplementedError
+    sol = 0
+    for i, pair in enumerate(get_pairs(ll)):
+        # print(i + 1, pair)
+        if compare(pair[0], pair[1]) == -1:
+            # print("in order")
+            sol += i + 1
+    return sol
 
 def part2(ll):
     raise NotImplementedError
@@ -480,4 +519,4 @@ FULL_INPUT = """[[[1,6,[1,9,0,9],6]]]
 [[[]],[[3,9],[[],[10,8,3],10,[4,5,3]],[8],[[2],2],0],[3,1,[2],3,[4]]]
 [[[],[[6,3,4,1]],3],[5,4,8,[6,[7,1,8],[]],[[],3,0]],[[5]],[[[8,3],[9,1,8,5,3],[6],[]]],[]]"""
 
-FULL_SOL = []
+FULL_SOL = [5292]
