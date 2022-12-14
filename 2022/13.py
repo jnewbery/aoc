@@ -1,3 +1,5 @@
+import functools
+
 def get_pairs(ll):
     while ll:
         a = eval(ll.pop(0))
@@ -41,7 +43,11 @@ def part1(ll):
     return sol
 
 def part2(ll):
-    raise NotImplementedError
+    signals = [eval(l) for l in ll if l]
+    signals += [[[2]], [[6]]]
+    signals.sort(key=functools.cmp_to_key(compare))
+    # print(signals)
+    return (signals.index([[2]]) + 1) * (signals.index([[6]]) + 1)
 
 TEST_INPUT = """[1,1,3,1,1]
 [1,1,5,1,1]
@@ -67,7 +73,7 @@ TEST_INPUT = """[1,1,3,1,1]
 [1,[2,[3,[4,[5,6,7]]]],8,9]
 [1,[2,[3,[4,[5,6,0]]]],8,9]"""
 
-TEST_SOL = [13]
+TEST_SOL = [13, 140]
 
 FULL_INPUT = """[[[1,6,[1,9,0,9],6]]]
 [[],[[[5,6,3],6,[6,5,3,3]],8,3],[],[4]]
@@ -519,4 +525,4 @@ FULL_INPUT = """[[[1,6,[1,9,0,9],6]]]
 [[[]],[[3,9],[[],[10,8,3],10,[4,5,3]],[8],[[2],2],0],[3,1,[2],3,[4]]]
 [[[],[[6,3,4,1]],3],[5,4,8,[6,[7,1,8],[]],[[],3,0]],[[5]],[[[8,3],[9,1,8,5,3],[6],[]]],[]]"""
 
-FULL_SOL = [5292]
+FULL_SOL = [5292, 23868]
