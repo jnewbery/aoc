@@ -1,13 +1,14 @@
-def sol(depths, distance):
-    # Checking whether the sum of the moving window of x items increases is equivalent
-    # to checking whether the item at index n is greater than the item at index (n - x)
-    return len([1 for i in range(len(depths)) if i >= distance and depths[i] > depths[i - distance]])
-
 def part1(ll):
-    return sol(ll, 1)
+    ll = [int(l) for l in ll]
+    pairs = [ll[i:i+2] for i in range(len(ll) - 1)]
+    # print(pairs)
+    return len([p for p in pairs if p[1] > p[0]])
 
 def part2(ll):
-    return sol(ll, 3)
+    ll = [int(l) for l in ll]
+    pairs = [[sum(ll[i:i+3]), sum(ll[i+1:i+4])] for i in range(len(ll) - 3)]
+    # print(pairs)
+    return len([p for p in pairs if p[1] > p[0]])
 
 TEST_INPUT = """199
 200
@@ -20,7 +21,7 @@ TEST_INPUT = """199
 260
 263"""
 
-TEST_SOL = [7,5]
+TEST_SOL = [7, 5]
 
 FULL_INPUT = """109
 117
