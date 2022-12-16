@@ -1,5 +1,77 @@
+from itertools import count
+
+def get_pairs(ll):
+    for l in ll:
+        coords = l.split(" -> ")
+        int_coords = []
+        for coord in coords:
+            x, y = coord.split(",")
+            int_coords.append((int(x), int(y)))
+
+        for i in range(len(int_coords) - 1):
+            yield (int_coords[i], int_coords[i + 1])
+
+def get_rocks(p):
+    if p[0][0] != p[1][0]:
+        return [[x, p[0][1]] for x in range(min(p[0][0], p[1][0]), max(p[0][0], p[1][0]) + 1)]
+    elif p[0][1] != p[1][1]:
+        return [[p[0][0], y] for y in range(min(p[0][1], p[1][1]), max(p[0][1], p[1][1]) + 1)]
+
+def print_cave(cave):
+    for y in cave:
+        print(''.join(y))
+
+def add_sand(cave, start):
+    sand = start.copy()
+    while True:
+        # print(sand)
+        if sand[0] + 1 == len(cave):
+            return False
+        if cave[sand[0] + 1][sand[1]] == '.':
+            sand[0] += 1
+        elif cave[sand[0] + 1][sand[1] - 1] == '.':
+            sand[0] += 1
+            sand[1] -= 1
+        elif cave[sand[0] + 1][sand[1] + 1] == '.':
+            sand[0] += 1
+            sand[1] += 1
+        else:
+            cave[sand[0]][sand[1]] = 'o'
+            break
+    return True
+
 def part1(ll):
-    raise NotImplementedError
+    rocks = []
+    for p in get_pairs(ll):
+        rocks += get_rocks(p)
+        print(p)
+
+    print(rocks)
+
+    max_x = max(r[0] for r in rocks) + 1
+    min_x = min(r[0] for r in rocks) - 1
+    max_y = max(r[1] for r in rocks)
+    print(min_x, max_x, max_y)
+
+    # shift x axis by min_x
+    for rock in rocks:
+        rock[0] -= min_x
+    print(rocks)
+
+    sand_entrance = [0, 500 - min_x]
+
+    cave = [['.' for x in range(max_x - min_x + 1)] for y in range(max_y + 1)]
+    # print_cave(cave)
+
+    for rock in rocks:
+        # print(rock)
+        cave[rock[1]][rock[0]] = '#'
+    cave[sand_entrance[0]][sand_entrance[1]] = '+'
+    print_cave(cave)
+
+    for n in count():
+        if not add_sand(cave, sand_entrance):
+            return n
 
 def part2(ll):
     raise NotImplementedError
