@@ -1,30 +1,33 @@
 class Board:
-    def __init__(self, numbers):
+    def __init__(self, numbers, index):
         """Takes a list of lists of numbers"""
         self.rows = []
         for row in numbers:
             self.rows.append([int(n) for n in row.split(" ") if n])
         self.columns = [list(c) for c in zip(*self.rows)]
+        self.index = index  # debug
 
     def draw(self, number):
         for row in self.rows:
             if number in row:
                 row.remove(number)
                 if not row:
-                    return number * sum([sum(row) for row in self.rows])
+                    remaining = sum([sum(row) for row in self.rows])
+                    return number * remaining
 
         for column in self.columns:
             if number in column:
                 column.remove(number)
                 if not column:
-                    return number * sum([sum(column) for column in self.columns])
+                    remaining = sum([sum(column) for column in self.columns])
+                    return number * remaining
 
         return False
 
 def parse_input(ll):
     draws = [int(d) for d in ll.pop(0).split(',')]
     nonempty = [l for l in ll if l]
-    boards = [Board(nonempty[i:i + 5]) for i in range(0, len(nonempty), 5)]
+    boards = [Board(nonempty[i:i + 5], i / 5) for i in range(0, len(nonempty), 5)]
 
     return draws, boards
 
@@ -34,25 +37,28 @@ def part1(ll):
     for d in draws:
         for b in boards:
             ret = b.draw(d)
-            if ret:
+            if ret != False:
                 return ret
 
 def part2(ll):
     draws, boards = parse_input(ll)
 
     num_boards = len(boards)
-    for d in draws:
+    # print(f"{num_boards} boards")
+    remaining_boards = num_boards
+    for j, d in enumerate(draws):
+        # print(f"round {j} draw {d}")
         for i, b in enumerate(boards):
             if not b:
                 continue
             ret = b.draw(d)
-            if ret:
-                # print(f"board {101 - num_boards} complete!")
-                if num_boards == 1:
-                    # print(b)
+            if ret is not False:
+                # print(f"board {num_boards - remaining_boards + 1} complete!")
+                # print(f"score {ret}")
+                if remaining_boards == 1:
                     return ret
                 boards[i] = None
-                num_boards -= 1
+                remaining_boards -= 1
 
 TEST_INPUT = """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
@@ -678,4 +684,4 @@ FULL_INPUT = """13,47,64,52,60,69,80,85,57,1,2,6,30,81,86,40,27,26,97,77,70,92,4
 41 15 98  2 11
  5 96 22 18 55"""
 
-FULL_SOL = [49686]
+FULL_SOL = [49686, 26878]
