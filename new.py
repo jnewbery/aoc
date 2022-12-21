@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Create a solution file."""
+import argparse
 import itertools
 import os
 import re
@@ -26,12 +27,25 @@ def get_multiline(prompt):
     return "\n".join(contents)
 
 def main():
-    year_input = input(f"year (default={YEAR}): ")
-    year = int(year_input) if year_input else YEAR
+    parser = argparse.ArgumentParser()
 
-    next_day = get_next_day(year)
-    day_input = input(f"day (default={next_day}): ")
-    day = int(day_input) if day_input else next_day
+    parser.add_argument("-d", "--day",  type=int, help="Advent of code day..")
+    parser.add_argument("-y", "--year", type=int, help="Which year to run.")
+
+    args = parser.parse_args()
+
+    if args.year:
+        year = args.year
+    else:
+        year_input = input(f"year (default={YEAR}): ")
+        year = int(year_input) if year_input else YEAR
+
+    if args.day:
+        day = args.day
+    else:
+        next_day = get_next_day(year)
+        day_input = input(f"day (default={next_day}): ")
+        day = int(day_input) if day_input else next_day
 
     test_input = get_multiline("Enter test input. Ctrl-D or Ctrl-Z ( windows ) to save.")
     test_sol = input("Enter test solution: ")
