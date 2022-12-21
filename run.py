@@ -61,15 +61,19 @@ def main():
         result = {'Day': f'Day {day}'}
         mod = importlib.import_module(f"{args.year}.{day}")
 
-        if args.test:
-            ll = mod.TEST_INPUT.splitlines()
-        else:
-            ll = mod.FULL_INPUT.splitlines()
-
         for part in parts:
             func = getattr(mod, f"part{part}")
             input_str = "test input" if args.test else "full input"
             result_header = f"Part {part} ({input_str})"
+
+            if args.test:
+                if 'TEST_INPUT' not in mod.__dir__():
+                    result[result_header] = inconclusive("No example input")
+                    continue
+                ll = mod.TEST_INPUT.splitlines()
+            else:
+                ll = mod.FULL_INPUT.splitlines()
+
             try:
                 sol = func(ll.copy())
                 sols = mod.TEST_SOL if args.test else mod.FULL_SOL
