@@ -18,15 +18,13 @@ def get_rocks(p):
         return [[p[0][0], y] for y in range(min(p[0][1], p[1][1]), max(p[0][1], p[1][1]) + 1)]
 
 def print_cave(cave):
+    print('-' * len(cave[0]))
     for y in cave:
         print(''.join(y))
 
 def add_sand(cave, start):
     sand = start.copy()
     while True:
-        # print(sand)
-        if sand[0] + 1 == len(cave):
-            return False
         if cave[sand[0] + 1][sand[1]] == '.':
             sand[0] += 1
         elif cave[sand[0] + 1][sand[1] - 1] == '.':
@@ -37,49 +35,59 @@ def add_sand(cave, start):
             sand[1] += 1
         else:
             cave[sand[0]][sand[1]] = 'o'
-            break
+            return sand[0], sand[1]
     return True
 
-def part1(ll):
+def get_cave(ll):
     rocks = []
     for p in get_pairs(ll):
         rocks += get_rocks(p)
-        print(p)
+        # print(p)
+    # print(rocks)
 
-    print(rocks)
-
-    max_x = max(r[0] for r in rocks) + 1
-    min_x = min(r[0] for r in rocks) - 1
-    max_y = max(r[1] for r in rocks)
-    print(min_x, max_x, max_y)
+    max_y = max(r[1] for r in rocks) + 3
+    min_x = 500 - max_y
+    # print(max_y)
 
     # shift x axis by min_x
     for rock in rocks:
-        rock[0] -= min_x
-    print(rocks)
+        rock[0] -= (min_x)
+    # print(rocks)
 
-    sand_entrance = [0, 500 - min_x]
+    entrance = [0, 500 - min_x]
 
-    cave = [['.' for x in range(max_x - min_x + 1)] for y in range(max_y + 1)]
+    cave = [['.' for x in range(2 * max_y)] for y in range(max_y)]
     # print_cave(cave)
 
     for rock in rocks:
-        # print(rock)
         cave[rock[1]][rock[0]] = '#'
-    cave[sand_entrance[0]][sand_entrance[1]] = '+'
-    print_cave(cave)
+    for x in range(len(cave[0])):
+        cave[-1][x] = '#'
+    cave[entrance[0]][entrance[1]] = '+'
+    # print_cave(cave)
 
+    return (cave, entrance)
+
+def part1(ll):
+    cave, entrance = get_cave(ll)
     for n in count():
-        if not add_sand(cave, sand_entrance):
+        # print_cave(cave)
+        new_sand = add_sand(cave, entrance)
+        if new_sand[0] == len(cave) - 2:
             return n
 
 def part2(ll):
-    raise NotImplementedError
+    cave, entrance = get_cave(ll)
+    for n in count():
+        # print_cave(cave)
+        new_sand = add_sand(cave, entrance)
+        if new_sand[0] == entrance[0] and new_sand[1] == entrance[1]:
+            return n + 1
 
 TEST_INPUT = """498,4 -> 498,6 -> 496,6
 503,4 -> 502,4 -> 502,9 -> 494,9"""
 
-TEST_SOL = [24]
+TEST_SOL = [24, 93]
 
 FULL_INPUT = """457,150 -> 462,150
 472,133 -> 472,123 -> 472,133 -> 474,133 -> 474,131 -> 474,133 -> 476,133 -> 476,132 -> 476,133 -> 478,133 -> 478,123 -> 478,133 -> 480,133 -> 480,130 -> 480,133 -> 482,133 -> 482,131 -> 482,133 -> 484,133 -> 484,132 -> 484,133 -> 486,133 -> 486,123 -> 486,133 -> 488,133 -> 488,125 -> 488,133
@@ -222,4 +230,4 @@ FULL_INPUT = """457,150 -> 462,150
 460,72 -> 460,73 -> 477,73 -> 477,72
 484,36 -> 484,31 -> 484,36 -> 486,36 -> 486,31 -> 486,36 -> 488,36 -> 488,26 -> 488,36 -> 490,36 -> 490,26 -> 490,36 -> 492,36 -> 492,26 -> 492,36 -> 494,36 -> 494,26 -> 494,36 -> 496,36 -> 496,28 -> 496,36 -> 498,36 -> 498,33 -> 498,36 -> 500,36 -> 500,26 -> 500,36"""
 
-FULL_SOL = []
+FULL_SOL = [805, 25161]
