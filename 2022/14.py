@@ -1,4 +1,5 @@
 from itertools import count
+import time
 
 def get_pairs(ll):
     for l in ll:
@@ -71,18 +72,25 @@ def get_cave(ll):
 def part1(ll):
     cave, entrance = get_cave(ll)
     for n in count():
-        # print_cave(cave)
         new_sand = add_sand(cave, entrance)
         if new_sand[0] == len(cave) - 2:
             return n
+        # time.sleep(0.01)
+        # print("\033c", end="\033[A")
+        # print_cave(cave)
 
 def part2(ll):
     cave, entrance = get_cave(ll)
+    # print_cave(cave)
     for n in count():
-        # print_cave(cave)
         new_sand = add_sand(cave, entrance)
         if new_sand[0] == entrance[0] and new_sand[1] == entrance[1]:
             return n + 1
+
+        # if not n % 10:
+        #     time.sleep(0.002)
+        #     print("\033c", end="\033[A")
+        #     print_cave(cave)
 
 TEST_INPUT = """498,4 -> 498,6 -> 496,6
 503,4 -> 502,4 -> 502,9 -> 494,9"""
