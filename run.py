@@ -3,6 +3,7 @@ import argparse
 import importlib
 import os
 import re
+import time
 
 from tabulate import tabulate
 
@@ -62,6 +63,7 @@ def main():
         mod = importlib.import_module(f"{args.year}.{day}")
 
         for part in parts:
+            time_start = time.time()
             func = getattr(mod, f"part{part}")
             input_str = "test input" if args.test else "full input"
             result_header = f"Part {part} ({input_str})"
@@ -80,7 +82,8 @@ def main():
                 if len(sols) < part:
                     result[result_header] = inconclusive(sol)
                 elif sols[part - 1] == sol:
-                    result[result_header] = success(sol)
+                    time_delta = int((time.time() - time_start) * 1000)
+                    result[result_header] = success(f"{sol}    ({time_delta}ms)") 
                 else:
                     result[result_header] = failure(sol)
             except NotImplementedError:
