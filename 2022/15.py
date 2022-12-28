@@ -1,7 +1,83 @@
+import re
+
+def distance(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def get_sensor_beacon_radius(ll):
+    for l in ll:
+        sb = [int(i) for i in re.findall(r'-?\d+', l)]
+        r = distance((sb[0], sb[1]), (sb[2], sb[3]))
+        yield ((sb[0], sb[1]), (sb[2], sb[3]), r)
+
+def row_cover(row, sensor, beacon, radius, with_beacon):
+    if abs(sensor[1] - row) > radius:
+        return []
+    elif sensor[0] == beacon[0] and beacon[1] == row:
+        return []
+    low_x = sensor[0] - (radius - abs(sensor[1] - row))
+    high_x = sensor[0] + (radius - abs(sensor[1] - row))
+    if not with_beacon:
+        if low_x == beacon[0]:
+            low_x += 1
+        if high_x == beacon[0]:
+            high_x -= 1
+    return [low_x, high_x]
+
+def merge_covers(covers):
+    i = 0
+    while i + 1 < len(covers):
+        if covers[i + 1][0] <= covers[i][1] + 1:
+            covers[i][1] = max(covers[i][1], covers[i + 1][1])
+            del covers[i + 1]
+        else:
+            i += 1
+
 def part1(ll):
-    raise NotImplementedError
+    if len(ll) == 14:
+        ROW = 10  # test input
+    else:
+        ROW = 2000000  # full input
+
+    sbrs = [sbr for sbr in get_sensor_beacon_radius(ll)]
+
+    covers = []
+    for sbr in sbrs:
+        cover = row_cover(ROW, sbr[0], sbr[1], sbr[2], False)
+        if cover:
+            covers.append(cover)
+    covers.sort()
+    # print(covers)
+    merge_covers(covers)
+    # print(covers)
+
+    return sum([cover[1] - cover[0] + 1 for cover in covers])
 
 def part2(ll):
+    if len(ll) == 14:
+        MAX_X = 20  # test input
+    else:
+        MAX_X = 4_000_000  # full input
+
+    sbrs = [sbr for sbr in get_sensor_beacon_radius(ll)]
+
+    for y in range(0, MAX_X + 1):
+        print(y)
+        covers = []
+        for sbr in sbrs:
+            cover = row_cover(y, sbr[0], sbr[1], sbr[2], True)
+            if len(cover) == 0:
+                continue
+            elif cover[1] < 0:
+                continue
+            elif cover[0] > MAX_X:
+                continue
+            covers.append([max(cover[0], 0), min(cover[1], MAX_X)])
+        covers.sort()
+        print(covers)
+        merge_covers(covers)
+        print(covers)
+        if len(covers) > 1:
+            print(covers[0][1] + 1, y)
     raise NotImplementedError
 
 TEST_INPUT = """Sensor at x=2, y=18: closest beacon is at x=-2, y=15
@@ -57,4 +133,4 @@ Sensor at x=2650714, y=3674470: closest beacon is at x=2505629, y=4282497
 Sensor at x=1696740, y=586715: closest beacon is at x=1929144, y=529341
 Sensor at x=3818789, y=2961752: closest beacon is at x=3629407, y=2984857"""
 
-FULL_SOL = []
+FULL_SOL = [5367037]
