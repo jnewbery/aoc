@@ -1,5 +1,4 @@
 from itertools import count
-import time
 
 def get_pairs(ll):
     for l in ll:
