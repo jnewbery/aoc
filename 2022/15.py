@@ -61,7 +61,7 @@ def part2(ll):
     sbrs = [sbr for sbr in get_sensor_beacon_radius(ll)]
 
     for y in range(0, MAX_X + 1):
-        print(y)
+        # print(y)
         covers = []
         for sbr in sbrs:
             cover = row_cover(y, sbr[0], sbr[1], sbr[2], True)
@@ -73,12 +73,12 @@ def part2(ll):
                 continue
             covers.append([max(cover[0], 0), min(cover[1], MAX_X)])
         covers.sort()
-        print(covers)
+        # print(covers)
         merge_covers(covers)
-        print(covers)
+        # print(covers)
         if len(covers) > 1:
             print(covers[0][1] + 1, y)
-    raise NotImplementedError
+            return((covers[0][1] + 1) * 4_000_000 + y)
 
 TEST_INPUT = """Sensor at x=2, y=18: closest beacon is at x=-2, y=15
 Sensor at x=9, y=16: closest beacon is at x=10, y=16
@@ -95,7 +95,7 @@ Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3"""
 
-TEST_SOL = [26]
+TEST_SOL = [26, 56000011]
 
 FULL_INPUT = """Sensor at x=545406, y=2945484: closest beacon is at x=772918, y=2626448
 Sensor at x=80179, y=3385522: closest beacon is at x=772918, y=2626448
@@ -133,4 +133,4 @@ Sensor at x=2650714, y=3674470: closest beacon is at x=2505629, y=4282497
 Sensor at x=1696740, y=586715: closest beacon is at x=1929144, y=529341
 Sensor at x=3818789, y=2961752: closest beacon is at x=3629407, y=2984857"""
 
-FULL_SOL = [5367037]
+FULL_SOL = [5367037, 11914583249288]
