@@ -7,7 +7,7 @@ import time
 
 from tabulate import tabulate
 
-YEAR = 2022
+YEAR = 2023
 
 if os.name == 'posix':
     GREEN = "\033[0;32m"

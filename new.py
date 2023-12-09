@@ -5,7 +5,7 @@ import itertools
 import os
 import re
 
-YEAR = 2022
+YEAR = 2023
 
 def get_next_day(year):
     regex = re.compile(r"^\d{2}\.py$")
@@ -29,7 +29,7 @@ def get_multiline(prompt):
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-d", "--day",  type=int, help="Advent of code day..")
+    parser.add_argument("-d", "--day",  type=int, help="Advent of code day.")
     parser.add_argument("-y", "--year", type=int, help="Which year to run.")
 
     args = parser.parse_args()
