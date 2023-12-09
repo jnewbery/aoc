@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def find_repeats(l, n):
     for i in range(len(l) - n):
         if len(set(l[i:i + n])) == n:

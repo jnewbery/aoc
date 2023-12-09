@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def part1(ll):
     ll = [int(l) for l in ll]
     pairs = [ll[i:i+2] for i in range(len(ll) - 1)]

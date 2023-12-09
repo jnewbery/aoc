@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import functools
 
 def get_pairs(ll):

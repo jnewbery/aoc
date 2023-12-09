@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from itertools import count
 
 def get_pairs(ll):

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def part1(lines):
     sol = 0
     for l in lines:

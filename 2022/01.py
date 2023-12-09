@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def get_totals(ll):
     totals = [0]
     for l in ll:

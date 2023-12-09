@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def head_generator(ll):
     h = [0, 0]
     for l in ll:

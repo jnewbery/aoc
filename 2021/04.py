@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 class Board:
     def __init__(self, numbers, index):
         """Takes a list of lists of numbers"""

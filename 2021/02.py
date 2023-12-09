@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Return a list of pairs (x_change, y_change [challenge 1] | aim_change [challenge 2])"""
 def get_moves(ll):
     moves = []

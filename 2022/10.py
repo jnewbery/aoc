@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import hashlib
 def register_generator(ll):
     reg = 1

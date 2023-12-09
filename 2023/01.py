@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from typing import Optional
 
 DIGITS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,

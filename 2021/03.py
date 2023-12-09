@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Normalize 1 -> 1 , 0 -> -1"""
 def norm1(n):
     return 2 * int(n) - 1
