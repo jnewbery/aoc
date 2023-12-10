@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 from dataclasses import dataclass
 import functools
+import json
 
-from utils import get_params, exit_not_implemented
+from utils import get_params, exit_not_implemented, time_execution
 
 @dataclass
 class Hand:
@@ -57,16 +58,23 @@ def play_game(line: str) -> bool:
 #                 # ret += ix + 1
 #     print(ret)
 
+@time_execution
 def part1(ll):
     exit_not_implemented()
 
+@time_execution
 def part2(ll):
     return sum(play_game(game) for game in ll)
 
 if __name__ == "__main__":
-    part, problem_input = get_params(__file__)
+    args = get_params(__file__)
 
-    if part == "1":
-        print(part1(problem_input.splitlines()))
-    elif part == "2":
-        print(part2(problem_input.splitlines()))
+    if args.part == "1":
+        sol = part1(args.puzzle_input.splitlines())
+    elif args.part == "2":
+        sol = part2(args.puzzle_input.splitlines())
+
+    if args.verbose:
+        print(json.dumps(sol))
+    else:
+        print(sol["solution"])

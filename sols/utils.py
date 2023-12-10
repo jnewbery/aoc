@@ -1,8 +1,10 @@
 import argparse
 import enum
+from functools import wraps
 import os
 from pathlib import Path
 import sys
+import time
 
 class EXIT_CODES(enum.Enum):
     SUCCESS = 0
@@ -11,11 +13,22 @@ class EXIT_CODES(enum.Enum):
 def exit_not_implemented():
     sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)
 
-def get_params(sol_file: str) -> tuple[str, str]:
+def time_execution(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time_ns()
+        ret = func(*args, **kwargs)
+        end = time.time_ns()
+        execution_time = end - start
+        return {"solution": str(ret), "execution_time": f"{int(execution_time // 1e6)}ms"}
+    return wrapper
+
+def get_params(sol_file: str) -> argparse.Namespace:
     """Get the part and input"""
     parser = argparse.ArgumentParser()
     parser.add_argument("part", choices=["1", "2"])
     parser.add_argument("-t", "--test", action="store_true")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Print solution and extra information")
 
     args = parser.parse_args()
 
@@ -33,4 +46,6 @@ def get_params(sol_file: str) -> tuple[str, str]:
         input_file = f"{input_file_stem}.txt"
 
     with open(input_file) as f:
-        return args.part, f.read()
+        args.puzzle_input = f.read()
+
+    return args

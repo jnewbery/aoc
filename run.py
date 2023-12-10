@@ -82,10 +82,9 @@ def run_as_subprocess(days: list[int], parts: list[int], test: bool) -> list[dic
     for day in days:
         result = {'Day': f'Day {day[4:]}'}
         for part in parts:
-            time_start = time.time()
             input_str = "test input" if test else "full input"
             result_header = f"Part {part} ({input_str})"
-            command = [f"sols/{day}.py", str(part)]
+            command = [f"sols/{day}.py", str(part), "-v"]
             if test:
                 command.append("-t")
 
@@ -95,7 +94,7 @@ def run_as_subprocess(days: list[int], parts: list[int], test: bool) -> list[dic
                 result[result_header] = inconclusive("Not implemented")
                 continue
 
-            calculated_sol = script_output.stdout.strip()
+            calculated_sol = json.loads(script_output.stdout.strip())["solution"]
             try:
                 actual_sol = solutions[day][str(part)]["test" if test else "full"]
             except KeyError:
@@ -103,8 +102,8 @@ def run_as_subprocess(days: list[int], parts: list[int], test: bool) -> list[dic
                 continue
 
             if calculated_sol == actual_sol:
-                time_delta = int((time.time() - time_start) * 1000)
-                result[result_header] = success(f"{calculated_sol}    ({time_delta}ms)") 
+                execution_time = json.loads(script_output.stdout.strip())["execution_time"]
+                result[result_header] = success(f"{calculated_sol}    ({execution_time})") 
             else:
                 result[result_header] = failure(calculated_sol)
 
