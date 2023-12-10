@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Create a solution file."""
 import argparse
+from datetime import date
 import itertools
 import os
 from pathlib import Path
-
-YEAR = 2023
 
 def get_next_day(year):
     days = sorted([int(f.stem[4:6]) for f in Path("sols").glob('*') if f.name.startswith(f"{year}") and f.suffix == ".py"])
@@ -36,8 +35,9 @@ def main():
     if args.year:
         year = args.year
     else:
-        year_input = input(f"year (default={YEAR}): ")
-        year = int(year_input) if year_input else YEAR
+        this_year = date.today().year
+        year_input = input(f"year (default={this_year}): ")
+        year = int(year_input) if year_input else this_year
 
     if args.day:
         day = args.day

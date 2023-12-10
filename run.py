@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import argparse
+from datetime import date
 import importlib
 import os
 from pathlib import Path
 import time
 
 from tabulate import tabulate
-
-YEAR = 2023
 
 if os.name == 'posix':
     GREEN = "\033[0;32m"
@@ -30,13 +29,15 @@ def inconclusive(string):
     return BLUE + str(string) + RESET
 
 def main():
+    this_year = date.today().year
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-a", "--args",  action="store_true", help="Print args")
     parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
     parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
-    parser.add_argument("-y", "--year", type=int, default=YEAR, help=f"Which year to run. Default is {YEAR}")
+    parser.add_argument("-y", "--year", type=int, default=this_year, help=f"Which year to run. Default is {this_year}")
 
     args = parser.parse_args()
 
