@@ -3,13 +3,12 @@
 import argparse
 import itertools
 import os
-import re
+from pathlib import Path
 
 YEAR = 2023
 
 def get_next_day(year):
-    regex = re.compile(r"^\d{2}\.py$")
-    days = sorted([int(f[0:2]) for f in os.listdir(str(year)) if regex.match(f)])
+    days = sorted([int(f.stem[4:6]) for f in Path("sols").glob('*') if f.name.startswith(f"{year}") and f.suffix == ".py"])
     for i in itertools.count(1):
         if i not in days:
             return i
@@ -52,7 +51,7 @@ def main():
     full_input = get_multiline("Enter full input. Ctrl-D or Ctrl-Z ( windows ) to save.")
 
     print(f"year: {year}, day: {day}")
-    filename = f"{year}/{day:02}.py"
+    filename = f"sols/{year}{day:02}.py"
     print(filename)
     assert not os.path.exists(filename)
     f = open(filename, "w")

@@ -2,7 +2,7 @@
 import argparse
 import importlib
 import os
-import re
+from pathlib import Path
 import time
 
 from tabulate import tabulate
@@ -41,10 +41,9 @@ def main():
     args = parser.parse_args()
 
     if not args.day:
-        regex = re.compile(r"^\d{2}\.py$")
-        days = sorted([f[0:2] for f in os.listdir(str(args.year)) if regex.match(f)])
+        days = sorted([f.stem for f in Path("sols").glob('*') if f.name.startswith(f"{args.year}") and f.suffix == ".py"])
     else:
-        days = [f"{args.day:02}"]
+        days = [f"{args.year}{args.day:02}"]
 
     if not args.part:
         parts = [1, 2]
@@ -60,7 +59,7 @@ def main():
     results = []
     for day in days:
         result = {'Day': f'Day {day}'}
-        mod = importlib.import_module(f"{args.year}.{day}")
+        mod = importlib.import_module(f"sols.{day}")
 
         for part in parts:
             time_start = time.time()
