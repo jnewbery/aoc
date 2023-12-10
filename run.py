@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 import argparse
 from datetime import date
+import enum
 import importlib
+import json
 import os
 from pathlib import Path
+from subprocess import run
 import time
 
 from tabulate import tabulate
+
+class EXIT_CODES(enum.Enum):
+    # Must match utils.EXIT_CODES
+    SUCCESS = 0
+    NOT_IMPLEMENTED = 38
+
 
 if os.name == 'posix':
     GREEN = "\033[0;32m"
@@ -27,6 +36,81 @@ def failure(string):
 
 def inconclusive(string):
     return BLUE + str(string) + RESET
+
+def run_as_function(days: list[int], parts: list[int], test: bool) -> list[dict[str, str]]:
+    results: list[dict[str, str]] = []
+    for day in days:
+        result = {'Day': f'Day {day[4:]}'}
+        mod = importlib.import_module(f"sols.{day}")
+
+        for part in parts:
+            time_start = time.time()
+            func = getattr(mod, f"part{part}")
+            input_str = "test input" if test else "full input"
+            result_header = f"Part {part} ({input_str})"
+
+            if test:
+                if 'TEST_INPUT' not in mod.__dir__():
+                    result[result_header] = inconclusive("No example input")
+                    continue
+                ll = mod.TEST_INPUT.splitlines()
+            else:
+                ll = mod.FULL_INPUT.splitlines()
+
+            try:
+                sol = func(ll.copy())
+                sols = mod.TEST_SOL if test else mod.FULL_SOL
+                if len(sols) < part:
+                    result[result_header] = inconclusive(sol)
+                elif sols[part - 1] == sol:
+                    time_delta = int((time.time() - time_start) * 1000)
+                    result[result_header] = success(f"{sol}    ({time_delta}ms)") 
+                else:
+                    result[result_header] = failure(sol)
+            except NotImplementedError:
+                result[result_header] = inconclusive("Not implemented")
+
+        results.append(result)
+
+    return results
+
+def run_as_subprocess(days: list[int], parts: list[int], test: bool) -> list[dict[str, str]]:
+    results: list[dict[str, str]] = []
+    with open("sols/solutions.json", "r") as f:
+        solutions = json.load(f)
+
+    for day in days:
+        result = {'Day': f'Day {day[4:]}'}
+        for part in parts:
+            time_start = time.time()
+            input_str = "test input" if test else "full input"
+            result_header = f"Part {part} ({input_str})"
+            command = [f"sols/{day}.py", str(part)]
+            if test:
+                command.append("-t")
+
+            script_output = run(command, capture_output=True, text=True)
+
+            if script_output.returncode == EXIT_CODES.NOT_IMPLEMENTED.value:
+                result[result_header] = inconclusive("Not implemented")
+                continue
+
+            calculated_sol = script_output.stdout.strip()
+            try:
+                actual_sol = solutions[day][str(part)]["test" if test else "full"]
+            except KeyError:
+                result[result_header] = inconclusive(calculated_sol)
+                continue
+
+            if calculated_sol == actual_sol:
+                time_delta = int((time.time() - time_start) * 1000)
+                result[result_header] = success(f"{calculated_sol}    ({time_delta}ms)") 
+            else:
+                result[result_header] = failure(calculated_sol)
+
+        results.append(result)
+
+    return results
 
 def main():
     this_year = date.today().year
@@ -57,39 +141,10 @@ def main():
         print(f"test: {args.test}")
         print(f"parts: {parts}")
 
-    results = []
-    for day in days:
-        result = {'Day': f'Day {day}'}
-        mod = importlib.import_module(f"sols.{day}")
-
-        for part in parts:
-            time_start = time.time()
-            func = getattr(mod, f"part{part}")
-            input_str = "test input" if args.test else "full input"
-            result_header = f"Part {part} ({input_str})"
-
-            if args.test:
-                if 'TEST_INPUT' not in mod.__dir__():
-                    result[result_header] = inconclusive("No example input")
-                    continue
-                ll = mod.TEST_INPUT.splitlines()
-            else:
-                ll = mod.FULL_INPUT.splitlines()
-
-            try:
-                sol = func(ll.copy())
-                sols = mod.TEST_SOL if args.test else mod.FULL_SOL
-                if len(sols) < part:
-                    result[result_header] = inconclusive(sol)
-                elif sols[part - 1] == sol:
-                    time_delta = int((time.time() - time_start) * 1000)
-                    result[result_header] = success(f"{sol}    ({time_delta}ms)") 
-                else:
-                    result[result_header] = failure(sol)
-            except NotImplementedError:
-                result[result_header] = inconclusive("Not implemented")
-
-        results.append(result)
+    if args.year in [2021, 2022]:
+        results = run_as_function(days, parts, args.test)
+    else:
+        results = run_as_subprocess(days, parts, args.test)
 
     print(tabulate(results, headers='keys', tablefmt="github"))
 
