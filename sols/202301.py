@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import re
 from typing import Optional
 
 from utils import get_params, exit_not_implemented, time_execution
@@ -16,17 +17,20 @@ def to_digit(affix: str) -> Optional[int]:
            return v
    return None
 
-def get_calibration_value(line: str) -> int:
-    numbers = list(filter(lambda x: x is not None, [to_digit(line[i:]) for i in range(len(line))]))
+def get_calibration_value(line: str, include_str: bool) -> int:
+    if include_str:
+        numbers = list(filter(lambda x: x is not None, [to_digit(line[i:]) for i in range(len(line))]))
+    else:
+        numbers = [int(d) for d in re.findall(r'\d', line)]
     return numbers[0] * 10 + numbers[-1]
 
 @time_execution
 def part1(ll):
-    exit_not_implemented()
+    return sum([get_calibration_value(l, False) for l in ll])
 
 @time_execution
 def part2(ll):
-    return sum([get_calibration_value(l) for l in ll])
+    return sum([get_calibration_value(l, True) for l in ll])
 
 if __name__ == "__main__":
     args = get_params(__file__)

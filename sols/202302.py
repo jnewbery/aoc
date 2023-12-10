@@ -38,33 +38,26 @@ MAX_HAND = Hand(12, 13, 14)
 
 def play_game(line: str) -> bool:
     line = line.split(':')[1].strip()
-    # print(line)
-    return functools.reduce(lambda x, y: x.merge(y), [Hand.from_txt(hand) for hand in line.split(';')]).power()
-    # for hand in line.split(';'):
-        # if not MAX_HAND.contains(Hand.from_txt(hand)):
-            # return False
-    # return True
+    for hand in line.split(';'):
+        if not MAX_HAND.contains(Hand.from_txt(hand)):
+            return False
+    return True
 
-# def main():
-#     file_name = 'input2.txt'
-#     ret = 0
-#     with open(file_name) as f:
-#         # print(sum(ix + 1 for ix, game in enumerate(f.readlines()) if play_game(game)))
-#         print(sum(play_game(game) for game in f.readlines()))
-#         # for ix, game in enumerate(f.readlines()):
-#             # print(play_game(game))
-#             # if play_game(game):
-#                 # print(f'Game {ix + 1} is {play_game(game)}')
-#                 # ret += ix + 1
-#     print(ret)
+def fewest_number(line: str) -> bool:
+    line = line.split(':')[1].strip()
+    return functools.reduce(lambda x, y: x.merge(y), [Hand.from_txt(hand) for hand in line.split(';')]).power()
 
 @time_execution
 def part1(ll):
-    exit_not_implemented()
+    ret = 0
+    for ix, game in enumerate(ll):
+        if play_game(game):
+            ret += ix + 1
+    return ret
 
 @time_execution
 def part2(ll):
-    return sum(play_game(game) for game in ll)
+    return sum(fewest_number(game) for game in ll)
 
 if __name__ == "__main__":
     args = get_params(__file__)
