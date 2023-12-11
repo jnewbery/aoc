@@ -49,3 +49,24 @@ def get_params(sol_file: str) -> argparse.Namespace:
         args.puzzle_input = f.read()
 
     return args
+
+class Solution:
+    @time_execution
+    def part1(self, ll):
+        exit_not_implemented()
+
+    def part2(self, ll):
+        exit_not_implemented()
+
+    def run(self, sol_file: str):
+        args = get_params(sol_file)
+
+        start = time.time_ns()
+        func = getattr(self, f"part{args.part}")
+        sol = func(args.puzzle_input.splitlines())
+        end = time.time_ns()
+        execution_time = end - start
+        if args.verbose:
+            print({"solution": str(sol), "execution_time": f"{int(execution_time // 1e6)}ms"})
+        else:
+            print(str(sol))
