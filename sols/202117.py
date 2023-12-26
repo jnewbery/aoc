@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-def part1(ll):
-    raise NotImplementedError
+from utils import BaseSolution
 
-def part2(ll):
-    raise NotImplementedError
+class Solution(BaseSolution):
+    def part1(self, ll):
+        self.exit_not_implemented()
 
-TEST_INPUT = """target area: x=20..30, y=-10..-5"""
+    def part2(self, ll):
+        self.exit_not_implemented()
 
-TEST_SOL = [45]
-
-FULL_INPUT = """target area: x=79..137, y=-176..-117"""
-
-FULL_SOL = []
+if __name__ == "__main__":
+    Solution()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import csv
 from datetime import date
 import enum
 import importlib
@@ -8,6 +9,8 @@ import os
 from pathlib import Path
 from subprocess import run
 import time
+from typing import Any
+from functools import cache
 
 from tabulate import tabulate
 
@@ -74,10 +77,21 @@ def run_as_function(days: list[int], parts: list[int], test: bool) -> list[dict[
 
     return results
 
+@cache
+def read_solutions_json() -> dict[str, dict[str, dict[str, str]]]:
+    with open("sols/solutions.json", "r") as f:
+        return json.load(f)
+
+def get_solution(day: str, part: int, test: bool) -> str:
+    solutions = read_solutions_json()
+
+    part_str = str(part)
+    type_str = "test" if test else "full"
+    
+    return solutions[day][part_str][type_str]
+
 def run_as_subprocess(days: list[int], parts: list[int], test: bool) -> list[dict[str, str]]:
     results: list[dict[str, str]] = []
-    with open("sols/solutions.json", "r") as f:
-        solutions = json.load(f)
 
     for day in days:
         result = {'Day': f'Day {day[4:]}'}
@@ -94,9 +108,14 @@ def run_as_subprocess(days: list[int], parts: list[int], test: bool) -> list[dic
                 result[result_header] = inconclusive("Not implemented")
                 continue
 
-            calculated_sol = json.loads(script_output.stdout.strip())["solution"]
             try:
-                actual_sol = solutions[day][str(part)]["test" if test else "full"]
+                calculated_sol = json.loads(script_output.stdout.strip())["solution"]
+            except json.decoder.JSONDecodeError:
+                result[result_header] = failure("No solution found")
+                continue
+
+            try:
+                actual_sol = get_solution(day, part, test)
             except KeyError:
                 result[result_header] = inconclusive(calculated_sol)
                 continue
@@ -140,7 +159,7 @@ def main():
         print(f"test: {args.test}")
         print(f"parts: {parts}")
 
-    if args.year in [2021, 2022]:
+    if args.year == 2022:
         results = run_as_function(days, parts, args.test)
     else:
         results = run_as_subprocess(days, parts, args.test)

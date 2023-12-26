@@ -1,26 +1,14 @@
 #!/usr/bin/env python3
 import re
 
-from utils import Solution
+from utils import BaseSolution
 
-class Solution2023(Solution):
+class Solution(BaseSolution):
     def part1(self, ll):
-        leading_digits_match = re.match(r'\d+', input_string)
-
-        numbers:list[dict] =[]
-        symbols:list[list] =[]
-        for y, l in enumerate(ll):
-            numbers.append([])
-            symbols.append([])
-            for x, c in enumerate(l):
-                if c.isdigit():
-                    numbers[y].append([x, y, int(c)])
-                elif c != '.':
-                    symbols[y].append(x)
-        return 5
+        self.exit_not_implemented()
 
     def part2(self, ll):
-        return 10
+        self.exit_not_implemented()
 
 if __name__ == "__main__":
-    Solution2023().run(__file__)
+    Solution()

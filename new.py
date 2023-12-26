@@ -54,21 +54,37 @@ def main():
     filename = f"sols/{year}{day:02}.py"
     print(filename)
     assert not os.path.exists(filename)
-    f = open(filename, "w")
+    with open(filename, "w") as f:
+        f.write("#!/usr/bin/env python3\n")
+        f.write("from utils import BaseSolution\n")
+        f.write("\n")
+        f.write("class Solution(BaseSolution):\n")
+        f.write("    def part1(self, ll):\n")
+        f.write("        self.exit_not_implemented()\n")
+        f.write("\n")
+        f.write("    def part2(self, ll):\n")
+        f.write("        self.exit_not_implemented()\n")
+        f.write("\n")
+        f.write('if __name__ == "__main__":\n')
+        f.write("    Solution()\n")
 
-    f.write("def part1(ll):\n")
-    f.write("    raise NotImplementedError\n")
-    f.write("\n")
-    f.write("def part2(ll):\n")
-    f.write("    raise NotImplementedError\n")
-    f.write("\n")
-    f.write(f'TEST_INPUT = """{test_input}"""\n')
-    f.write("\n")
-    f.write(f"TEST_SOL = [{test_sol}]\n")
-    f.write("\n")
-    f.write(f'FULL_INPUT = """{full_input}"""\n')
-    f.write("\n")
-    f.write("FULL_SOL = []")
+    test_input_filename = f"sols/{year}{day:02}_test_input.txt"
+    with open(test_input_filename, "w") as f:
+        f.write(test_input)
+
+    full_input_filename = f"sols/{year}{day:02}_input.txt"
+    with open(full_input_filename, "w") as f:
+        f.write(full_input)
+
+    with open("sols/solutions.json", "r") as f:
+        solutions = json.load(f)
+
+    if year not in solutions:
+        solutions[year] = {}
+    solutions[year][day] = {"test": test_sol, "full": full_sol}
+
+    with open("sols/solutions.json", "w") as f:
+        json.dump(solutions, f, indent=2)
 
 if __name__ == "__main__":
     main()

@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
-def part1(ll):
-    raise NotImplementedError
+from utils import BaseSolution
 
-def part2(ll):
-    raise NotImplementedError
+class Solution(BaseSolution):
+    def part1(self, ll):
+        self.exit_not_implemented()
 
-TEST_INPUT = """Player 1 starting position: 4
-Player 2 starting position: 8"""
+    def part2(self, ll):
+        self.exit_not_implemented()
 
-TEST_SOL = [739785]
-
-FULL_INPUT = """Player 1 starting position: 8
-Player 2 starting position: 6"""
-
-FULL_SOL = []
+if __name__ == "__main__":
+    Solution()

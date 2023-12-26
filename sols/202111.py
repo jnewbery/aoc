@@ -1,32 +1,12 @@
 #!/usr/bin/env python3
-def part1(ll):
-    raise NotImplementedError
+from utils import BaseSolution
 
-def part2(ll):
-    raise NotImplementedError
+class Solution(BaseSolution):
+    def part1(self, ll):
+        self.exit_not_implemented()
 
-TEST_INPUT = """5483143223
-2745854711
-5264556173
-6141336146
-6357385478
-4167524645
-2176841721
-6882881134
-4846848554
-5283751526"""
+    def part2(self, ll):
+        self.exit_not_implemented()
 
-TEST_SOL = [1656]
-
-FULL_INPUT = """8577245547
-1654333653
-5365633785
-1333243226
-4272385165
-5688328432
-3175634254
-6775142227
-6152721415
-2678227325"""
-
-FULL_SOL = []
+if __name__ == "__main__":
+    Solution()

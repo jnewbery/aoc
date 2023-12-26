@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 from dataclasses import dataclass
 import functools
-import json
 
-from utils import get_params, exit_not_implemented, time_execution
+from utils import BaseSolution
 
 @dataclass
 class Hand:
@@ -47,27 +46,17 @@ def fewest_number(line: str) -> bool:
     line = line.split(':')[1].strip()
     return functools.reduce(lambda x, y: x.merge(y), [Hand.from_txt(hand) for hand in line.split(';')]).power()
 
-@time_execution
-def part1(ll):
-    ret = 0
-    for ix, game in enumerate(ll):
-        if play_game(game):
-            ret += ix + 1
-    return ret
+class Solution(BaseSolution):
 
-@time_execution
-def part2(ll):
-    return sum(fewest_number(game) for game in ll)
+    def part1(lself, ll):
+        ret = 0
+        for ix, game in enumerate(ll):
+            if play_game(game):
+                ret += ix + 1
+        return ret
+
+    def part2(self, ll):
+        return sum(fewest_number(game) for game in ll)
 
 if __name__ == "__main__":
-    args = get_params(__file__)
-
-    if args.part == "1":
-        sol = part1(args.puzzle_input.splitlines())
-    elif args.part == "2":
-        sol = part2(args.puzzle_input.splitlines())
-
-    if args.verbose:
-        print(json.dumps(sol))
-    else:
-        print(sol["solution"])
+    Solution()

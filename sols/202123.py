@@ -1,22 +1,12 @@
 #!/usr/bin/env python3
-def part1(ll):
-    raise NotImplementedError
+from utils import BaseSolution
 
-def part2(ll):
-    raise NotImplementedError
+class Solution(BaseSolution):
+    def part1(self, ll):
+        self.exit_not_implemented()
 
-TEST_INPUT = """#############
-#...........#
-###B#C#B#D###
-  #A#D#C#A#
-  #########"""
+    def part2(self, ll):
+        self.exit_not_implemented()
 
-TEST_SOL = [12521]
-
-FULL_INPUT = """#############
-#...........#
-###D#C#D#B###
-  #C#A#A#B#
-  #########"""
-
-FULL_SOL = []
+if __name__ == "__main__":
+    Solution()
