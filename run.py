@@ -40,43 +40,6 @@ def failure(string):
 def inconclusive(string):
     return BLUE + str(string) + RESET
 
-def run_as_function(days: list[int], parts: list[int], test: bool) -> list[dict[str, str]]:
-    results: list[dict[str, str]] = []
-    for day in days:
-        result = {'Day': f'Day {day[4:]}'}
-        mod = importlib.import_module(f"sols.{day}")
-
-        for part in parts:
-            time_start = time.time()
-            func = getattr(mod, f"part{part}")
-            input_str = "test input" if test else "full input"
-            result_header = f"Part {part} ({input_str})"
-
-            if test:
-                if 'TEST_INPUT' not in mod.__dir__():
-                    result[result_header] = inconclusive("No example input")
-                    continue
-                ll = mod.TEST_INPUT.splitlines()
-            else:
-                ll = mod.FULL_INPUT.splitlines()
-
-            try:
-                sol = func(ll.copy())
-                sols = mod.TEST_SOL if test else mod.FULL_SOL
-                if len(sols) < part:
-                    result[result_header] = inconclusive(sol)
-                elif sols[part - 1] == sol:
-                    time_delta = int((time.time() - time_start) * 1000)
-                    result[result_header] = success(f"{sol}    ({time_delta}ms)") 
-                else:
-                    result[result_header] = failure(sol)
-            except NotImplementedError:
-                result[result_header] = inconclusive("Not implemented")
-
-        results.append(result)
-
-    return results
-
 @cache
 def read_solutions_json() -> dict[str, dict[str, dict[str, str]]]:
     with open("sols/solutions.json", "r") as f:
@@ -159,10 +122,7 @@ def main():
         print(f"test: {args.test}")
         print(f"parts: {parts}")
 
-    if args.year == 2022:
-        results = run_as_function(days, parts, args.test)
-    else:
-        results = run_as_subprocess(days, parts, args.test)
+    results = run_as_subprocess(days, parts, args.test)
 
     print(tabulate(results, headers='keys', tablefmt="github"))
 

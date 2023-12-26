@@ -1,24 +1,4 @@
-#!/usr/bin/env python3
-def part1(ll):
-    raise NotImplementedError
-
-def part2(ll):
-    raise NotImplementedError
-
-TEST_INPUT = """Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
-Valve BB has flow rate=13; tunnels lead to valves CC, AA
-Valve CC has flow rate=2; tunnels lead to valves DD, BB
-Valve DD has flow rate=20; tunnels lead to valves CC, AA, EE
-Valve EE has flow rate=3; tunnels lead to valves FF, DD
-Valve FF has flow rate=0; tunnels lead to valves EE, GG
-Valve GG has flow rate=0; tunnels lead to valves FF, HH
-Valve HH has flow rate=22; tunnel leads to valve GG
-Valve II has flow rate=0; tunnels lead to valves AA, JJ
-Valve JJ has flow rate=21; tunnel leads to valve II"""
-
-TEST_SOL = [1651]
-
-FULL_INPUT = """Valve VR has flow rate=11; tunnels lead to valves LH, KV, BP
+Valve VR has flow rate=11; tunnels lead to valves LH, KV, BP
 Valve UV has flow rate=0; tunnels lead to valves GH, RO
 Valve OH has flow rate=0; tunnels lead to valves AJ, NY
 Valve GD has flow rate=0; tunnels lead to valves TX, PW
@@ -71,6 +51,4 @@ Valve SP has flow rate=24; tunnels lead to valves KC, KV, PJ
 Valve NY has flow rate=0; tunnels lead to valves IR, OH
 Valve OM has flow rate=7; tunnels lead to valves EC, GH, KE, ZR, LH
 Valve GH has flow rate=0; tunnels lead to valves OM, UV
-Valve RI has flow rate=3; tunnels lead to valves NV, KE, LN, XH, TX"""
-
-FULL_SOL = []
+Valve RI has flow rate=3; tunnels lead to valves NV, KE, LN, XH, TX
