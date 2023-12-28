@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a solution file."""
+"""Create a template solution file, and add input files and solutions to solutions.json."""
 import argparse
 from datetime import date
 import itertools
