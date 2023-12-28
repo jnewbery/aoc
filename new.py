@@ -3,6 +3,7 @@
 import argparse
 from datetime import date
 import itertools
+import json
 import os
 from pathlib import Path
 
@@ -51,7 +52,8 @@ def main():
     full_input = get_multiline("Enter full input. Ctrl-D or Ctrl-Z ( windows ) to save.")
 
     print(f"year: {year}, day: {day}")
-    filename = f"sols/{year}{day:02}.py"
+    puzzle_name = f"{year}{day:02}"
+    filename = f"sols/{puzzle_name}.py"
     print(filename)
     assert not os.path.exists(filename)
     with open(filename, "w") as f:
@@ -60,28 +62,28 @@ def main():
         f.write("\n")
         f.write("class Solution(BaseSolution):\n")
         f.write("    def part1(self, ll):\n")
-        f.write("        self.exit_not_implemented()\n")
+        f.write("        raise NotImplementedError\n")
         f.write("\n")
         f.write("    def part2(self, ll):\n")
-        f.write("        self.exit_not_implemented()\n")
+        f.write("        raise NotImplementedError\n")
         f.write("\n")
         f.write('if __name__ == "__main__":\n')
         f.write("    Solution()\n")
 
-    test_input_filename = f"sols/{year}{day:02}_test_input.txt"
+    test_input_filename = f"sols/{puzzle_name}_test_input.txt"
     with open(test_input_filename, "w") as f:
         f.write(test_input)
 
-    full_input_filename = f"sols/{year}{day:02}_input.txt"
+    full_input_filename = f"sols/{puzzle_name}_input.txt"
     with open(full_input_filename, "w") as f:
         f.write(full_input)
 
     with open("sols/solutions.json", "r") as f:
         solutions = json.load(f)
 
-    if year not in solutions:
-        solutions[year] = {}
-    solutions[year][day] = {"test": test_sol, "full": full_sol}
+    if puzzle_name not in solutions:
+        solutions[puzzle_name] = {}
+        solutions[puzzle_name]["1"] = {"test": test_sol}
 
     with open("sols/solutions.json", "w") as f:
         json.dump(solutions, f, indent=2)

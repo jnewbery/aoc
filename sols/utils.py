@@ -10,15 +10,15 @@ class EXIT_CODES(enum.Enum):
     SUCCESS = 0
     NOT_IMPLEMENTED = 38
 
+def exit_not_implemented():
+    sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)
+
 class BaseSolution:
     def part1(self, ll) -> str:
-        exit_not_implemented()
+        raise NotImplementedError
 
     def part2(self, ll) -> str:
-        exit_not_implemented()
-
-    def exit_not_implemented(self):
-        sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)
+        raise NotImplementedError
 
     def get_params(self):
         """Get the part and input"""
@@ -57,9 +57,13 @@ class BaseSolution:
 
         start = time.time_ns()
         func = getattr(self, f"part{self.part}")
-        sol = func(self.puzzle_input)
-        end = time.time_ns()
-        execution_time = end - start
+
+        try:
+            sol = func(self.puzzle_input)
+        except NotImplementedError:
+            exit_not_implemented()
+
+        execution_time = time.time_ns() - start
 
         if self.verbose:
             print(json.dumps({"solution": str(sol), "execution_time": f"{int(execution_time // 1e6)}ms"}))
