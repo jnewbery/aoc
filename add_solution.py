@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """Add solutions to solutions.json."""
-import argparse
 from datetime import date
-import itertools
-import os
-from pathlib import Path
+import json
 
 def main():
     this_year = date.today().year
@@ -17,7 +14,7 @@ def main():
     part_input = input("part: ")
     part = int(part_input)
 
-    solution_type_input = input("Test solution? (y/n)")
+    solution_type_input = input("Test solution? (y/n): ")
     solution_type = "test" if solution_type_input == "y" else "full"
 
     solution = input("Enter solution: ")
