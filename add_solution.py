@@ -12,14 +12,14 @@ def main():
     day = int(day_input)
 
     part_input = input("part: ")
-    part = int(part_input)
+    part = str(int(part_input))
 
     solution_type_input = input("Test solution? (y/n): ")
     solution_type = "test" if solution_type_input == "y" else "full"
 
     solution = input("Enter solution: ")
 
-    print(f"year: {year}, day: {day}, part: {part}, type: {solution_type}")
+    print(f"year: {year}, day: {day}, part: {part}, type: {solution_type}, solution: {solution}")
     puzzle_name = f"{year}{day:02}"
 
     with open("sols/solutions.json", "r") as f:
@@ -30,7 +30,6 @@ def main():
 
     if part not in solutions[puzzle_name]:
         solutions[puzzle_name][part] = {}
-
 
     if solutions[puzzle_name][part].get(solution_type):
         if input("Solution already exists! Overwrite? (y/n): ") != "y":
