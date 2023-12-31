@@ -6,6 +6,7 @@ import itertools
 import json
 import os
 from pathlib import Path
+import shutil
 
 def get_next_day(year):
     days = sorted([int(f.stem[4:6]) for f in Path("sols").glob('*') if f.name.startswith(f"{year}") and f.suffix == ".py"])
@@ -56,19 +57,8 @@ def main():
     filename = f"sols/{puzzle_name}.py"
     print(filename)
     assert not os.path.exists(filename)
-    with open(filename, "w") as f:
-        f.write("#!/usr/bin/env python3\n")
-        f.write("from utils import BaseSolution\n")
-        f.write("\n")
-        f.write("class Solution(BaseSolution):\n")
-        f.write("    def part1(self, ll):\n")
-        f.write("        raise NotImplementedError\n")
-        f.write("\n")
-        f.write("    def part2(self, ll):\n")
-        f.write("        raise NotImplementedError\n")
-        f.write("\n")
-        f.write('if __name__ == "__main__":\n')
-        f.write("    Solution()\n")
+    template_filename = "sols/template.py"
+    shutil.copy(template_filename, filename)
 
     test_input_filename = f"sols/{puzzle_name}_test_input.txt"
     with open(test_input_filename, "w") as f:
