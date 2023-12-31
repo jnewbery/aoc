@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import re
 
-from utils import BaseSolution
+from utils import BaseSolution, get_numbers
 
 def get_winning_numbers_and_numbers_we_have(line: str) -> tuple[set[int], set[int]]:
     line = line.split(":")[1]
     winning_numbers_str, numbers_we_have_str = line.split("|")
-    winning_numbers = set(int(x) for x in re.findall(r"\d+", winning_numbers_str))
-    numbers_we_have = set(int(x) for x in re.findall(r"\d+", numbers_we_have_str))
+    winning_numbers = set(get_numbers(winning_numbers_str))
+    numbers_we_have = set(get_numbers(numbers_we_have_str))
 
     return winning_numbers, numbers_we_have
 

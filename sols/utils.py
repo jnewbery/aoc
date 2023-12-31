@@ -3,6 +3,7 @@ import enum
 import json
 import os
 from pathlib import Path
+import re
 import sys
 import time
 
@@ -69,3 +70,6 @@ class BaseSolution:
             print(json.dumps({"solution": str(sol), "execution_time": f"{int(execution_time // 1e6)}ms"}))
         else:
             print(str(sol))
+
+def get_numbers(line: str) -> list[int]:
+    return [int(x) for x in re.findall(r"\d+", line)]
