@@ -1,10 +1,9 @@
-use std::io;
 use std::collections::HashMap;
 
 static _TEST_INPUT: &str = include_str!("202401_test_input.txt");
 static _INPUT: &str = include_str!("202401_input.txt");
 
-fn main() -> io::Result<()> {
+fn main() {
     // Parse the input into two hashmaps
     let (counts1, counts2) = _INPUT.lines().fold((HashMap::new(), HashMap::new()), |(mut acc1, mut acc2), line| {
         let parts: Vec<&str> = line.split_whitespace().collect();
@@ -21,6 +20,4 @@ fn main() -> io::Result<()> {
         .sum();
 
     println!("Result: {}", result);
-
-    Ok(())
 }
