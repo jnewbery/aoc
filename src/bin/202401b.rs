@@ -5,31 +5,20 @@ static _TEST_INPUT: &str = include_str!("202401_test_input.txt");
 static _INPUT: &str = include_str!("202401_input.txt");
 
 fn main() -> io::Result<()> {
-    let mut counts1 = HashMap::new();
-    let mut counts2 = HashMap::new();
-
-    // Read the file line by line
-    for line in _INPUT.lines() {
+    // Parse the input into two hashmaps
+    let (counts1, counts2) = _INPUT.lines().fold((HashMap::new(), HashMap::new()), |(mut acc1, mut acc2), line| {
         let parts: Vec<&str> = line.split_whitespace().collect();
-        if parts.len() == 2 {
-            if let (Ok(a), Ok(b)) = (parts[0].parse::<i32>(), parts[1].parse::<i32>()) {
-                *counts1.entry(a).or_insert(0) += 1;
-                *counts2.entry(b).or_insert(0) += 1;
-            } else {
-                eprintln!("Warning: Could not parse line: {}", line);
-            }
-        } else {
-            eprintln!("Warning: Incorrect format in line: {}", line);
-        }
-    }
+        let a = parts[0].parse::<i32>().expect("Failed to parse first column");
+        let b = parts[1].parse::<i32>().expect("Failed to parse second column");
+        *acc1.entry(a).or_insert(0) += 1;
+        *acc2.entry(b).or_insert(0) += 1;
+        (acc1, acc2)
+    });
 
-    // Iterate over counts1 and calculate result
-    let mut result = 0;
-    for (key, value1) in &counts1 {
-        if let Some(value2) = counts2.get(key) {
-            result += key * value1 * value2;
-        }
-    }
+    // Calculate the product of the counts of the two columns
+    let result: i32 = counts1.iter()
+        .filter_map(|(key, value1)| counts2.get(key).map(|value2| key * value1 * value2))
+        .sum();
 
     println!("Result: {}", result);
 
