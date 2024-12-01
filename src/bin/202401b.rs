@@ -1,25 +1,20 @@
 use std::io;
 use std::collections::HashMap;
 
-static TEST_INPUT: &str = include_str!("202401_test_input.txt");
-static INPUT: &str = include_str!("202401_input.txt");
+static _TEST_INPUT: &str = include_str!("202401_test_input.txt");
+static _INPUT: &str = include_str!("202401_input.txt");
 
 fn main() -> io::Result<()> {
-
-    // Create a vector to hold the two columns
-    let mut columns: Vec<Vec<i32>> = vec![vec![], vec![]];
+    let mut counts1 = HashMap::new();
+    let mut counts2 = HashMap::new();
 
     // Read the file line by line
-    for line in TEST_INPUT.lines() {
-        // Split the line into two columns
+    for line in _INPUT.lines() {
         let parts: Vec<&str> = line.split_whitespace().collect();
-
-        // Ensure there are exactly two columns
         if parts.len() == 2 {
-            // Parse each part into an integer and push to the respective column
             if let (Ok(a), Ok(b)) = (parts[0].parse::<i32>(), parts[1].parse::<i32>()) {
-                columns[0].push(a);
-                columns[1].push(b);
+                *counts1.entry(a).or_insert(0) += 1;
+                *counts2.entry(b).or_insert(0) += 1;
             } else {
                 eprintln!("Warning: Could not parse line: {}", line);
             }
@@ -28,19 +23,15 @@ fn main() -> io::Result<()> {
         }
     }
 
-    let counts1 = columns[0].clone().into_iter().fold(HashMap::new(), |mut acc, num| {
-        *acc.entry(num).or_insert(0) += 1;
-        acc
-    });
+    // Iterate over counts1 and calculate result
+    let mut result = 0;
+    for (key, value1) in &counts1 {
+        if let Some(value2) = counts2.get(key) {
+            result += key * value1 * value2;
+        }
+    }
 
-    let counts2 = columns[1].clone().into_iter().fold(HashMap::new(), |mut acc, num| {
-        *acc.entry(num).or_insert(0) += 1;
-        acc
-    });
-
-    // Print the parsed vectors
-    println!("counts1: {:?}", counts1);
-    println!("counts2: {:?}", counts2);
+    println!("Result: {}", result);
 
     Ok(())
 }
