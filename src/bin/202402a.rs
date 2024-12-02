@@ -1,8 +1,7 @@
 static _TEST_INPUT: &str = include_str!("202402_test_input.txt");
 static _INPUT: &str = include_str!("202402_input.txt");
 
-fn is_safe(vec: Vec<i32>) -> bool {
-    // println!("Checking vec: {:?}", vec);
+fn is_safe(vec: &Vec<i32>) -> bool {
     vec.windows(2)
         .map(|pair| pair[1] - pair[0]) // Compute the differences
         .fold(Ok(None), |is_inc, diff| match is_inc {
@@ -26,10 +25,10 @@ fn main() {
     let ret = _INPUT
         .lines()
         .map(|line| {
-            let vec: Vec<i32> = line.split_whitespace().map(|s| s.parse::<i32>().expect("Failed to parse column")).collect();
-            is_safe(vec) as i32
+            line.split_whitespace().map(|s| s.parse::<i32>().expect("Failed to parse column")).collect()
         })
-        .sum::<i32>();
+        .filter(|vec| is_safe(vec))
+        .count();
 
     println!("ret: {:?}", ret);
 }
