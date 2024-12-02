@@ -23,17 +23,13 @@ fn is_safe(vec: Vec<i32>) -> bool {
 }
 
 fn main() {
-    let mut ret = 0;
-    for line in _INPUT.lines() {
-        let vec: Vec<i32> = line.split_whitespace().map(|s| s.parse::<i32>().expect("Failed to parse column")).collect();
-        if is_safe(vec) {
-            // println!("safe!");
-            ret += 1;
-        } else {
-            // println!("unsafe!");
-        }
-
-    }
+    let ret = _INPUT
+        .lines()
+        .map(|line| {
+            let vec: Vec<i32> = line.split_whitespace().map(|s| s.parse::<i32>().expect("Failed to parse column")).collect();
+            is_safe(vec) as i32
+        })
+        .sum::<i32>();
 
     println!("ret: {:?}", ret);
 }
