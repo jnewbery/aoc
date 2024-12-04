@@ -4,27 +4,29 @@ static _INPUT: &str = include_str!("202403_input.txt");
 use regex::Regex;
 
 fn main() {
-    let re = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don\'t\(\)").unwrap();
+    const REGEX_PATTERN: &str = r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)";
+    let re = Regex::new(REGEX_PATTERN).unwrap();
 
-    let sol = re.captures_iter(_INPUT).fold((0, true), |(count, enabled), cap| {
+    let mut count = 0;
+    let mut enabled = true;
+
+    for cap in re.captures_iter(_INPUT) {
         match cap.get(0).map(|m| m.as_str()) {
             Some(m) if m.starts_with("mul(") && enabled => {
-                let n = cap.get(1).unwrap().as_str().parse::<i32>().unwrap();
-                let m = cap.get(2).unwrap().as_str().parse::<i32>().unwrap();
-                // println!("Matched mul: ({}, {})", n, m);
-                (count + n * m, enabled)
+                if let (Some(n_match), Some(m_match)) = (cap.get(1), cap.get(2)) {
+                    let n = n_match.as_str().parse::<i32>().unwrap();
+                    let m = m_match.as_str().parse::<i32>().unwrap();
+                    count += n * m;
+                }
             }
             Some("do()") => {
-                // println!("Matched: do()");
-                (count, true)
-
+                enabled = true;
             }
             Some("don't()") => {
-                // println!("Matched: don't()");
-                (count, false)
+                enabled = false;
             }
-            _ => (count, enabled)
+            _ => {}
         }
-    }).0;
-    println!("{:?}", sol);
+    }
+    println!("{:?}", count);
 }
