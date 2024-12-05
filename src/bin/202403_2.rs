@@ -1,4 +1,4 @@
-static _TEST_INPUT: &str = include_str!("202403b_test_input.txt");
+static _TEST_INPUT: &str = include_str!("202403_2_test_input.txt");
 static _INPUT: &str = include_str!("202403_input.txt");
 
 use regex::Regex;
