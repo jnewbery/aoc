@@ -9,7 +9,7 @@ fn get_constraints(lines: &mut std::str::Lines) -> HashMap<i32, HashSet<i32>> {
     // Iterate over the lines until a blank line is found
     while let Some(line) = lines.next() {
         if line.is_empty() {
-            println!("Encountered a blank line, stopping.");
+            // println!("Encountered a blank line, stopping.");
             break;
         }
 
@@ -26,7 +26,7 @@ fn get_constraints(lines: &mut std::str::Lines) -> HashMap<i32, HashSet<i32>> {
 }
 
 fn test_single_line(line: &str, constraints: &HashMap<i32, HashSet<i32>>) -> i32 {
-    println!("Processing line: {}", line);
+    // println!("Processing line: {}", line);
     let mut seen = HashSet::new();
 
     // Split the line by ','
@@ -37,7 +37,7 @@ fn test_single_line(line: &str, constraints: &HashMap<i32, HashSet<i32>>) -> i32
         if let Some(constraint_set) = constraints.get(&value) {
             // Check for overlap between constraint_set and seen
             if !seen.is_disjoint(constraint_set) {
-                println!("Found overlap between constraint_set and seen for value: {}", value);
+                // println!("Found overlap between constraint_set and seen for value: {}", value);
                 return 0;
             }
         }
@@ -54,7 +54,7 @@ fn main() {
 
     // Call the function to process lines until a blank line is found
     let constraints = get_constraints(&mut lines);
-    println!("Constructed HashMap: {:?}", constraints);
+    // println!("Constructed HashMap: {:?}", constraints);
 
     // Apply test_single_line function to the remaining lines
     let sol = lines.map(|line| test_single_line(line, &constraints)).sum::<i32>();
