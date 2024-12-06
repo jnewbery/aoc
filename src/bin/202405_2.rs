@@ -34,22 +34,23 @@ fn sort_pairs(mut pairs: HashSet<(i32, i32)>) -> Vec<i32> {
         let backs: HashSet<i32> = pairs.iter().map(|pair| pair.1).collect();
 
         if pairs.len() == 1 {
-            // Add both values to the sorted_values
+            // Handle the final pair case
             let pair = pairs.iter().next().unwrap();
             sorted_values.push(pair.0);
             sorted_values.push(pair.1);
             break;
         }
 
-        for f in &fronts {
-            if !backs.contains(f) {
-                // Add the front value to the sorted_values
-                sorted_values.push(*f);
-                pairs = pairs.iter().filter(|pair| pair.0 != *f).map(|pair| *pair).collect();
-                // println!("Found front: {}, remaining pairs: {:?}", f, pairs);
-                break;
-            }
-        }
+        let &next = fronts.difference(&backs).next().expect("Pairs don't give a unique ordering");
+        // Find elements in `fronts` that are not in `backs` (no dependencies)
+        sorted_values.push(next);
+
+        // Remove pairs starting with the `next` element
+        pairs = pairs
+            .into_iter()
+            .filter(|&(a, _)| a != next)
+            .collect();
+
     }
 
     sorted_values
