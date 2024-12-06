@@ -49,19 +49,16 @@ fn sort_pairs(mut pairs: HashSet<(i32, i32)>) -> Vec<i32> {
 fn test_single_line(line: &str, pairs: &Vec<(i32, i32)>) -> i32 {
     // println!("Processing line: {}", line);
     
-    let mut relevant_pairs = HashSet::new();
-
     // Split the line by ','
     let values = line.split(',').map(|value_str| value_str.trim().parse().expect("Failed to parse value")).collect::<Vec<i32>>();
     // println!("Values: {:?}", values);
 
-    for pair in pairs {
-        if values.contains(&pair.0) && values.contains(&pair.1) {
-            relevant_pairs.insert(*pair);
-        }
-    }
+    let relevant_pairs: HashSet<_> = pairs.iter()
+        .filter(|pair| values.contains(&pair.0) && values.contains(&pair.1))
+        .copied()
+        .collect();
 
-    // Sort the relevant_pairs
+    // Get an ordered list off values that respect the ordering of pairs
     let ordered_values = sort_pairs(relevant_pairs);
     // println!("Ordered values: {:?}", ordered_values);
 
