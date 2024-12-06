@@ -4,24 +4,14 @@ static _TEST_INPUT: &str = include_str!("202405_test_input.txt");
 static _INPUT: &str = include_str!("202405_input.txt");
 
 fn get_pairs(lines: &mut std::str::Lines) -> Vec<(i32, i32)> {
-    let mut pairs = Vec::new();
-
-    // Iterate over the lines until a blank line is found
-    while let Some(line) = lines.next() {
-        if line.is_empty() {
-            // println!("Encountered a blank line, stopping.");
-            break;
-        }
-
-        // Split the line by '|'
-        let (left, right) = line.split_once('|').expect("Failed to split line");
-        let left: i32 = left.trim().parse().expect("Failed to parse key");
-        let right: i32 = right.trim().parse().expect("Failed to parse value");
-
-        pairs.push((left, right));
-    }
-
-    pairs
+    lines.take_while(|line| !line.is_empty())
+        .map(|line| {
+            let (left, right) = line.split_once('|').expect("Failed to split line");
+            let left: i32 = left.trim().parse().expect("Failed to parse left integer");
+            let right: i32 = right.trim().parse().expect("Failed to parse right integer");
+            (left, right)
+        })
+        .collect()
 }
 
 fn sort_pairs(mut pairs: HashSet<(i32, i32)>) -> Vec<i32> {
@@ -41,8 +31,8 @@ fn sort_pairs(mut pairs: HashSet<(i32, i32)>) -> Vec<i32> {
             break;
         }
 
-        let &next = fronts.difference(&backs).next().expect("Pairs don't give a unique ordering");
         // Find elements in `fronts` that are not in `backs` (no dependencies)
+        let &next = fronts.difference(&backs).next().expect("Pairs don't give a unique ordering");
         sorted_values.push(next);
 
         // Remove pairs starting with the `next` element
@@ -57,13 +47,13 @@ fn sort_pairs(mut pairs: HashSet<(i32, i32)>) -> Vec<i32> {
 }
 
 fn test_single_line(line: &str, pairs: &Vec<(i32, i32)>) -> i32 {
-    println!("Processing line: {}", line);
+    // println!("Processing line: {}", line);
     
     let mut relevant_pairs = HashSet::new();
 
     // Split the line by ','
     let values = line.split(',').map(|value_str| value_str.trim().parse().expect("Failed to parse value")).collect::<Vec<i32>>();
-    println!("Values: {:?}", values);
+    // println!("Values: {:?}", values);
 
     for pair in pairs {
         if values.contains(&pair.0) && values.contains(&pair.1) {
@@ -73,7 +63,7 @@ fn test_single_line(line: &str, pairs: &Vec<(i32, i32)>) -> i32 {
 
     // Sort the relevant_pairs
     let ordered_values = sort_pairs(relevant_pairs);
-    println!("Ordered values: {:?}", ordered_values);
+    // println!("Ordered values: {:?}", ordered_values);
 
     if ordered_values == values {
         return 0;
