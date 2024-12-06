@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 static _TEST_INPUT: &str = include_str!("202405_test_input.txt");
 static _INPUT: &str = include_str!("202405_input.txt");
 
@@ -22,22 +24,61 @@ fn get_pairs(lines: &mut std::str::Lines) -> Vec<(i32, i32)> {
     pairs
 }
 
-fn test_single_line(line: &str, pairs: &Vec<(i32, i32)>) -> i32 {
-    // println!("Processing line: {}", line);
+fn sort_pairs(mut pairs: HashSet<(i32, i32)>) -> Vec<i32> {
+    // Given a vector of pairs (a, b) indicating that a comes before
+    // b in the sorted vector, return the sorted vector
+    // println!("Sorting pairs: {:?}", pairs);
+    let mut sorted_values = Vec::new();
+    while !pairs.is_empty() {
+        let fronts: HashSet<i32> = pairs.iter().map(|pair| pair.0).collect();
+        let backs: HashSet<i32> = pairs.iter().map(|pair| pair.1).collect();
 
-    // Split the line by ','
-    let values = line.split(',').map(|value_str| value_str.trim().parse().expect("Failed to parse value")).collect::<Vec<i32>>();
+        if pairs.len() == 1 {
+            // Add both values to the sorted_values
+            let pair = pairs.iter().next().unwrap();
+            sorted_values.push(pair.0);
+            sorted_values.push(pair.1);
+            break;
+        }
 
-    for pair in pairs {
-        if values.contains(&pair.0) && values.contains(&pair.1) {
-            // If the index of pair.1 is before the index of pair.0, return 0
-            if values.iter().position(|&x| x == pair.1) < values.iter().position(|&x| x == pair.0) {
-                return 0;
-            } 
+        for f in &fronts {
+            if !backs.contains(f) {
+                // Add the front value to the sorted_values
+                sorted_values.push(*f);
+                pairs = pairs.iter().filter(|pair| pair.0 != *f).map(|pair| *pair).collect();
+                // println!("Found front: {}, remaining pairs: {:?}", f, pairs);
+                break;
+            }
         }
     }
 
-    values[(values.len() - 1) / 2]
+    sorted_values
+}
+
+fn test_single_line(line: &str, pairs: &Vec<(i32, i32)>) -> i32 {
+    println!("Processing line: {}", line);
+    
+    let mut relevant_pairs = HashSet::new();
+
+    // Split the line by ','
+    let values = line.split(',').map(|value_str| value_str.trim().parse().expect("Failed to parse value")).collect::<Vec<i32>>();
+    println!("Values: {:?}", values);
+
+    for pair in pairs {
+        if values.contains(&pair.0) && values.contains(&pair.1) {
+            relevant_pairs.insert(*pair);
+        }
+    }
+
+    // Sort the relevant_pairs
+    let ordered_values = sort_pairs(relevant_pairs);
+    println!("Ordered values: {:?}", ordered_values);
+
+    if ordered_values == values {
+        return 0;
+    }
+
+    ordered_values[(ordered_values.len() - 1) / 2]
 }
 
 fn main() {
