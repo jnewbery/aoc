@@ -70,7 +70,7 @@ fn main() {
     let mut visited: HashSet<(Location, Direction)> = HashSet::new();
     let mut solution = 0;
     loop {
-        println!("Location: {:?}, Direction: {:?}, Visited: {:?}", loc, dir, visited.len());
+        // println!("Location: {:?}, Direction: {:?}, Visited: {:?}", loc, dir, visited.len());
         visited.insert((loc, dir));
         let next_location = move_in_direction(&loc, &dir);
         let next_char = lines.get(next_location.0 as usize).and_then(|row: &&str| row.chars().nth(next_location.1 as usize));
@@ -93,6 +93,6 @@ fn main() {
         }
     }
     // println!("Visited locations: {:?}", visited);
-    println!("Visited {:?} locations", visited.iter().map(|(loc, _)| loc).collect::<HashSet<_>>().len());
+    // println!("Visited {:?} locations", visited.iter().map(|(loc, _)| loc).collect::<HashSet<_>>().len());
     println!("Solution: {:?}", solution);
 }
