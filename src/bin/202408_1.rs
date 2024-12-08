@@ -16,28 +16,25 @@ fn parse_map(input: Vec<&str>) -> HashMap<char, Vec<(i32, i32)>> {
 }
 
 fn get_antinode(ant1: (i32, i32), ant2: (i32, i32), bounds: (i32, i32)) -> Result<(i32, i32), ()> {
-    let x = 2 * ant1.0 - ant2.0;
-    if x < 0 || x >= bounds.0 {
-        return Err(());
+    let (x, y) = (2 * ant1.0 - ant2.0, 2 * ant1.1 - ant2.1);
+    if (0..bounds.0).contains(&x) && (0..bounds.1).contains(&y) {
+        Ok((x, y))
+    } else {
+        Err(())
     }
-    let y = 2 * ant1.1 - ant2.1;
-    if y < 0 || y >= bounds.1 {
-        return Err(());
-    }
-    return Ok((x, y));
 }
 
 fn get_antinodes(antennae: &Vec<(i32, i32)>, bounds: (i32, i32)) -> HashSet<(i32, i32)> {
-    let mut antinodes = HashSet::new();
-    for pair in antennae.iter().flat_map(|&x| antennae.iter().filter_map(move |&y| if x != y { Some((x, y)) } else { None })) {
-        match get_antinode(pair.0, pair.1, bounds) {
-            Ok(antinode) => {
-                antinodes.insert(antinode);
-            },
-            Err(_) => {},
-        }
-    }
-    antinodes
+    antennae
+        .iter()
+        .flat_map(|&ant1| antennae.iter().filter_map(move |&ant2| {
+            if ant1 != ant2 {
+                get_antinode(ant1, ant2, bounds).ok()
+            } else {
+                None
+            }
+        }))
+        .collect()
 }
 
 fn main() {
@@ -47,7 +44,10 @@ fn main() {
     // println!("{:?}", antennae);
     // println!("{:?}", bounds);
 
-    let antinodes = antennae.iter().map(|(_, v)| get_antinodes(v, bounds)).fold(HashSet::new(), |acc, x| acc.union(&x).cloned().collect());
-    // println!("{:?}", antinodes);
-    println!("{:?}", antinodes.len());
+    let sol = antennae
+        .values()
+        .flat_map(|v| get_antinodes(v, bounds))
+        .collect::<HashSet<(i32, i32)>>()
+        .len();
+    println!("{:?}", sol);
 }
