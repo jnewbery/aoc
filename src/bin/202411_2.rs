@@ -19,26 +19,24 @@ fn blink_n_times(stones: &HashMap<i64, i64>, n: i64) -> i64 {
     if n == 0 {
         return stones.values().sum();
     }
+
     let new_stones = stones.iter().fold(HashMap::new(), |mut acc, (k, v)| {
         match k {
             0 => {
                 *acc.entry(1).or_insert(0) += v;
-                acc
             },
             _ if even_digits(*k)=> {
                 let (front, back) = split_digits(*k);
                 *acc.entry(front).or_insert(0) += v;
                 *acc.entry(back).or_insert(0) += v;
-                acc
             },
             _ => {
                 *acc.entry(k * 2024).or_insert(0) += v;
-                acc
-
             },
         }
-
+        acc
     });
+
     blink_n_times(&new_stones, n - 1)
 }
 
@@ -49,7 +47,7 @@ fn main() {
             *acc.entry(s).or_insert(0) += 1;
             acc
         });
+    // println!("{:?}", stones);
 
-    println!("{:?}", stones);
     println!("{}", blink_n_times(&stones, 75));
 }
