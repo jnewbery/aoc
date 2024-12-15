@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 static _TEST_INPUT: &str = include_str!("inputs/201501_test.txt");
 static _INPUT: &str = include_str!("inputs/201501.txt");
@@ -13,5 +13,5 @@ fn main() {
             panic!("Invalid character: {}", c);
         }
     }).sum::<i32>();
-    println!("Solution: {}", sol);
+    println!("{}", sol);
 }

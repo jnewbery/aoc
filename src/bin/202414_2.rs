@@ -14,7 +14,7 @@ fn positive_modulo(x: i32, n: i32) -> i32 {
     ((x % n) + n) % n
 }
 
-fn print_grid(grid: &Vec<Vec<bool>>) {
+fn _print_grid(grid: &Vec<Vec<bool>>) {
     for row in grid.iter() {
         for cell in row.iter() {
             print!("{}", if *cell { '#' } else { '.' });
@@ -51,8 +51,8 @@ fn main() {
 
         // If the grid has more than 50 cells in the middle column, we have a solution
         if grid.iter().filter(|row| row_has_more_than_29(row) && column_has_more_than_29(&grid, GRID_SIZE.0 / 2)).count() > 0 {
-            print_grid(&grid);
-            println!("Solution: {}", i);
+            // _print_grid(&grid);
+            println!("{}", i);
             break;
         }
     }

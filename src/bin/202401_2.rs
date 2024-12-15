@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use std::collections::HashMap;
 
@@ -24,5 +24,5 @@ fn main() {
         .filter_map(|(key, value1)| counts2.get(key).map(|value2| key * value1 * value2))
         .sum();
 
-    println!("Result: {}", result);
+    println!("{}", result);
 }

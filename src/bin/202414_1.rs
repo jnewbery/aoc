@@ -37,6 +37,6 @@ fn main() {
     // println!("{:?}", quads);
     
     let sol: i32 = quads.values().product();
-    println!("Solution: {}", sol);
+    println!("{}", sol);
 
 }

@@ -49,5 +49,5 @@ fn main() {
     let puzzles = &mut INPUT.split("\n\n").map(|line| line.lines());
 
     let sol = puzzles.map(|mut lines| { solve(&mut lines) }).sum::<i64>();
-    println!("Solution: {}", sol);
+    println!("{}", sol);
 }

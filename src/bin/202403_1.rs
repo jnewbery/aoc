@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 static _TEST_INPUT: &str = include_str!("inputs/202403_test.txt");
 static _INPUT: &str = include_str!("inputs/202403.txt");

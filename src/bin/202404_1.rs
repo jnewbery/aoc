@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use itertools::iproduct;
 
@@ -46,5 +46,5 @@ fn main() {
         .map(|(y, x, dir)| dfs(&grid, x, y, &target, &dir))
         .sum();
 
-    println!("Total sum: {}", sum);
+    println!("{}", sum);
 }

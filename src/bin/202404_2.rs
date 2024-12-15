@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use itertools::iproduct;
 
@@ -66,5 +66,5 @@ fn main() {
         .map(|(y, x)| valid(&grid, x, y))
         .sum();
 
-    println!("Total sum: {}", sum);
+    println!("{}", sum);
 }

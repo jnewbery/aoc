@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use std::collections::HashSet;
 
@@ -63,5 +63,5 @@ fn main() {
             _ => panic!("Unexpected character at location: {:?}", next_location),
         }
     }
-    println!("Visited locations: {:?}", visited.len());
+    println!("{:?}", visited.len());
 }

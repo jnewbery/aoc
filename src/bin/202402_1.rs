@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 static _TEST_INPUT: &str = include_str!("inputs/202402_test.txt");
 static _INPUT: &str = include_str!("inputs/202402.txt");
@@ -34,5 +34,5 @@ fn main() {
         .filter(|vec| is_safe(vec))
         .count();
 
-    println!("ret: {:?}", ret);
+    println!("{:?}", ret);
 }

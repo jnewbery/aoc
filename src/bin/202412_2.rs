@@ -107,5 +107,5 @@ fn main() {
         sol += cells * sides;
     }
 
-    println!("Solution: {}", sol);
+    println!("{}", sol);
 }

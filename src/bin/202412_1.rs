@@ -56,5 +56,5 @@ fn main() {
         acc
     }).1;
 
-    println!("Score: {}", score);
+    println!("{}", score);
 }

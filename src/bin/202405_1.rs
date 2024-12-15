@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use std::collections::{HashMap, HashSet};
 
@@ -62,5 +62,5 @@ fn main() {
 
     // Apply test_single_line function to the remaining lines
     let sol = lines.map(|line| test_single_line(line, &constraints)).sum::<i32>();
-    println!("Solution: {}", sol);
+    println!("{}", sol);
 }

@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 static _TEST_INPUT: &str = include_str!("inputs/202401_test.txt");
 static _INPUT: &str = include_str!("inputs/202401.txt");
@@ -27,5 +27,5 @@ fn main() {
         .map(|(&a, &b)| (a - b).abs())
         .sum();
 
-    println!("Sum: {:?}", sum);
+    println!("{:?}", sum);
 }

@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 static _TEST_INPUT: &str = include_str!("inputs/201501_test.txt");
 static _INPUT: &str = include_str!("inputs/201501.txt");
@@ -14,6 +14,6 @@ fn main() {
         }
         Some((pos, *floor))
     }).find(|&(_, floor)| floor == -1) {
-        println!("Basement reached at position: {}", pos + 1);
+        println!("{}", pos + 1);
     }
 }

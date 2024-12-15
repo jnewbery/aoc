@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use std::collections::HashSet;
 
@@ -82,5 +82,5 @@ fn main() {
 
     // Apply test_single_line function to the remaining lines
     let sol = lines.map(|line| test_single_line(line, &pairs)).sum::<i32>();
-    println!("Solution: {}", sol);
+    println!("{}", sol);
 }

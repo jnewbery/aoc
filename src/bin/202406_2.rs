@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use std::collections::HashSet;
 
@@ -98,5 +98,5 @@ fn main() {
     }
     // println!("Visited locations: {:?}", visited);
     // println!("Visited {:?} locations", visited.iter().map(|(loc, _)| loc).collect::<HashSet<_>>().len());
-    println!("Solution: {:?}", solution);
+    println!("{:?}", solution);
 }
