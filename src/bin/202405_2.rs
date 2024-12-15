@@ -1,7 +1,11 @@
+static TEST: bool = true;
+
 use std::collections::HashSet;
 
-static _TEST_INPUT: &str = include_str!("202405_test_input.txt");
-static _INPUT: &str = include_str!("202405_input.txt");
+static _TEST_INPUT: &str = include_str!("inputs/202405_test.txt");
+static _INPUT: &str = include_str!("inputs/202405.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn get_pairs(lines: &mut std::str::Lines) -> Vec<(i32, i32)> {
     lines.take_while(|line| !line.is_empty())
@@ -70,7 +74,7 @@ fn test_single_line(line: &str, pairs: &Vec<(i32, i32)>) -> i32 {
 }
 
 fn main() {
-    let mut lines = _INPUT.lines();
+    let mut lines = INPUT.lines();
 
     // Call the function to process lines until a blank line is found
     let pairs = get_pairs(&mut lines);

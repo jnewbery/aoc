@@ -1,7 +1,11 @@
-static _TEST_INPUT: &str = include_str!("202409_test_input.txt");
-static _INPUT: &str = include_str!("202409_input.txt");
+static TEST: bool = true;
 
 use std::iter;
+
+static _TEST_INPUT: &str = include_str!("inputs/202409_test.txt");
+static _INPUT: &str = include_str!("inputs/202409.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn read_from_front<'a>(disk: &'a str) -> impl Iterator<Item = Option<i32>> + 'a {
     let mut chars = disk.chars();
@@ -77,7 +81,7 @@ fn expand(disk: &str) -> Vec<i32> {
 }
 
 fn main() {
-    let disk = expand(_INPUT.trim());
+    let disk = expand(INPUT.trim());
     // println!("{:?}", disk);
     let sol = disk.iter().enumerate().fold(0 as i64, |acc, (i, x)| acc + (x * i as i32) as i64);
     println!("{}", sol);

@@ -1,7 +1,11 @@
+static TEST: bool = true;
+
 use std::collections::{HashMap, HashSet};
 
-static _TEST_INPUT: &str = include_str!("202408_test_input.txt");
-static _INPUT: &str = include_str!("202408_input.txt");
+static _TEST_INPUT: &str = include_str!("inputs/202408_test.txt");
+static _INPUT: &str = include_str!("inputs/202408.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn parse_map(input: Vec<&str>) -> HashMap<char, Vec<(i32, i32)>> {
     let mut map = HashMap::new();
@@ -38,7 +42,7 @@ fn get_antinodes_for_freq(antennae: &[(i32, i32)], bounds: (i32, i32)) -> HashSe
 }
 
 fn main() {
-    let lines: Vec<&str> = _INPUT.lines().collect();
+    let lines: Vec<&str> = INPUT.lines().collect();
     let bounds = (lines[0].len() as i32, lines.len() as i32);
     let antennae = parse_map(lines);
     // println!("{:?}", antennae);

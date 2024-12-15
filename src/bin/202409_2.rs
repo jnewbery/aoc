@@ -1,5 +1,9 @@
-static _TEST_INPUT: &str = include_str!("202409_test_input.txt");
-static _INPUT: &str = include_str!("202409_input.txt");
+static TEST: bool = true;
+
+static _TEST_INPUT: &str = include_str!("inputs/202409_test.txt");
+static _INPUT: &str = include_str!("inputs/202409.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 struct File {
     id: Option<i32>,
@@ -30,7 +34,7 @@ fn main() {
     let mut is_file = true;
     let mut pos = 0;
 
-    for c in _INPUT.chars().take_while(|c| c.is_digit(10)).collect::<String>().chars() {
+    for c in INPUT.chars().take_while(|c| c.is_digit(10)).collect::<String>().chars() {
         // println!("{}", c);
         let current_size = c.to_digit(10).unwrap() as i32;
         match is_file {

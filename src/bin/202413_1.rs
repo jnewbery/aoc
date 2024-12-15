@@ -1,5 +1,9 @@
+static TEST: bool = false;
+
 static _TEST_INPUT: &str = include_str!("inputs/202413_test.txt");
 static _INPUT: &str = include_str!("inputs/202413.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn solve(lines: &mut std::str::Lines) -> i32 {
     // println!("Solving puzzle: {:?}", lines);
@@ -39,7 +43,7 @@ fn solve(lines: &mut std::str::Lines) -> i32 {
 }
 
 fn main() {
-    let puzzles = &mut _INPUT.split("\n\n").map(|line| line.lines());
+    let puzzles = &mut INPUT.split("\n\n").map(|line| line.lines());
 
     let sol = puzzles.map(|mut lines| { solve(&mut lines) }).sum::<i32>();
     println!("Solution: {}", sol);

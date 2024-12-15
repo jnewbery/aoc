@@ -1,7 +1,11 @@
+static TEST: bool = true;
+
 use std::collections::HashSet;
 
-static _TEST_INPUT: &str = include_str!("202407_test_input.txt");
-static _INPUT: &str = include_str!("202407_input.txt");
+static _TEST_INPUT: &str = include_str!("inputs/202407_test.txt");
+static _INPUT: &str = include_str!("inputs/202407.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn test_line(line: &str) -> i64 {
     let mut operands = line.split(|c: char| !c.is_numeric() && c != '-')
@@ -38,6 +42,6 @@ fn test_line(line: &str) -> i64 {
 }
 
 fn main() {
-    let sol = _INPUT.lines().map(|line| test_line(line)).sum::<i64>();
+    let sol = INPUT.lines().map(|line| test_line(line)).sum::<i64>();
     println!("{:?}", sol);
 }

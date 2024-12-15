@@ -1,8 +1,12 @@
+static TEST: bool = false;
+
 use itertools::iproduct;
 use std::collections::HashSet;
 
 static _TEST_INPUT: &str = include_str!("inputs/202412_test.txt");
 static _INPUT: &str = include_str!("inputs/202412.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 type Coord = (i32, i32);
 
@@ -43,7 +47,7 @@ fn walk(grid: &Vec<Vec<char>>, visited: &mut HashSet<Coord>, coord: Coord, crop:
 
 fn main() {
     // Parse the square of chars
-    let grid: Vec<Vec<char>> = _INPUT.lines().map(|line| line.chars().collect()).collect();
+    let grid: Vec<Vec<char>> = INPUT.lines().map(|line| line.chars().collect()).collect();
 
     let score = iproduct!(0..grid.len() as i32, 0..grid[0].len() as i32).fold((HashSet::new(), 0), |mut acc, coord| {
         let (visited, score) = &mut acc;

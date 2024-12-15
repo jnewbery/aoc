@@ -1,5 +1,9 @@
-static _TEST_INPUT: &str = include_str!("202402_test_input.txt");
-static _INPUT: &str = include_str!("202402_input.txt");
+static TEST: bool = true;
+
+static _TEST_INPUT: &str = include_str!("inputs/202402_test.txt");
+static _INPUT: &str = include_str!("inputs/202402.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn is_safe(vec: &Vec<i32>) -> bool {
     vec.windows(2)
@@ -22,7 +26,7 @@ fn is_safe(vec: &Vec<i32>) -> bool {
 }
 
 fn main() {
-    let ret = _INPUT
+    let ret = INPUT
         .lines()
         .map(|line| {
             line.split_whitespace().map(|s| s.parse::<i32>().expect("Failed to parse column")).collect()

@@ -1,5 +1,9 @@
-static _TEST_INPUT: &str = include_str!("202402_test_input.txt");
-static _INPUT: &str = include_str!("202402_input.txt");
+static TEST: bool = true;
+
+static _TEST_INPUT: &str = include_str!("inputs/202402_test.txt");
+static _INPUT: &str = include_str!("inputs/202402.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn is_safe(vec: &[i32]) -> bool {
     vec.windows(2)
@@ -31,7 +35,7 @@ fn missing_element_iterator(vec: Vec<i32>) -> impl Iterator<Item = Vec<i32>> {
 }
 
 fn main() {
-    let sol = _INPUT
+    let sol = INPUT
         .lines()
         .map(|line| {
             let vec: Vec<i32> = line.split_whitespace().map(|s| s.parse::<i32>().unwrap()).collect();

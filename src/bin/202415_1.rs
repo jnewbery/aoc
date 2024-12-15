@@ -5,12 +5,12 @@ static _INPUT: &str = include_str!("inputs/202415.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
-type Point = (i32, i32);
-enum cell {
-    Empty,
-    Wall,
-    Box,
-}
+// type Point = (i32, i32);
+// enum cell {
+//     Empty,
+//     Wall,
+//     Box,
+// }
 
 fn main() {
     println!("{}", INPUT);

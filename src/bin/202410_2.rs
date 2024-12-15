@@ -1,7 +1,11 @@
+static TEST: bool = true;
+
 use itertools::iproduct;
 
-static _TEST_INPUT: &str = include_str!("202410_test_input.txt");
-static _INPUT: &str = include_str!("202410_input.txt");
+static _TEST_INPUT: &str = include_str!("inputs/202410_test.txt");
+static _INPUT: &str = include_str!("inputs/202410.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 type Coord = (i32, i32);
 
@@ -38,7 +42,7 @@ fn climb(cells: &mut Vec<Vec<Cell>>, x: i32, y: i32) -> i32 {
 }
 
 fn main() {
-    let mut cells: Vec<Vec<Cell>> = _INPUT.lines().map(|line| {
+    let mut cells: Vec<Vec<Cell>> = INPUT.lines().map(|line| {
         line.chars().map(|c| Cell { height: c.to_digit(10).unwrap() as i32, rating: None }).collect()
     }).collect();
 

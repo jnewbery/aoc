@@ -1,16 +1,14 @@
-static _TEST: bool = false;
+static TEST: bool = false;
+
 static _TEST_INPUT: &str = include_str!("inputs/202414_test.txt");
 static _INPUT: &str = include_str!("inputs/202414.txt");
 
-const INPUT: &str = if _TEST { _TEST_INPUT } else { _INPUT };
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 type Point = (i32, i32);
 type Robot = (Point, Point);  // (pos, vel)
 
-static _TEST_GRID_SIZE: Point = (11, 7);
-static _GRID_SIZE: Point = (101, 103);
-
-const GRID_SIZE: Point = if _TEST { _TEST_GRID_SIZE } else { _GRID_SIZE };
+const GRID_SIZE: Point = if TEST { (11, 7) } else { (101, 103) };
 
 fn positive_modulo(x: i32, n: i32) -> i32 {
     ((x % n) + n) % n

@@ -1,7 +1,11 @@
+static TEST: bool = true;
+
 use std::collections::HashSet;
 
-static _TEST_INPUT: &str = include_str!("202406_test_input.txt");
-static _INPUT: &str = include_str!("202406_input.txt");
+static _TEST_INPUT: &str = include_str!("inputs/202406_test.txt");
+static _INPUT: &str = include_str!("inputs/202406.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 type Location = (i32, i32);
 type Direction = (i32, i32);
@@ -35,7 +39,7 @@ fn find_start_location(grid: &[&str]) -> Location {
 }
 
 fn main() {
-    let lines = _INPUT.lines().collect::<Vec<&str>>();
+    let lines = INPUT.lines().collect::<Vec<&str>>();
     let mut location = find_start_location(&lines);
     let mut dir = DIRECTIONS[0];
     // println!("Start location: {:?}, direction: {:?}", location, dir);

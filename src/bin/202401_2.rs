@@ -1,11 +1,15 @@
+static TEST: bool = true;
+
 use std::collections::HashMap;
 
-static _TEST_INPUT: &str = include_str!("202401_test_input.txt");
-static _INPUT: &str = include_str!("202401_input.txt");
+static _TEST_INPUT: &str = include_str!("inputs/202401_test.txt");
+static _INPUT: &str = include_str!("inputs/202401.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn main() {
     // Parse lines into hashmaps of counts
-    let (counts1, counts2) = _INPUT.lines().fold((HashMap::new(), HashMap::new()), |(mut acc1, mut acc2), line| {
+    let (counts1, counts2) = INPUT.lines().fold((HashMap::new(), HashMap::new()), |(mut acc1, mut acc2), line| {
         let parts: Vec<i32> = line
             .split_whitespace()
             .map(|s| s.parse::<i32>().expect("Failed to parse column"))

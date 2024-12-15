@@ -1,5 +1,9 @@
-static _TEST_INPUT: &str = include_str!("202403_test_input.txt");
-static _INPUT: &str = include_str!("202403_input.txt");
+static TEST: bool = true;
+
+static _TEST_INPUT: &str = include_str!("inputs/202403_test.txt");
+static _INPUT: &str = include_str!("inputs/202403.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 use regex::Regex;
 
@@ -19,7 +23,7 @@ fn parse_mul_pairs(input: &str) -> Vec<(i32, i32)> {
 }
 
 fn main() {
-    let pairs = parse_mul_pairs(_INPUT);
+    let pairs = parse_mul_pairs(INPUT);
     // println!("{:?}", pairs);
     let sol: i32 = pairs.iter().map(|(n, m)| n * m).sum();
     println!("{:?}", sol);

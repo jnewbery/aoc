@@ -1,8 +1,12 @@
+static TEST: bool = false;
+
 use itertools::iproduct;
 use std::collections::HashSet;
 
 static _TEST_INPUT: &str = include_str!("inputs/202412_test.txt");
 static _INPUT: &str = include_str!("inputs/202412.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 type Coord = (i32, i32);
 // A fence is a tuple of:
@@ -83,7 +87,7 @@ fn count_sides(fences: &mut HashSet<Fence>) -> i32 {
 
 fn main() {
     // Parse the square of chars
-    let grid: Vec<Vec<char>> = _INPUT.lines().map(|line| line.chars().collect()).collect();
+    let grid: Vec<Vec<char>> = INPUT.lines().map(|line| line.chars().collect()).collect();
     let mut visited = HashSet::new();
 
     let mut sol = 0;

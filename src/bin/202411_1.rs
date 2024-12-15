@@ -1,7 +1,11 @@
+static TEST: bool = true;
+
 use std::collections::HashMap;
 
-static _TEST_INPUT: &str = include_str!("202411_test_input.txt");
-static _INPUT: &str = include_str!("202411_input.txt");
+static _TEST_INPUT: &str = include_str!("inputs/202411_test.txt");
+static _INPUT: &str = include_str!("inputs/202411.txt");
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn even_digits(n: i64) -> bool {
     n.abs().to_string().len() % 2 == 0
@@ -41,7 +45,7 @@ fn blink_n_times(stones: &HashMap<i64, i64>, n: i64) -> i64 {
 
 fn main() {
     // Get count of stones from input
-    let stones = _INPUT.split(|c: char| !c.is_numeric() && c != '-')
+    let stones = INPUT.split(|c: char| !c.is_numeric() && c != '-')
         .filter_map(|s| s.parse::<i64>().ok()).fold(HashMap::new(), |mut acc, s| {
             *acc.entry(s).or_insert(0) += 1;
             acc
