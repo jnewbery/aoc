@@ -1,6 +1,6 @@
 pub mod utils {
     
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
     pub struct Point {
         pub x: i32,
         pub y: i32,
@@ -30,6 +30,40 @@ pub mod utils {
 
         fn mul(self, point: Point) -> Point {
             Point { x:self * point.x, y:self * point.y }
+        }
+    }
+
+    impl Point {
+        pub fn turn_left(&self) -> Point {
+            Point { x: -self.y, y: self.x }
+        }
+
+        pub fn turn_right(&self) -> Point {
+            Point { x: self.y, y: -self.x }
+        }
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
+    pub struct Position {
+        pub location: Point,
+        pub direction: Point,
+    }
+
+    impl Position {
+        pub fn new(location: Point, direction: Point) -> Self {
+            Position { location, direction }
+        }
+
+        pub fn turn_left(&self) -> Self {
+            Position { location: self.location, direction: self.direction.turn_left() }
+        }
+
+        pub fn turn_right(&self) -> Self {
+            Position { location: self.location, direction: self.direction.turn_right() }
+        }
+
+        pub fn forward(&self) -> Self {
+            Position { location: self.location + self.direction, direction: self.direction }
         }
     }
 }
