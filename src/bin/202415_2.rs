@@ -180,7 +180,6 @@ fn score_warehouse(warehouse: &Warehouse) {
 }
 
 fn main() {
-    // let mut lines: Vec<Vec<char>> = INPUT.lines().map(|line| line.chars().collect()).collect();
     let mut lines = INPUT.lines().peekable();
     let mut warehouse = get_warehouse(&mut lines);
     // println!("{:?}", warehouse);
