@@ -21,7 +21,7 @@ struct Maze {
     end: Point,
 }
 
-// Implement print for warehouse
+// Implement print for maze
 impl fmt::Debug for Maze {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
@@ -104,7 +104,6 @@ fn shortest_path(maze: &mut Maze) {
     let mut visited: HashSet<Position> = HashSet::new();
     let mut heap = BinaryHeap::new();
     heap.push(State { steps: 0, position: Position::new(maze.start, Point { x: 1, y: 0 }), path: HashSet::from([maze.start]) });
-    let mut best_score: Option<i32> = None;
 
     loop {
         let state = heap.pop().unwrap();
@@ -125,13 +124,6 @@ fn shortest_path(maze: &mut Maze) {
         if visited.contains(&position) {
             continue;
         }
-        if let Some(score) = best_score {
-            // The next best position has a higher cost than the best score.
-            // We can stop searching.
-            if steps > score {
-                return;
-            }
-        }
 
         if position.location == maze.end {
             // We've reached the end, but there may be other ways to get here.
@@ -139,8 +131,7 @@ fn shortest_path(maze: &mut Maze) {
                 maze.path.insert(*p);
             }
             maze.path.insert(maze.end);
-            best_score = Some(steps);
-            continue;
+            return;
         }
         visited.insert(position);
 
