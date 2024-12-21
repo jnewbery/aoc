@@ -1,3 +1,5 @@
+// TODO: sum the number of times the bit flips from false to true in every row
+// The christmas tree is in the one with the fewest flips
 static TEST: bool = false;
 
 static _TEST_INPUT: &str = include_str!("inputs/202414_test.txt");
