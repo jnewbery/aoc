@@ -20,7 +20,7 @@ struct Maze {
     end: Point,
 }
 
-// Implement print for warehouse
+// Implement print for maze
 impl fmt::Debug for Maze {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
