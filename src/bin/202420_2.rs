@@ -9,8 +9,7 @@ static _INPUT: &str = include_str!("inputs/202420.txt");
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 const DIRECTIONS: [(i32, i32); 4] = [(0, -1), (0, 1), (-1, 0), (1, 0)];
-const TWO_AWAY: [(i32, i32); 8] = [(0, -2), (1, -1), (2, 0), (1, 1), (0, 2), (-1, 1), (-2, 0), (-1, -1)];
-const MIN_SAVING: i32 = if TEST { 1 } else {100};
+const MIN_SAVING: i32 = if TEST { 50 } else {100};
 
 struct Maze {
     width: i32,
@@ -39,6 +38,20 @@ fn _print_maze(maze: &Maze, distances: &HashMap<Point, i32>) {
         println!(); // Newline at the end of each row
     }
     println!(); // Extra newline at the end
+}
+
+fn n_away(point: &Point, n: i32) -> Vec<Point> {
+    let mut points = Vec::new();
+
+    for dx in -n..=n {
+        let dy = n - dx.abs();
+        points.push(*point + Point { x: dx, y: dy });
+        if dy != 0 {
+            points.push(*point + Point { x: dx, y: -dy });
+        }
+    }
+
+    points
 }
 
 fn get_maze(lines: std::str::Lines) -> Maze {
@@ -101,23 +114,24 @@ fn main() {
 
     let mut cheats: HashSet<(Point, Point, i32)> = HashSet::new();
     for (point, distance) in &distances {
-        for (dx, dy) in TWO_AWAY.iter() {
-            let new_point = Point { x: point.x + dx, y: point.y + dy };
-            if maze.walls.contains(&new_point) {
-                continue;
-            }
-            if let Some(&new_distance) = distances.get(&new_point) {
-                if new_distance < distance - 2{
-                    // println!("cheat from old point {:?} (distance {}) -> new point {:?} (distance {}), saving {}", point, distance, new_point, new_distance, distance - new_distance - 2);
-                    cheats.insert((*point, new_point, distance - new_distance - 2));
+        for n in 2..=20 {
+            for new_point in n_away(point, n) {
+                if let Some(&new_distance) = distances.get(&new_point) {
+                    if new_distance < distance - n {
+                        // println!("cheat from old point {:?} (distance {}) -> new point {:?} (distance {}), saving {}", point, distance, new_point, new_distance, distance - new_distance - n);
+                        cheats.insert((*point, new_point, distance - new_distance - n));
+                    }
                 }
             }
         }
     }
-    // sort the cheats by distance and print them
+    // // sort the cheats by distance and print them
     // let mut cheats: Vec<_> = cheats.into_iter().collect();
     // cheats.sort_by_key(|(_, _, distance)| -distance);
     // for cheat in &cheats {
+    //     if cheat.2 < MIN_SAVING {
+    //         break;
+    //     }
     //     println!("{:?}", cheat);
     // }
 
