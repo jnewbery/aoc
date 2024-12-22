@@ -1,6 +1,7 @@
 pub mod utils {
+    use std::fmt;
     
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
+    #[derive(Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
     pub struct Point {
         pub x: i32,
         pub y: i32,
@@ -40,6 +41,14 @@ pub mod utils {
 
         pub fn turn_right(&self) -> Point {
             Point { x: self.y, y: -self.x }
+        }
+    }
+
+    // Implement print for maze
+    impl fmt::Debug for Point {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "({}, {})", self.x, self.y)?;
+            Ok(()) // Return success
         }
     }
 
