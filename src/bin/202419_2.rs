@@ -7,24 +7,23 @@ static _INPUT: &str = include_str!("inputs/202419.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
-fn make_designs<'a>(towels: &HashSet<&'a str>, memoized: &mut HashMap<&'a str, bool>, design: &'a str) -> bool {
+fn make_designs<'a>(towels: &HashSet<&'a str>, memoized: &mut HashMap<&'a str, u64>, design: &'a str) -> u64 {
     // println!("Testing design: {:?}", design);
-
     if design.is_empty() {
-        return true;
+        return 1;
     }
 
     if let Some(&cached) = memoized.get(design) {
         return cached;
     }
 
-    let success = (1..=design.len()).find(|&i| {
-        let prefix = &design[..i];
-        towels.contains(prefix) && make_designs(towels, memoized, &design[i..])
-    }).is_some();
+    let ways = (1..=design.len())
+        .filter(|&i| towels.contains(&design[..i]))
+        .map(|i| make_designs(towels, memoized, &design[i..]))
+        .sum();
 
-    memoized.insert(design, success);
-    success
+    memoized.insert(design, ways);
+    ways
 }
 
 fn main() {
@@ -39,10 +38,10 @@ fn main() {
 
     lines.next(); // blank line
 
-    let mut memoized: HashMap<&str, bool> = HashMap::new();
+    let mut memoized: HashMap<&str, u64> = HashMap::new();
 
     let sol = lines
-        .filter(|line| make_designs(&towels, &mut memoized, line))
-        .count();
+        .map(|line| make_designs(&towels, &mut memoized, line))
+        .sum::<u64>();
     println!("{:?}", sol);
 }
