@@ -3,8 +3,8 @@ static TEST: bool = false;
 use itertools::iproduct;
 use std::collections::HashSet;
 
-static _TEST_INPUT: &str = include_str!("inputs/202412_test.txt");
-static _INPUT: &str = include_str!("inputs/202412.txt");
+static _TEST_INPUT: &str = include_str!("../../../inputs/test/202412.txt");
+static _INPUT: &str = include_str!("../../../inputs/full/202412.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 

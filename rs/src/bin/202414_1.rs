@@ -2,8 +2,8 @@ static TEST: bool = false;
 
 use std::collections::HashMap;
 
-static _TEST_INPUT: &str = include_str!("inputs/202414_test.txt");
-static _INPUT: &str = include_str!("inputs/202414.txt");
+static _TEST_INPUT: &str = include_str!("../../../inputs/test/202414.txt");
+static _INPUT: &str = include_str!("../../../inputs/full/202414.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 

@@ -5,8 +5,8 @@ use std::iter::Peekable;
 use std::collections::HashSet;
 use aoc::utils::Point;
 
-static _TEST_INPUT: &str = include_str!("inputs/202415_test.txt");
-static _INPUT: &str = include_str!("inputs/202415.txt");
+static _TEST_INPUT: &str = include_str!("../../../inputs/test/202415.txt");
+static _INPUT: &str = include_str!("../../../inputs/full/202415.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 

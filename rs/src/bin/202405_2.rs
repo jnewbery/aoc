@@ -2,8 +2,8 @@ static TEST: bool = false;
 
 use std::collections::HashSet;
 
-static _TEST_INPUT: &str = include_str!("inputs/202405_test.txt");
-static _INPUT: &str = include_str!("inputs/202405.txt");
+static _TEST_INPUT: &str = include_str!("../../../inputs/test/202405.txt");
+static _INPUT: &str = include_str!("../../../inputs/full/202405.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 

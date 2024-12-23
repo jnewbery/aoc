@@ -2,8 +2,8 @@ static TEST: bool = false;
 
 use regex::Regex;
 
-static _TEST_INPUT: &str = include_str!("inputs/202403_test.txt");
-static _INPUT: &str = include_str!("inputs/202403.txt");
+static _TEST_INPUT: &str = include_str!("../../../inputs/test/202403.txt");
+static _INPUT: &str = include_str!("../../../inputs/full/202403.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 

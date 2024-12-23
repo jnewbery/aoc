@@ -3,8 +3,8 @@ static TEST: bool = true;
 use std::collections::HashMap;
 use aoc::utils::Point;
 
-static _TEST_INPUT: &str = include_str!("inputs/202421_test.txt");
-static _INPUT: &str = include_str!("inputs/202421.txt");
+static _TEST_INPUT: &str = include_str!("../../../inputs/test/202421.txt");
+static _INPUT: &str = include_str!("../../../inputs/full/202421.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 

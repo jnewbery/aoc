@@ -5,8 +5,8 @@ use std::collections::BinaryHeap;
 use std::collections::HashSet;
 use aoc::utils::Point;
 
-static _TEST_INPUT: &str = include_str!("inputs/202418_test.txt");
-static _INPUT: &str = include_str!("inputs/202418.txt");
+static _TEST_INPUT: &str = include_str!("../../../inputs/test/202418.txt");
+static _INPUT: &str = include_str!("../../../inputs/full/202418.txt");
 
 const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 const GRID_SIZE: usize = if TEST {7} else {71};
