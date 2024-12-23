@@ -4,7 +4,8 @@ version = "0.1.0"
 description = "Solvers for Advent of Code"
 requires-python = ">=3.12"
 dependencies = [
-    "tabulate>=0.8.9",
+    "tabulate>=0.9",
+    "requests>=2.32",
 ]
 
 [tool.black]
