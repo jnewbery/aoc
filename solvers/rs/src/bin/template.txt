@@ -1,0 +1,10 @@
+static TEST: bool = true;
+
+static _TEST_INPUT: &str = include_str!("../../../../inputs/2024  <- ADD TEST INPUT HERE
+static _INPUT: &str = include_str!("../../../../inputs/full/2024 <- ADD INPUT HERE
+
+const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
+
+fn main() {
+    println!("{}", INPUT);
+}
