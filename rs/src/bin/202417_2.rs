@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 static _TEST_INPUT: &str = include_str!("../../../inputs/test/202417.txt");
 static _INPUT: &str = include_str!("../../../inputs/full/202417.txt");
@@ -76,7 +76,7 @@ fn main() {
     let program = lines.next().unwrap().split(|c: char| !c.is_numeric()).filter_map(|s| s.parse::<u64>().ok()).collect::<Vec<u64>>();
 
     let mut reg_a = (8 as u64).pow(program.len() as u32 - 1);
-    println!("({:?},{:?},{:?}), {:?}", reg_a, reg_b, reg_c, program);
+    // println!("({:?},{:?},{:?}), {:?}", reg_a, reg_b, reg_c, program);
 
     loop {
         // println!("({:?},{:?},{:?})", reg_a, reg_b, reg_c);

@@ -176,7 +176,7 @@ fn score_warehouse(warehouse: &Warehouse) {
     for left_box in &warehouse.left_boxes {
         score += 100 * left_box.y + left_box.x;
     }
-    println!("Score: {}", score);
+    println!("{}", score);
 }
 
 fn main() {

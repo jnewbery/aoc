@@ -143,7 +143,7 @@ fn score_grid(grid: &Vec<Vec<Cell>>){
             }
         }
     }
-    println!("Score: {}", score);
+    println!("{}", score);
 }
 
 fn main() {

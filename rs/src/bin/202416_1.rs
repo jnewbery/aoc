@@ -135,7 +135,7 @@ fn shortest_path(maze: &Maze) -> i32 {
 fn main() {
     let mut lines = INPUT.lines().peekable();
     let maze = get_maze(&mut lines);
-    println!("{:?}", maze);
+    // println!("{:?}", maze);
 
     let shortest = shortest_path(&maze);
     println!("{}", shortest);

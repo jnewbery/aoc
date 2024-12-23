@@ -1,4 +1,4 @@
-static TEST: bool = true;
+static TEST: bool = false;
 
 use std::collections::HashMap;
 use aoc::utils::Point;
@@ -113,15 +113,15 @@ fn main() {
     for line in lines {
         let numeric_part = line.chars().filter(|c| c.is_numeric()).collect::<String>().parse::<i32>().unwrap();
         // let sol = type_code(&type_code(&type_code(line, &numeric_keypad), &directional_keypad), &directional_keypad);
-        println!("{:?}", line);
+        // println!("{:?}", line);
         let sol = &type_numeric_code(line, &numeric_keypad);
-        println!("{}", sol);
+        // println!("{}", sol);
         let sol = &type_directional_code(sol, &directional_keypad);
-        println!("{}", sol);
+        // println!("{}", sol);
         let sol = &type_directional_code(sol, &directional_keypad);
-        println!("{}", sol);
+        // println!("{}", sol);
         score += numeric_part * (sol.len() as i32);
-        println!("{:?}: {:?} ({:?}) -> {}", line, sol, sol.len(), numeric_part * (sol.len() as i32));
+        // println!("{:?}: {:?} ({:?}) -> {}", line, sol, sol.len(), numeric_part * (sol.len() as i32));
     }
     println!("{:?}", score);
 }
