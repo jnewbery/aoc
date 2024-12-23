@@ -98,15 +98,13 @@ def main():
     parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
     parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
-    parser.add_argument("-y", "--year", default=None, help=f"Which year to run. Default is {this_year}")
+    parser.add_argument("-y", "--year", default=None, help=f"Which year to run. Default is to run all years")
 
     args = parser.parse_args()
 
     all_years = list(range(2015, this_year + 1))
 
     if not args.year:
-        years = [this_year]
-    elif args.year == "*":
         years = all_years
     else:
         years = [int(args.year)]
