@@ -42,12 +42,16 @@ def read_solutions_json() -> dict[str, dict[str, dict[str, str]]]:
         return json.load(f)
 
 def get_solution(day: str, part: int, test: bool) -> str:
-    solutions = read_solutions_json()
+    file_path = Path(f"../../solutions/{'test' if test else 'full'}/{day[:4]}.txt")
+    with open(file_path, "r") as f:
+        line_num = (int(day[4:]) - 1) * 2 + (part - 1)
+        return f.readlines()[line_num].strip()
+    # solutions = read_solutions_file()
 
-    part_str = str(part)
-    type_str = "test" if test else "full"
+    # part_str = str(part)
+    # type_str = "test" if test else "full"
     
-    return solutions[day][part_str][type_str]
+    # return solutions[day][part_str][type_str]
 
 def run_as_subprocess(days: list[str], parts: list[int], test: bool) -> list[dict[str, str]]:
     results: list[dict[str, str]] = []
