@@ -102,14 +102,24 @@ def main():
     parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
     parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
-    parser.add_argument("-y", "--year", type=int, default=this_year, help=f"Which year to run. Default is {this_year}")
+    parser.add_argument("-y", "--year", default=None, help=f"Which year to run. Default is {this_year}")
 
     args = parser.parse_args()
 
-    if not args.day:
-        days = sorted([f.stem for f in Path("sols").glob('*') if f.name.startswith(f"{args.year}") and f.suffix == ".py"])
+    all_years = list(range(2015, this_year + 1))
+
+    if not args.year:
+        years = [this_year]
+    elif args.year == "*":
+        years = all_years
     else:
-        days = [f"{args.year}{args.day:02}"]
+        years = [int(args.year)]
+
+    if not args.day:
+        days = sorted([f.stem for f in Path("sols").glob('*') if f.name[0:4] in [str(y) for y in years] and f.suffix == ".py"])
+    else:
+        days = sorted([f.stem for f in Path("sols").glob('*') if f.name[0:4] in [str(y) for y in years] and f.name[4:6] == f"{args.day:02}" and f.suffix == ".py"])
+        # days = [f"{args.year}{args.day:02}"]
 
     if not args.part:
         parts = [1, 2]
@@ -117,7 +127,7 @@ def main():
         parts = [args.part]
 
     if args.args:
-        print(f"year: {args.year}")
+        print(f"years: {years}")
         print(f"days: {days}")
         print(f"test: {args.test}")
         print(f"parts: {parts}")
