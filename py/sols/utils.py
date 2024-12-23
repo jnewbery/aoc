@@ -38,18 +38,17 @@ class BaseSolution:
 
     def get_puzzle_input(self):
         assert self.sol_file is not None
-        parent_dir = Path(self.sol_file).parent
+        if self.test:
+            input_dir = Path(self.sol_file).parent.parent.parent / "inputs" / "test"
+        else:
+            input_dir = Path(self.sol_file).parent.parent.parent / "inputs" / "full"
+
         puzzle_stem = Path(self.sol_file).stem
 
-        if self.test:
-            input_file_stem = f"{parent_dir}/{puzzle_stem}_test_input"
+        if os.path.exists(input_dir / f"{puzzle_stem}_{self.part}.txt"):
+            input_file = input_dir / f"{puzzle_stem}_{self.part}.txt"
         else:
-            input_file_stem = f"{parent_dir}/{puzzle_stem}_input"
-        
-        if os.path.exists(f"{input_file_stem}{self.part}.txt"):
-            input_file = f"{input_file_stem}{self.part}.txt"
-        else:
-            input_file = f"{input_file_stem}.txt"
+            input_file = input_dir / f"{puzzle_stem}.txt"
 
         with open(input_file) as f:
             self.puzzle_input = f.read().splitlines()
