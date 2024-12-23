@@ -16,16 +16,16 @@ def get_moves(ll):
     return moves
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         moves = get_moves(ll)
 
         x, y = 0, 0
         for x_change, y_change in moves:
             x += x_change
             y += y_change
-        return x * y
+        return str(x * y)
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         moves = get_moves(ll)
 
         x, y, aim = 0, 0, 0
@@ -36,7 +36,7 @@ class Solution(BaseSolution):
             else:
                 aim += aim_change
 
-        return x * y
+        return str(x * y)
 
 if __name__ == '__main__':
     Solution()

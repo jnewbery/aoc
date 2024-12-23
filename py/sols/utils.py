@@ -15,10 +15,12 @@ def exit_not_implemented():
     sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)
 
 class BaseSolution:
-    def part1(self, ll) -> str:
+    def part1(self, ll: list[str]) -> str:
+        del ll
         raise NotImplementedError
 
-    def part2(self, ll) -> str:
+    def part2(self, ll: list[str]) -> str:
+        del ll
         raise NotImplementedError
 
     def get_params(self):
@@ -35,6 +37,7 @@ class BaseSolution:
         self.verbose = args.verbose
 
     def get_puzzle_input(self):
+        assert self.sol_file is not None
         parent_dir = Path(self.sol_file).parent
         puzzle_stem = Path(self.sol_file).stem
 
@@ -59,10 +62,11 @@ class BaseSolution:
         start = time.time_ns()
         func = getattr(self, f"part{self.part}")
 
+        sol = None
         try:
             sol = func(self.puzzle_input)
         except NotImplementedError:
-            exit_not_implemented()
+            self.exit_not_implemented()
 
         execution_time = time.time_ns() - start
 
@@ -70,6 +74,9 @@ class BaseSolution:
             print(json.dumps({"solution": str(sol), "execution_time": f"{int(execution_time // 1e6)}ms"}))
         else:
             print(str(sol))
+
+    def exit_not_implemented(self) -> None:
+        sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)
 
 def get_numbers(line: str) -> list[int]:
     return [int(x) for x in re.findall(r"\d+", line)]

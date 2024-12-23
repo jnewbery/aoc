@@ -2,9 +2,9 @@
 from utils import BaseSolution
 
 class Solution(BaseSolution):
-    def part1(self, lines):
+    def part1(self, ll: list[str]) -> str:
         sol = 0
-        for l in lines:
+        for l in ll:
             line_len = len(l)
             front = set(l[:(line_len >> 1)])
             back = set(l[(line_len >> 1):])
@@ -19,17 +19,17 @@ class Solution(BaseSolution):
             # print(pts)
             sol += pts
 
-        return sol
+        return str(sol)
 
-    def part2(self, lines):
+    def part2(self, ll: list[str]) -> str:
         sol = 0
-        while(lines):
-            ll, lines = lines[:3], lines[3:]
-            # print(ll)
-            # print(set(ll[0]))
-            # print(set(ll[1]))
-            # print(set(ll[2]))
-            badge = (set(ll[0]) & set(ll[1]) & set(ll[2])).pop()
+        while(ll):
+            three_lines, ll = ll[:3], ll[3:]
+            # print(three_lines)
+            # print(set(three_lines[0]))
+            # print(set(three_lines[1]))
+            # print(set(three_lines[2]))
+            badge = (set(three_lines[0]) & set(three_lines[1]) & set(three_lines[2])).pop()
             # print(badge)
 
             if ord(badge) >= ord('a'):
@@ -40,7 +40,7 @@ class Solution(BaseSolution):
             # print(pts)
             sol += pts
 
-        return sol
+        return str(sol)
 
 if __name__ == "__main__":
     Solution()

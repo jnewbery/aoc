@@ -2,7 +2,7 @@
 from utils import BaseSolution
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         offset = ord('X') - ord('A')
         # print(offset)
 
@@ -18,9 +18,9 @@ class Solution(BaseSolution):
             # print(f"game: {game_pts}, me: {me_pts}, total: {game_pts + me_pts}")
             pts += game_pts + me_pts
 
-        return pts
+        return str(pts)
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         pts = 0
         for l in ll:
             # print(l.rstrip())
@@ -32,7 +32,7 @@ class Solution(BaseSolution):
             # print(f"me: {me_pts}, win: {win_pts}, total: {me_pts + win_pts}")
             pts += me_pts + win_pts
 
-        return pts
+        return str(pts)
 
 if __name__ == "__main__":
     Solution()

@@ -8,6 +8,7 @@ def get_directories(ll):
     counted_files = set()
     dirs = defaultdict(int)
 
+    curr = []
     for l in ll:
         match l.split():
             case '$', 'cd', '/': curr = ['/']
@@ -25,21 +26,21 @@ def get_directories(ll):
     return dirs
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         directories = get_directories(ll)
 
         sol = 0
-        for k, v in directories.items():
+        for v in directories.values():
             if v <= 100000:
                 sol += v
 
-        return sol
+        return str(sol)
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         directories = get_directories(ll)
         target = directories[("/")] - 40000000
         sol = min(x for x in directories.values() if x > target)
-        return sol
+        return str(sol)
 
 if __name__ == "__main__":
     Solution()

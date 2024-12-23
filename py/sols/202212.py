@@ -17,6 +17,7 @@ def solve(ll, part):
     heights = {}
     distances = [[]]
 
+    goal = None
     for y, l in enumerate(ll):
         for x, c in enumerate(l):
             if ord(c) >= ord('a') and ord(c) <= ord('z'):
@@ -29,6 +30,7 @@ def solve(ll, part):
             elif c == 'E':
                 heights[(x, y)] = ord('z') - ord('a')
                 goal = (x, y)
+    assert goal is not None
 
     # print(heights)
     # print(distances)
@@ -47,11 +49,11 @@ def solve(ll, part):
             # print(distances)
 
 class Solution(BaseSolution):
-    def part1(self, ll):
-        return solve(ll, 1)
+    def part1(self, ll) -> str:
+        return str(solve(ll, 1))
 
-    def part2(self, ll):
-        return solve(ll, 2)
+    def part2(self, ll) -> str:
+        return str(solve(ll, 2))
 
 if __name__ == "__main__":
     Solution()

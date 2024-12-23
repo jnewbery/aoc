@@ -15,12 +15,12 @@ def register_generator(ll):
                 yield reg
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         # print([(i,n) for i,n in enumerate(register_generator(ll))])
         # print([((i+1), n) for i,n in enumerate(register_generator(ll)) if i in range(19, 220, 40)])
-        return sum(((i+1) * n for i, n in enumerate(register_generator(ll)) if i in range(19, 220, 40)))
+        return str(sum(((i+1) * n for i, n in enumerate(register_generator(ll)) if i in range(19, 220, 40))))
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         screen = ''
         for (t, x) in enumerate(register_generator(ll)):
             # print(x)

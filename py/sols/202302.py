@@ -42,21 +42,21 @@ def play_game(line: str) -> bool:
             return False
     return True
 
-def fewest_number(line: str) -> bool:
+def fewest_number(line: str) -> int:
     line = line.split(':')[1].strip()
     return functools.reduce(lambda x, y: x.merge(y), [Hand.from_txt(hand) for hand in line.split(';')]).power()
 
 class Solution(BaseSolution):
 
-    def part1(lself, ll):
+    def part1(self, ll: list[str]) -> str:
         ret = 0
         for ix, game in enumerate(ll):
             if play_game(game):
                 ret += ix + 1
-        return ret
+        return str(ret)
 
-    def part2(self, ll):
-        return sum(fewest_number(game) for game in ll)
+    def part2(self, ll) -> str:
+        return str(sum(fewest_number(game) for game in ll))
 
 if __name__ == "__main__":
     Solution()

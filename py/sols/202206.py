@@ -7,11 +7,11 @@ def find_repeats(l, n):
             return i + n
 
 class Solution(BaseSolution):
-    def part1(self, ll):
-        return find_repeats(ll[0], 4)
+    def part1(self, ll) -> str:
+        return str(find_repeats(ll[0], 4))
 
-    def part2(self, ll):
-        return find_repeats(ll[0], 14)
+    def part2(self, ll) -> str:
+        return str(find_repeats(ll[0], 14))
 
 if __name__ == "__main__":
     Solution()

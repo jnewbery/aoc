@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 import argparse
-import csv
 from datetime import date
 import enum
-import importlib
 import json
 import os
 from pathlib import Path
 from subprocess import run
-import time
-from typing import Any
 from functools import cache
 
 from tabulate import tabulate
@@ -53,11 +49,11 @@ def get_solution(day: str, part: int, test: bool) -> str:
     
     return solutions[day][part_str][type_str]
 
-def run_as_subprocess(days: list[int], parts: list[int], test: bool) -> list[dict[str, str]]:
+def run_as_subprocess(days: list[str], parts: list[int], test: bool) -> list[dict[str, str]]:
     results: list[dict[str, str]] = []
 
     for day in days:
-        result = {'Day': f'Day {day[4:]}'}
+        result = {"Year": f"{day[0:4]}", "Day": f"Day {day[4:]}"}
         for part in parts:
             input_str = "test input" if test else "full input"
             result_header = f"Part {part} ({input_str})"

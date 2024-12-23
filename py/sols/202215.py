@@ -43,7 +43,7 @@ def tuning_freq(coord):
 
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         if len(ll) == 14:
             ROW = 10  # test input
         else:
@@ -58,9 +58,9 @@ class Solution(BaseSolution):
                 covers.append(cover)
         merge_covers(covers)
 
-        return sum([cover[1] - cover[0] + 1 for cover in covers])
+        return str(sum([cover[1] - cover[0] + 1 for cover in covers]))
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         if len(ll) == 14:
             MAX_X = 20  # test input
         else:
@@ -89,7 +89,9 @@ class Solution(BaseSolution):
             p = ((b-a)//2, (a+b)//2)
             if all(0 < c and c < MAX_X for c in p):
                 if all(distance(p, sbr[0]) > sbr[2] for sbr in sbrs):
-                    return(tuning_freq(p))
+                    return(str(tuning_freq(p)))
+
+        assert False, "No solution found"
 
 if __name__ == "__main__":
     Solution()

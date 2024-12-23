@@ -12,13 +12,13 @@ def get_totals(ll):
     return totals
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         totals = get_totals(ll)
-        return totals[-1]
+        return str(totals[-1])
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         totals = get_totals(ll)
-        return sum(totals[-3:])
+        return str(sum(totals[-3:]))
 
 if __name__ == "__main__":
     Solution()

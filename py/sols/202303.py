@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from utils import BaseSolution
-from typing import Optional, Iterable
 import math, re
 
 DIGITS = [str(i) for i in range(10)]
@@ -26,16 +25,16 @@ def get_symbols(ll) -> dict[tuple[int, int], list[int]]:
     return symbols
 
 class Solution(BaseSolution):
-    def part1(self, ll: list[str]):
+    def part1(self, ll: list[str]) -> str:
         symbols = get_symbols(ll)
 
-        return sum(sum(p) for p in symbols.values())
+        return str(sum(sum(p) for p in symbols.values()))
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         symbols = get_symbols(ll)
 
         # Assumes that no other symbol (eg & or #) touches two numbers
-        return sum(math.prod(p) for p in symbols.values() if len(p)==2)
+        return str(sum(math.prod(p) for p in symbols.values() if len(p)==2))
 
 if __name__ == "__main__":
     Solution()

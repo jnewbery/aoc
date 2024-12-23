@@ -42,7 +42,7 @@ def visible_from(row):
     return ret
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll: list[str]) -> str:
         grid = construct_grid(ll)
         vis = set()
 
@@ -54,9 +54,9 @@ class Solution(BaseSolution):
             vis |= visible(row)
             vis |= visible(reversed(row))
 
-        return len(vis)
+        return str(len(vis))
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         grid = construct_grid(ll)
 
         sol = 0
@@ -71,7 +71,7 @@ class Solution(BaseSolution):
             if scenic > sol:
                 sol = max(sol, scenic)
 
-        return sol
+        return str(sol)
 
 if __name__ == "__main__":
     Solution()

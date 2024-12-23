@@ -27,31 +27,33 @@ class Board:
 
         return False
 
-def parse_input(ll):
+def parse_input(ll: list[str]) -> tuple[list[int], list[Board | None]]:
     draws = [int(d) for d in ll.pop(0).split(',')]
     nonempty = [l for l in ll if l]
-    boards = [Board(nonempty[i:i + 5], i / 5) for i in range(0, len(nonempty), 5)]
+    boards: list[Board | None] = [Board(nonempty[i:i + 5], i / 5) for i in range(0, len(nonempty), 5)]
 
     return draws, boards
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll: list[str]) -> str:
         draws, boards = parse_input(ll)
 
         for d in draws:
             for b in boards:
+                assert b is not None
                 ret = b.draw(d)
                 if ret != False:
                     return ret
+        assert False, "no solution found"
 
-    def part2(self, ll):
+    def part2(self, ll: list[str]) -> str:
         draws, boards = parse_input(ll)
 
         num_boards = len(boards)
         # print(f"{num_boards} boards")
         remaining_boards = num_boards
-        for j, d in enumerate(draws):
-            # print(f"round {j} draw {d}")
+        for d in draws:
+            # print(f"draw {d}")
             for i, b in enumerate(boards):
                 if not b:
                     continue
@@ -63,6 +65,7 @@ class Solution(BaseSolution):
                         return ret
                     boards[i] = None
                     remaining_boards -= 1
+        assert False, "no solution found"
 
 if __name__ == '__main__':
     Solution()

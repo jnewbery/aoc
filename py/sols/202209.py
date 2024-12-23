@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 from utils import BaseSolution
+from typing import Generator
 
-def head_generator(ll):
+def head_generator(ll: list[str]) -> Generator[list[int], None, None]:
     h = [0, 0]
     for l in ll:
         direction, repeat = l.split()
-        for r in range(int(repeat)):
+        for _ in range(int(repeat)):
             match direction:
                 case "U":
                     h = [h[0], h[1] + 1]
@@ -17,11 +18,11 @@ def head_generator(ll):
                     h = [h[0] - 1, h[1]]
             yield h
 
-def solve(ll, tail_len):
+def solve(ll: list[str], tail_len):
     tail = [[0, 0] for _ in range(tail_len + 1)]
     t_visited = set([tuple(tail[-1])])
     for h in head_generator(ll):
-        tail[0] = tuple(h)
+        tail[0] = h
         for i in range(1, len(tail)):
             if abs(tail[i][0] - tail[i - 1][0]) <= 1 and abs(tail[i][1] - tail[i - 1][1]) <= 1:
                 # tail doesn't move
@@ -38,11 +39,11 @@ def solve(ll, tail_len):
     return len(t_visited)
 
 class Solution(BaseSolution):
-    def part1(self, ll):
-        return solve(ll, 1)
+    def part1(self, ll) -> str:
+        return str(solve(ll, 1))
 
-    def part2(self, ll):
-        return solve(ll, 9)
+    def part2(self, ll) -> str:
+        return str(solve(ll, 9))
 
 if __name__ == "__main__":
     Solution()

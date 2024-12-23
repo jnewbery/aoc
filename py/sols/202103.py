@@ -28,6 +28,7 @@ class Node:
             if left_bit == '0':
                 self.zeros.store(l, number)
             else:
+                assert self.ones is not None
                 self.ones.store(l, number)
 
     """02 rating => mode == True, co2 rating => mode == False"""
@@ -46,7 +47,7 @@ class Node:
         return number
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         normed_lines = list([map(norm1, l) for l in ll])
         line_len = len(ll[0])
         columns = list(sum(l) for l in zip(*normed_lines))
@@ -60,7 +61,7 @@ class Solution(BaseSolution):
 
         return gamma * epsilon
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         root = Node()
         for l in ll:
             number = int(''.join(list(l)), 2)
@@ -69,7 +70,7 @@ class Solution(BaseSolution):
         o2 = root.rating(True)
         co2 = root.rating(False)
         
-        return o2 * co2
+        return str(o2 * co2)
 
 if __name__ == '__main__':
     Solution()

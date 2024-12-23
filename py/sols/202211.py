@@ -34,11 +34,11 @@ def get_monkeys(ll):
     return monkeys
 
 def monkey_round(monkeys, worry_operation):
-    for i, monkey in enumerate(monkeys):
+    for monkey in monkeys:
         # print(f"monkey {i}, items: {monkey.items}")
         while monkey.items:
             monkey.inspections += 1
-            old = monkey.items.pop(0)  # noqa: F841 (`old` is used in the eval)
+            old = monkey.items.pop(0)  # ignore
             # print(old)
             # print(monkey.operation)
             new = int(eval(monkey.operation))
@@ -53,7 +53,7 @@ def monkey_round(monkeys, worry_operation):
     #     print(monkey)
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         monkeys = get_monkeys(ll)
         for _ in range(20):
             monkey_round(monkeys, lambda x: x // 3)
@@ -63,7 +63,7 @@ class Solution(BaseSolution):
 
         return inspections[-2] * inspections[-1]
 
-    def part2(self, ll):
+    def part2(self, ll) -> str:
         monkeys = get_monkeys(ll)
         divisor = reduce(operator.mul, [monkey.test_divisor for monkey in monkeys], 1)
         for _ in range(10000):

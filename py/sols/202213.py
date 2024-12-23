@@ -11,46 +11,47 @@ def get_pairs(ll):
             ll.pop(0)  # empty line
         yield a, b
 
-def compare(a, b):
+def compare(a: list | int, b: list | int) -> int:
     # print(f"comparing {a} and {b}")
     if type(a) == int and type(b) == int:
         if a < b:
             return -1
-        elif a > b:
+        if a > b:
             return 1
-        else:
-            return 0
-    elif type(a) == list and type(b) == list:
+        return 0
+    
+    if type(a) == list and type(b) == list:
         for i in range(min(len(a), len(b))):
             comp = compare(a[i], b[i])
             if comp != 0:
                 return comp
         if len(a) < len(b):
             return -1
-        elif len(a) > len(b):
+        if len(a) > len(b):
             return 1
-        else:
-            return 0
-    elif type(a) == list and type(b) == int:
+        return 0
+    
+    if type(a) == list and type(b) == int:
         return compare(a, [b])
-    elif type(b) == list and type(a) == int:
-        return compare([a], b)
+
+    # else type(b) == list and type(a) == int:
+    return compare([a], b)
 
 class Solution(BaseSolution):
-    def part1(self, ll):
+    def part1(self, ll) -> str:
         sol = 0
         for i, pair in enumerate(get_pairs(ll)):
             # print(i + 1, pair)
             if compare(pair[0], pair[1]) == -1:
                 # print("in order")
                 sol += i + 1
-        return sol
+        return str(sol)
 
-    def part2(self, ll):
-        signals = [eval(l) for l in ll if l]
+    def part2(self, ll) -> str:
+        signals: list[list[list[int]]] = [eval(l) for l in ll if l]
         signals += [[[2]], [[6]]]
         signals.sort(key=functools.cmp_to_key(compare))
-        return (signals.index([[2]]) + 1) * (signals.index([[6]]) + 1)
+        return str((signals.index([[2]]) + 1) * (signals.index([[6]]) + 1))
 
 if __name__ == "__main__":
     Solution()
