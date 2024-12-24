@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 from subprocess import run
 from functools import cache
-import time
 from itertools import product
 
 from tabulate import tabulate
@@ -63,9 +62,7 @@ def run_as_subprocess(years: list[int], days: list[str], parts: list[int], test:
             if test:
                 command.append("-t")
 
-            time_start = time.time()
             script_output = run(command, capture_output=True, text=True)
-            execution_time = int((time.time() - time_start) * 1000)
 
             if script_output.returncode == EXIT_CODES.NOT_IMPLEMENTED.value:
                 result[result_header] = inconclusive("Not implemented")
@@ -84,8 +81,16 @@ def run_as_subprocess(years: list[int], days: list[str], parts: list[int], test:
                 continue
 
             if calculated_sol == actual_sol:
-                execution_time = json.loads(script_output.stdout.strip())["execution_time"]
-                result[result_header] = success(f"{calculated_sol}    ({execution_time}ms)") 
+                execution_time_micro_seconds = int(json.loads(script_output.stdout.strip())["execution_time"])
+                if execution_time_micro_seconds < 1000:
+                    execution_time_str = f"{execution_time_micro_seconds}µs"
+                elif execution_time_micro_seconds < 100_000:
+                    execution_time_str = f"{execution_time_micro_seconds / 1000:.1f}ms"
+                elif execution_time_micro_seconds < 1_000_000:
+                    execution_time_str = f"{int(execution_time_micro_seconds // 1_000)}ms"
+                else:
+                    execution_time_str = f"{execution_time_micro_seconds // 1_000_000:.1f}s"
+                result[result_header] = success(f"{calculated_sol}    ({execution_time_str})") 
             else:
                 result[result_header] = failure(calculated_sol)
 

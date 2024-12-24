@@ -170,7 +170,7 @@ fn main() {
                     let execution_time = start.elapsed();
                     let result = json!({
                         "solution": solution,
-                        "execution_time": execution_time.as_millis(),
+                        "execution_time": execution_time.as_micros(),
                     });
 
                     if verbose {
