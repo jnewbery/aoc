@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 from subprocess import run
 from functools import cache
+import time
+from itertools import product
 
 from tabulate import tabulate
 
@@ -41,49 +43,53 @@ def read_solutions_json() -> dict[str, dict[str, dict[str, str]]]:
     with open("solutions.json", "r") as f:
         return json.load(f)
 
-def get_solution(day: str, part: int, test: bool) -> str:
-    file_path = Path(f"../../solutions/{'test' if test else 'full'}/{day[:4]}.txt")
+def get_solution(year: int, day: str, part: int, test: bool) -> str:
+    # print(f"Reading solution for {day} part {part} {'test' if test else 'full'}")
+    file_path = Path(f"../../solutions/{'test' if test else 'full'}/{year}.txt")
     with open(file_path, "r") as f:
-        line_num = (int(day[4:]) - 1) * 2 + (part - 1)
+        line_num = (int(day) - 1) * 2 + (part - 1)
         return f.readlines()[line_num].strip()
 
-def run_as_subprocess(days: list[str], parts: list[int], test: bool) -> list[dict[str, str]]:
+def run_as_subprocess(years: list[int], days: list[str], parts: list[int], test: bool) -> list[dict[str, str]]:
     results: list[dict[str, str]] = []
 
-    for day in days:
-        result = {"Year": f"{day[0:4]}", "Day": f"Day {day[4:]}"}
+    for year, day in product(years, days):
+        result = {"Year": f"{year}", "Day": f"Day {day}"}
         for part in parts:
             input_str = "test input" if test else "full input"
             result_header = f"Part {part} ({input_str})"
-            command = [f"./{day}.py", str(part), "-v"]
+            solver = Path(f"../../solvers/rs/target/release/{year}{day}_{part}")
+            # print(f"Checking {solver}")
+            if not solver.exists():
+                continue
+            command = [solver.resolve()]
             if test:
                 command.append("-t")
 
+            time_start = time.time()
             script_output = run(command, capture_output=True, text=True)
+            execution_time = int((time.time() - time_start) * 1000)
 
             if script_output.returncode == EXIT_CODES.NOT_IMPLEMENTED.value:
                 result[result_header] = inconclusive("Not implemented")
                 continue
 
-            try:
-                calculated_sol = json.loads(script_output.stdout.strip())["solution"]
-            except json.decoder.JSONDecodeError:
-                result[result_header] = failure("No solution found")
-                continue
+            calculated_sol = script_output.stdout.strip()
 
             try:
-                actual_sol = get_solution(day, part, test)
+                actual_sol = get_solution(year, day, part, test)
             except KeyError:
                 result[result_header] = inconclusive(calculated_sol)
                 continue
 
             if calculated_sol == actual_sol:
-                execution_time = json.loads(script_output.stdout.strip())["execution_time"]
-                result[result_header] = success(f"{calculated_sol}    ({execution_time})") 
+                # execution_time = json.loads(script_output.stdout.strip())["execution_time"]
+                result[result_header] = success(f"{calculated_sol}    ({execution_time}ms)") 
             else:
                 result[result_header] = failure(calculated_sol)
 
-        results.append(result)
+        if len(result.keys()) > 2:
+            results.append(result)
 
     return results
 
@@ -108,10 +114,9 @@ def main():
         years = [int(args.year)]
 
     if not args.day:
-        days = sorted([f.stem for f in Path("").glob('*') if f.name[0:4] in [str(y) for y in years] and f.suffix == ".py"])
+        days = list(f"{d:02}" for d in range(1, 26))
     else:
-        days = sorted([f.stem for f in Path("").glob('*') if f.name[0:4] in [str(y) for y in years] and f.name[4:6] == f"{args.day:02}" and f.suffix == ".py"])
-        # days = [f"{args.year}{args.day:02}"]
+        days = [f"{args.day:02}"]
 
     if not args.part:
         parts = [1, 2]
@@ -124,7 +129,9 @@ def main():
         print(f"test: {args.test}")
         print(f"parts: {parts}")
 
-    results = run_as_subprocess(days, parts, args.test)
+    print("Building solutions...")
+    run(["cargo", "build", "--release"])
+    results = run_as_subprocess(years, days, parts, args.test)
 
     print(tabulate(results, headers='keys', tablefmt="github"))
 
