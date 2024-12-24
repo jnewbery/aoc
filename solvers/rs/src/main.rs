@@ -3,6 +3,7 @@ use serde_json::json;
 use std::collections::HashMap;
 use std::fs;
 use std::time::Instant;
+use std::path::Path;
 
 pub mod solver_201501_1;
 pub mod solver_201501_2;
@@ -168,14 +169,19 @@ fn main() {
     let part = args.part.expect("Part is required");
     let key = format!("{:04}{:02}_{}", year, day, part);
     if let Some(func) = functions.get(&key) {
-        let input = if args.test {
-            fs::read_to_string(format!("../../inputs/test/{:04}{:02}.txt", year, day)).expect("Could not read input file")
+        let input_file = if args.test {
+            if Path::new(&format!("../../inputs/test/{:04}{:02}_{}.txt", year, day, part)).exists() {
+                format!("../../inputs/test/{:04}{:02}_{}.txt", year, day, part)
+            } else {
+                format!("../../inputs/test/{:04}{:02}.txt", year, day)
+            }
         } else {
-            fs::read_to_string(format!("../../inputs/full/{:04}{:02}.txt", year, day)).expect("Could not read input file")
+            format!("../../inputs/full/{:04}{:02}.txt", year, day)
         };
+        let input_string = fs::read_to_string(input_file).expect("Could not read input file");
 
         let start = Instant::now();
-        let solution: String = func(&input);
+        let solution: String = func(&input_string);
         let execution_time = start.elapsed();
         let result = json!({
             "solution": solution,
