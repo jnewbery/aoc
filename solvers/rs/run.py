@@ -58,11 +58,8 @@ def run_as_subprocess(years: list[int], days: list[str], parts: list[int], test:
         for part in parts:
             input_str = "test input" if test else "full input"
             result_header = f"Part {part} ({input_str})"
-            solver = Path(f"../../solvers/rs/target/release/{year}{day}_{part}")
-            # print(f"Checking {solver}")
-            if not solver.exists():
-                continue
-            command = [solver.resolve()]
+            # solver = Path(f"../../solvers/rs/target/release/{year}{day}_{part}")
+            command = ["./target/release/aoc", "-y", str(year), "-d", day, "-p", str(part), "-v"]
             if test:
                 command.append("-t")
 
@@ -74,7 +71,11 @@ def run_as_subprocess(years: list[int], days: list[str], parts: list[int], test:
                 result[result_header] = inconclusive("Not implemented")
                 continue
 
-            calculated_sol = script_output.stdout.strip()
+            try:
+                calculated_sol = json.loads(script_output.stdout.strip())["solution"]
+            except json.decoder.JSONDecodeError:
+                result[result_header] = failure("No solution found")
+                continue
 
             try:
                 actual_sol = get_solution(year, day, part, test)
@@ -83,7 +84,7 @@ def run_as_subprocess(years: list[int], days: list[str], parts: list[int], test:
                 continue
 
             if calculated_sol == actual_sol:
-                # execution_time = json.loads(script_output.stdout.strip())["execution_time"]
+                execution_time = json.loads(script_output.stdout.strip())["execution_time"]
                 result[result_header] = success(f"{calculated_sol}    ({execution_time}ms)") 
             else:
                 result[result_header] = failure(calculated_sol)
