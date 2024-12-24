@@ -51,5 +51,5 @@ pub fn solve_202414_2(input: &str) -> String {
             return i.to_string();
         }
     }
-    panic!();
+    return "No solution".to_string();
 }

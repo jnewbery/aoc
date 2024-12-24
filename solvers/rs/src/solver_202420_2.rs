@@ -77,7 +77,7 @@ fn get_maze(lines: std::str::Lines) -> Maze {
 }
 
 pub fn solve_202420_2(input: &str) -> String {
-    let min_saving = if input.len() < 1000 { 1 } else { 100 };
+    let min_saving = if input.len() < 1000 { 50 } else { 100 };
     let maze = get_maze(input.lines());
     let mut distances: HashMap<Point, i32> = HashMap::new();
     distances.insert(maze.end, 0);
