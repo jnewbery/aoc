@@ -1,3 +1,5 @@
+//TODO: add boxes to the stack and then move them in reverse order. Saves the need to 
+// create the temporary new_boxes_left and new_boxes_right sets.
 static TEST: bool = false;
 
 use std::fmt;

@@ -1,3 +1,4 @@
+// TODO: work from the back to the front, allowing us to trim the tree a lot more aggresively
 static TEST: bool = false;
 
 use std::collections::HashSet;

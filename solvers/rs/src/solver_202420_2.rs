@@ -1,3 +1,4 @@
+// TODO prune out the points in n_away that aren't in the maze
 static TEST: bool = false;
 
 use aoc::utils::Point;
