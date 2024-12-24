@@ -1,7 +1,8 @@
 use clap::{ArgAction,Parser};
-use std::collections::HashMap;
-use std::time::Instant;
 use serde_json::json;
+use std::collections::HashMap;
+use std::fs;
+use std::time::Instant;
 
 pub mod solver_201501_1;
 pub mod solver_201501_2;
@@ -102,11 +103,13 @@ struct Args {
     #[arg(short, long)]
     part: Option<u32>,
     #[arg(short, long, action = ArgAction::SetTrue)]
+    test: bool,
+    #[arg(short, long, action = ArgAction::SetTrue)]
     verbose: bool,
 }
 
-fn get_functions() -> HashMap<std::string::String, fn() -> std::string::String> {
-    let mut functions: HashMap<std::string::String, fn() -> std::string::String> = HashMap::new();
+fn get_functions() -> HashMap<std::string::String, fn(&str) -> std::string::String> {
+    let mut functions: HashMap<std::string::String, fn(&str) -> std::string::String> = HashMap::new();
     functions.insert("201501_1".to_string(), solve_201501_1);
     functions.insert("201501_2".to_string(), solve_201501_2);
     functions.insert("202401_1".to_string(), solve_202401_1);
@@ -160,29 +163,32 @@ fn main() {
 
     let verbose = args.verbose;
 
-    if let Some(year) = args.year {
-        if let Some(day) = args.day {
-            if let Some(part) = args.part {
-                let key = format!("{:04}{:02}_{}", year, day, part);
-                if let Some(func) = functions.get(&key) {
-                    let start = Instant::now();
-                    let solution: String = func();
-                    let execution_time = start.elapsed();
-                    let result = json!({
-                        "solution": solution,
-                        "execution_time": execution_time.as_micros(),
-                    });
+    let year = args.year.expect("Year is required");
+    let day = args.day.expect("Day is required");
+    let part = args.part.expect("Part is required");
+    let key = format!("{:04}{:02}_{}", year, day, part);
+    if let Some(func) = functions.get(&key) {
+        let input = if args.test {
+            fs::read_to_string(format!("../../inputs/test/{:04}{:02}.txt", year, day)).expect("Could not read input file")
+        } else {
+            fs::read_to_string(format!("../../inputs/full/{:04}{:02}.txt", year, day)).expect("Could not read input file")
+        };
 
-                    if verbose {
-                        println!("{}", serde_json::to_string_pretty(&result).unwrap());
-                    } else {
-                        println!("{}", solution);
-                    }
-                } else {
-                    std::process::exit(38);
-                    // println!("No function found for key: {}", key);
-                }
-            }
+        let start = Instant::now();
+        let solution: String = func(&input);
+        let execution_time = start.elapsed();
+        let result = json!({
+            "solution": solution,
+            "execution_time": execution_time.as_micros(),
+        });
+
+        if verbose {
+            println!("{}", serde_json::to_string_pretty(&result).unwrap());
+        } else {
+            println!("{}", solution);
         }
+    } else {
+        std::process::exit(38);
+        // println!("No function found for key: {}", key);
     }
 }

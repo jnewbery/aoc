@@ -1,10 +1,3 @@
-static TEST: bool = false;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202417.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202417.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
 fn get_combo_operand(operand: u64, reg_a: &u64, reg_b: &u64, reg_c: &u64) -> u64 {
     match operand {
         0 | 1 | 2 | 3 => operand,
@@ -61,8 +54,8 @@ fn run_program(program: &Vec<u64>, mut reg_a: u64, mut reg_b: u64, mut reg_c: u6
     output
 }
 
-pub fn solve_202417_2() -> String {
-    let mut lines = INPUT.lines();
+pub fn solve_202417_2(input: &str) -> String {
+    let mut lines = input.lines();
 
     // registers
     lines.next();  // skip reg_a

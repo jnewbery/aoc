@@ -1,12 +1,5 @@
-static TEST: bool = false;
-
 use std::collections::HashSet;
 use itertools::iproduct;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202410.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202410.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 type Coord = (i32, i32);
 
@@ -45,8 +38,8 @@ fn climb(cells: &mut Vec<Vec<Cell>>, x: i32, y: i32) -> HashSet<Coord> {
     summits
 }
 
-pub fn solve_202410_1() -> String {
-    let mut cells: Vec<Vec<Cell>> = INPUT.lines().map(|line| {
+pub fn solve_202410_1(input: &str) -> String {
+    let mut cells: Vec<Vec<Cell>> = input.lines().map(|line| {
         line.chars().map(|c| Cell { height: c.to_digit(10).unwrap() as i32, summits: None }).collect()
     }).collect();
 

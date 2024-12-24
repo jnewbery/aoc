@@ -1,20 +1,13 @@
-static TEST: bool = false;
-
 use regex::Regex;
 
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202403.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202403.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
-pub fn solve_202403_2() -> String {
+pub fn solve_202403_2(input: &str) -> String {
     const REGEX_PATTERN: &str = r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)";
     let re = Regex::new(REGEX_PATTERN).unwrap();
 
     let mut count = 0;
     let mut enabled = true;
 
-    for cap in re.captures_iter(INPUT) {
+    for cap in re.captures_iter(input) {
         match cap.get(0).map(|m| m.as_str()) {
             Some(m) if m.starts_with("mul(") && enabled => {
                 if let (Some(n_match), Some(m_match)) = (cap.get(1), cap.get(2)) {

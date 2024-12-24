@@ -1,11 +1,4 @@
-static TEST: bool = false;
-
 use std::collections::{HashMap, HashSet};
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202408.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202408.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn parse_map(input: Vec<&str>) -> HashMap<char, Vec<(i32, i32)>> {
     let mut map = HashMap::new();
@@ -41,8 +34,8 @@ fn get_antinodes(antennae: &Vec<(i32, i32)>, bounds: (i32, i32)) -> HashSet<(i32
         .collect()
 }
 
-pub fn solve_202408_1() -> String {
-    let lines: Vec<&str> = INPUT.lines().collect();
+pub fn solve_202408_1(input: &str) -> String {
+    let lines: Vec<&str> = input.lines().collect();
     let bounds = (lines[0].len() as i32, lines.len() as i32);
     let antennae = parse_map(lines);
     // println!("{:?}", antennae);

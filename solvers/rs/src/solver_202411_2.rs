@@ -1,11 +1,4 @@
-static TEST: bool = false;
-
 use std::collections::HashMap;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202411.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202411.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn split_digits_if_even(n: i64) -> Option<(i64, i64)> {
     // If the decimal representation of n has an even number of digits,
@@ -43,9 +36,9 @@ fn blink_n_times(stones: &HashMap<i64, i64>, n: i64) -> i64 {
     blink_n_times(&new_stones, n - 1)
 }
 
-pub fn solve_202411_2() -> String {
+pub fn solve_202411_2(input: &str) -> String {
     // Prime the pump
-    let stones = INPUT.split(|c: char| !c.is_numeric())
+    let stones = input.split(|c: char| !c.is_numeric())
         .filter_map(|s| s.parse::<i64>().ok()).fold(HashMap::new(), |mut acc, s| {
             *acc.entry(s).or_insert(0) += 1;
             acc

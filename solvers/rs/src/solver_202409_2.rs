@@ -1,10 +1,3 @@
-static TEST: bool = false;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202409.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202409.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
 struct File {
     id: Option<i32>,
     start: i32,
@@ -27,14 +20,14 @@ fn files_to_blocks(files: &Vec<File>) -> Vec<Option<i32>> {
     blocks
 }
 
-pub fn solve_202409_2() -> String {
+pub fn solve_202409_2(input: &str) -> String {
     let mut files: Vec<File> = Vec::new();
     let mut spaces: Vec<File> = Vec::new();
     let mut id = 0;
     let mut is_file = true;
     let mut pos = 0;
 
-    for c in INPUT.chars().take_while(|c| c.is_digit(10)).collect::<String>().chars() {
+    for c in input.chars().take_while(|c| c.is_digit(10)).collect::<String>().chars() {
         // println!("{}", c);
         let current_size = c.to_digit(10).unwrap() as i32;
         match is_file {

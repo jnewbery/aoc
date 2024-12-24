@@ -1,12 +1,5 @@
 // TODO: work from the back to the front, allowing us to trim the tree a lot more aggresively
-static TEST: bool = false;
-
 use std::collections::HashSet;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202407.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202407.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn test_line(line: &str) -> i64 {
     let mut operands = line.split(|c: char| !c.is_numeric() && c != '-')
@@ -42,8 +35,8 @@ fn test_line(line: &str) -> i64 {
     0
 }
 
-pub fn solve_202407_2() -> String {
-    let sol = INPUT.lines().map(|line| test_line(line)).sum::<i64>();
+pub fn solve_202407_2(input: &str) -> String {
+    let sol = input.lines().map(|line| test_line(line)).sum::<i64>();
     // println!("{:?}", sol);
     sol.to_string()
 }

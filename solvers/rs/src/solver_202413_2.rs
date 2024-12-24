@@ -1,10 +1,3 @@
-static TEST: bool = false;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202413.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202413.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
 fn solve(lines: &mut std::str::Lines) -> i64 {
     // println!("Solving puzzle: {:?}", lines);
     let a = lines.next().unwrap().split(|c: char| !c.is_numeric()).filter_map(|s| s.parse::<i64>().ok()).collect::<Vec<i64>>();
@@ -45,8 +38,8 @@ fn solve(lines: &mut std::str::Lines) -> i64 {
     3 * a_buttons + b_buttons
 }
 
-pub fn solve_202413_2() -> String {
-    let puzzles = &mut INPUT.split("\n\n").map(|line| line.lines());
+pub fn solve_202413_2(input: &str) -> String {
+    let puzzles = &mut input.split("\n\n").map(|line| line.lines());
 
     let sol = puzzles.map(|mut lines| { solve(&mut lines) }).sum::<i64>();
     // println!("{}", sol);

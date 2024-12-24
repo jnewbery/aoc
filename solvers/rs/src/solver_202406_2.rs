@@ -1,11 +1,4 @@
-static TEST: bool = false;
-
 use std::collections::HashSet;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202406.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202406.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 type Location = (i32, i32);
 type Direction = (i32, i32);
@@ -65,8 +58,8 @@ fn makes_loop(lines: &Vec<&str>, loc: Location, dir: Direction, obstacle: Locati
     }
 }
 
-pub fn solve_202406_2() -> String {
-    let lines = INPUT.lines().collect::<Vec<&str>>();
+pub fn solve_202406_2(input: &str) -> String {
+    let lines = input.lines().collect::<Vec<&str>>();
     let mut loc = find_start_location(&lines);
     let mut dir = DIRECTIONS[0];
     // println!("Start location: {:?}, direction: {:?}", loc, dir);

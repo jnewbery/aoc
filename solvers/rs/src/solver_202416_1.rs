@@ -1,16 +1,9 @@
-static TEST: bool = false;
-
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::iter::Peekable;
 use std::collections::HashSet;
 use aoc::utils::{Point, Position};
 use std::fmt;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202416.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202416.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 struct Maze {
     width: i32,
@@ -132,8 +125,8 @@ fn shortest_path(maze: &Maze) -> i32 {
     }
 }
 
-pub fn solve_202416_1() -> String {
-    let mut lines = INPUT.lines().peekable();
+pub fn solve_202416_1(input: &str) -> String {
+    let mut lines = input.lines().peekable();
     let maze = get_maze(&mut lines);
     // println!("{:?}", maze);
 

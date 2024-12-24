@@ -1,10 +1,3 @@
-static TEST: bool = false;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202402.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202402.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
 fn is_safe(vec: &Vec<i32>) -> bool {
     vec.windows(2)
         .map(|pair| pair[1] - pair[0]) // Compute the differences
@@ -25,8 +18,8 @@ fn is_safe(vec: &Vec<i32>) -> bool {
         .is_ok()
 }
 
-pub fn solve_202402_1() -> String {
-    let ret = INPUT
+pub fn solve_202402_1(input: &str) -> String {
+    let ret = input
         .lines()
         .map(|line| {
             line.split_whitespace().map(|s| s.parse::<i32>().expect("Failed to parse column")).collect()

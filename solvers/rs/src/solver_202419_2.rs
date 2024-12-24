@@ -1,11 +1,4 @@
-static TEST: bool = false;
-
 use std::collections::{HashSet, HashMap};
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202419.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202419.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn make_designs<'a>(towels: &HashSet<&'a str>, memoized: &mut HashMap<&'a str, u64>, design: &'a str) -> u64 {
     // println!("Testing design: {:?}", design);
@@ -26,8 +19,8 @@ fn make_designs<'a>(towels: &HashSet<&'a str>, memoized: &mut HashMap<&'a str, u
     ways
 }
 
-pub fn solve_202419_2() -> String {
-    let mut lines = INPUT.lines();
+pub fn solve_202419_2(input: &str) -> String {
+    let mut lines = input.lines();
     let towels: HashSet<&str> = lines
         .next()
         .unwrap()

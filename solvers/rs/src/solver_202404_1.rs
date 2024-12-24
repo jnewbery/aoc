@@ -1,11 +1,4 @@
-static TEST: bool = false;
-
 use itertools::iproduct;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202404.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202404.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn get_directions() -> Vec<(i32, i32)> {
     iproduct!(-1..=1, -1..=1)
@@ -36,9 +29,9 @@ fn dfs(grid: &Vec<Vec<char>>, x: usize, y: usize, target: &str, dir: &(i32, i32)
     dfs(grid, (x as i32 + dir.0) as usize, (y as i32 + dir.1) as usize, &target[1..], dir)
 }
 
-pub fn solve_202404_1() -> String {
+pub fn solve_202404_1(input: &str) -> String {
     let target = "XMAS";
-    let grid: Vec<Vec<char>> = INPUT.lines()
+    let grid: Vec<Vec<char>> = input.lines()
         .map(|line| line.chars().collect())
         .collect();
 

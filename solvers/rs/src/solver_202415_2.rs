@@ -1,16 +1,9 @@
 //TODO: add boxes to the stack and then move them in reverse order. Saves the need to 
 // create the temporary new_boxes_left and new_boxes_right sets.
-static TEST: bool = false;
-
 use std::fmt;
 use std::iter::Peekable;
 use std::collections::HashSet;
 use aoc::utils::Point;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202415.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202415.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 struct Warehouse {
     x: i32,
@@ -181,8 +174,8 @@ fn score_warehouse(warehouse: &Warehouse) -> i32 {
     score
 }
 
-pub fn solve_202415_2() -> String {
-    let mut lines = INPUT.lines().peekable();
+pub fn solve_202415_2(input: &str) -> String {
+    let mut lines = input.lines().peekable();
     let mut warehouse = get_warehouse(&mut lines);
     // println!("{:?}", warehouse);
 

@@ -1,10 +1,3 @@
-static TEST: bool = false;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202403.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202403.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
 use regex::Regex;
 
 fn parse_mul_pairs(input: &str) -> Vec<(i32, i32)> {
@@ -22,8 +15,8 @@ fn parse_mul_pairs(input: &str) -> Vec<(i32, i32)> {
     pairs
 }
 
-pub fn solve_202403_1() -> String {
-    let pairs = parse_mul_pairs(INPUT);
+pub fn solve_202403_1(input: &str) -> String {
+    let pairs = parse_mul_pairs(input);
     // println!("{:?}", pairs);
     let sol: i32 = pairs.iter().map(|(n, m)| n * m).sum();
     // println!("{:?}", sol);

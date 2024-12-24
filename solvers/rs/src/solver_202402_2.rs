@@ -1,10 +1,3 @@
-static TEST: bool = false;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202402.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202402.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
 fn is_safe(vec: &[i32]) -> bool {
     vec.windows(2)
         .map(|pair| pair[1] - pair[0]) // Compute the differences
@@ -34,8 +27,8 @@ fn missing_element_iterator(vec: Vec<i32>) -> impl Iterator<Item = Vec<i32>> {
     })
 }
 
-pub fn solve_202402_2() -> String {
-    let sol = INPUT
+pub fn solve_202402_2(input: &str) -> String {
+    let sol = input
         .lines()
         .map(|line| {
             let vec: Vec<i32> = line.split_whitespace().map(|s| s.parse::<i32>().unwrap()).collect();

@@ -1,11 +1,4 @@
-static TEST: bool = false;
-
 use std::iter;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202409.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202409.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn read_from_front<'a>(disk: &'a str) -> impl Iterator<Item = Option<i32>> + 'a {
     let mut chars = disk.chars();
@@ -80,8 +73,8 @@ fn expand(disk: &str) -> Vec<i32> {
     compressed_disk
 }
 
-pub fn solve_202409_1() -> String {
-    let disk = expand(INPUT.trim());
+pub fn solve_202409_1(input: &str) -> String {
+    let disk = expand(input.trim());
     // println!("{:?}", disk);
     let sol = disk.iter().enumerate().fold(0 as i64, |acc, (i, x)| acc + (x * i as i32) as i64);
     // println!("{}", sol);

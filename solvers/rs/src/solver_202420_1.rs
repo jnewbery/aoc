@@ -1,16 +1,8 @@
-static TEST: bool = false;
-
 use aoc::utils::Point;
 use std::collections::{HashSet, HashMap};
 
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202420.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202420.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
 const DIRECTIONS: [(i32, i32); 4] = [(0, -1), (0, 1), (-1, 0), (1, 0)];
 const TWO_AWAY: [(i32, i32); 8] = [(0, -2), (1, -1), (2, 0), (1, 1), (0, 2), (-1, 1), (-2, 0), (-1, -1)];
-const MIN_SAVING: i32 = if TEST { 1 } else {100};
 
 struct Maze {
     width: i32,
@@ -70,8 +62,9 @@ fn get_maze(lines: std::str::Lines) -> Maze {
     maze
 }
 
-pub fn solve_202420_1() -> String {
-    let maze = get_maze(INPUT.lines());
+pub fn solve_202420_1(input: &str) -> String {
+    let min_saving = if input.len() < 1000 { 1 } else { 100 };
+    let maze = get_maze(input.lines());
     let mut distances: HashMap<Point, i32> = HashMap::new();
     distances.insert(maze.end, 0);
     // _print_maze(&maze, &distances);
@@ -121,7 +114,7 @@ pub fn solve_202420_1() -> String {
     //     println!("{:?}", cheat);
     // }
 
-    let sol = cheats.iter().filter(|(_, _, distance)| { *distance >= MIN_SAVING }).count();
+    let sol = cheats.iter().filter(|(_, _, distance)| { *distance >= min_saving }).count();
     // println!("{:?}", sol);
     sol.to_string()
 }

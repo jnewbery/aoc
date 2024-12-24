@@ -1,12 +1,5 @@
-static TEST: bool = false;
-
 use std::collections::HashMap;
 use aoc::utils::Point;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202421.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202421.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 fn get_pairs(code: &str) -> Vec<(char, char)> {
     std::iter::once(('A', code.chars().next().unwrap()))  // Arm starts by pointing at 'A'
@@ -91,7 +84,7 @@ fn type_directional_code(code: &str, numeric_keypad: &HashMap<char, Point>) -> S
 }
 
 
-pub fn solve_202421_1() -> String {
+pub fn solve_202421_1(input: &str) -> String {
     let mut numeric_keypad: HashMap<char, Point> = HashMap::new();
     for i in 1..=9 {
         numeric_keypad.insert((i + '0' as u8) as char, Point { x: ((i - 1) % 3) as i32, y: ((i-1) / 3 + 1) as i32 });
@@ -108,7 +101,7 @@ pub fn solve_202421_1() -> String {
     directional_keypad.insert('>', Point { x: 2, y: 0 });
     // println!("{:?}", directional_keypad);
 
-    let lines = INPUT.lines();
+    let lines = input.lines();
     let mut score = 0;
     for line in lines {
         let numeric_part = line.chars().filter(|c| c.is_numeric()).collect::<String>().parse::<i32>().unwrap();

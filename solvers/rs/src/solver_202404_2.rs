@@ -1,11 +1,4 @@
-static TEST: bool = false;
-
 use itertools::iproduct;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202404.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202404.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
 
 // Define the diagonal directions, starting from the top-left corner and going clockwise.
 static DIAGONALS: &[(i32, i32)] = &[ 
@@ -57,8 +50,8 @@ fn valid(grid: &Vec<Vec<char>>, x: usize, y: usize) -> i32 {
     0
 }
 
-pub fn solve_202404_2() -> String {
-    let grid: Vec<Vec<char>> = INPUT.lines()
+pub fn solve_202404_2(input: &str) -> String {
+    let grid: Vec<Vec<char>> = input.lines()
         .map(|line| line.chars().collect())
         .collect();
 

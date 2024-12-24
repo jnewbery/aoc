@@ -1,17 +1,7 @@
-static TEST: bool = false;
-
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::collections::HashSet;
 use aoc::utils::Point;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/202418.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/202418.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
-const GRID_SIZE: usize = if TEST {7} else {71};
-const NUM_BYTES: u32 = if TEST {12} else {1024};
 
 const DIRECTIONS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
@@ -35,7 +25,7 @@ impl PartialOrd for State {
     }
 }
 
-fn shortest_path(walls: &HashSet<Point>) -> i32 {
+fn shortest_path(walls: &HashSet<Point>, grid_size: usize) -> i32 {
     let mut visited: HashSet<Point> = HashSet::new();
     let mut heap = BinaryHeap::new();
     heap.push(State { steps: 0, point: Point { x: 0, y: 0 } });
@@ -52,22 +42,24 @@ fn shortest_path(walls: &HashSet<Point>) -> i32 {
         }
         visited.insert(point);
 
-        if point == (Point { x: GRID_SIZE as i32 - 1, y: GRID_SIZE as i32 - 1 }) {
+        if point == (Point { x: grid_size as i32 - 1, y: grid_size as i32 - 1 }) {
             return steps;
         }
 
         for dir in DIRECTIONS {
             let next = Point { x: point.x + dir.0, y: point.y + dir.1 };
-            if !walls.contains(&next) && !visited.contains(&next) && next.x >= 0 && next.y >= 0 && next.x < GRID_SIZE as i32 && next.y < GRID_SIZE as i32 {
+            if !walls.contains(&next) && !visited.contains(&next) && next.x >= 0 && next.y >= 0 && next.x < grid_size as i32 && next.y < grid_size as i32 {
                 heap.push(State { steps: steps + 1, point: next });
             }
         }
     }
 }
 
-pub fn solve_202418_1() -> String {
-    let walls: HashSet<Point> = INPUT.lines()
-        .take(NUM_BYTES as usize) // Process only GRID_SIZE lines
+pub fn solve_202418_1(input: &str) -> String {
+    let grid_size = if input[0..3] == *"5,4" { 7 } else { 71 };
+    let num_bytes = if input[0..3] == *"5,4" { 12 } else { 1024 };
+    let walls: HashSet<Point> = input.lines()
+        .take(num_bytes as usize) // Process only grid_size lines
         .map(|line| {
             let coords: Vec<u32> = line.split(',').map(|s| s.parse::<u32>().unwrap()).collect();
             Point {x: coords[0] as i32, y: coords[1] as i32}
@@ -75,7 +67,7 @@ pub fn solve_202418_1() -> String {
         .collect();
     // println!("{:?}", walls);
 
-    let result = shortest_path(&walls);
+    let result = shortest_path(&walls, grid_size);
     // println!("{}", result);
     result.to_string()
 }

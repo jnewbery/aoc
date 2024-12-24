@@ -1,12 +1,5 @@
-static TEST: bool = false;
-
-static _TEST_INPUT: &str = include_str!("../../../inputs/test/201501.txt");
-static _INPUT: &str = include_str!("../../../inputs/full/201501.txt");
-
-const INPUT: &str = if TEST { _TEST_INPUT } else { _INPUT };
-
-pub fn solve_201501_2() -> String {
-    if let Some((pos, _)) = INPUT.chars().enumerate().scan(0, |floor, (pos, c)| {
+pub fn solve_201501_2(input: &str) -> String {
+    if let Some((pos, _)) = input.chars().enumerate().scan(0, |floor, (pos, c)| {
         match c {
             '(' => *floor += 1,
             ')' => *floor -= 1,
