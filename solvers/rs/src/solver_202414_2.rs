@@ -26,7 +26,10 @@ fn row_has_more_than_29(row: &Vec<bool>) -> bool {
 }
 
 pub fn solve_202414_2(input: &str) -> String {
-    let grid_size: Point = if input[0..3] == *"p=0" { (11, 7) } else { (101, 103) };  // hardcoded for the input
+    if input.len() < 1000 {
+        return "No part 2".to_string();
+    }
+    let grid_size: Point = { (101, 103) };
     let mut robots: Vec<Robot> = Vec::new();
     for line in input.lines() {
         let numbers = line.split(|c: char| !c.is_numeric() && c != '-').filter_map(|s| s.parse::<i32>().ok()).collect::<Vec<i32>>();
@@ -51,5 +54,5 @@ pub fn solve_202414_2(input: &str) -> String {
             return i.to_string();
         }
     }
-    return "No solution".to_string();
+    panic!("No solution found");
 }

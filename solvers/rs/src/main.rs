@@ -48,6 +48,15 @@ pub mod solver_202419_2;
 pub mod solver_202420_1;
 pub mod solver_202420_2;
 pub mod solver_202421_1;
+// pub mod solver_202421_2;
+// pub mod solver_202422_1;
+// pub mod solver_202422_2;
+// pub mod solver_202423_1;
+// pub mod solver_202423_2;
+// pub mod solver_202424_1;
+// pub mod solver_202424_2;
+pub mod solver_202425_1;
+pub mod solver_202425_2;
 
 use crate::solver_201501_1::solve_201501_1;
 use crate::solver_201501_2::solve_201501_2;
@@ -92,6 +101,15 @@ use crate::solver_202419_2::solve_202419_2;
 use crate::solver_202420_1::solve_202420_1;
 use crate::solver_202420_2::solve_202420_2;
 use crate::solver_202421_1::solve_202421_1;
+// use crate::solver_202421_2::solve_202421_2;
+// use crate::solver_202422_1::solve_202422_1;
+// use crate::solver_202422_2::solve_202422_2;
+// use crate::solver_202423_1::solve_202423_1;
+// use crate::solver_202423_2::solve_202423_2;
+// use crate::solver_202424_1::solve_202424_1;
+// use crate::solver_202424_2::solve_202424_2;
+use crate::solver_202425_1::solve_202425_1;
+use crate::solver_202425_2::solve_202425_2;
 
 #[derive(Parser, Debug)]
 #[command(name = "AoC solver")]
@@ -154,6 +172,15 @@ fn get_functions() -> HashMap<std::string::String, fn(&str) -> std::string::Stri
     functions.insert("202420_1".to_string(), solve_202420_1);
     functions.insert("202420_2".to_string(), solve_202420_2);
     functions.insert("202421_1".to_string(), solve_202421_1);
+    // functions.insert("202421_2".to_string(), solve_202421_2);
+    // functions.insert("202422_1".to_string(), solve_202422_1);
+    // functions.insert("202422_2".to_string(), solve_202422_2);
+    // functions.insert("202423_1".to_string(), solve_202423_1);
+    // functions.insert("202423_2".to_string(), solve_202423_2);
+    // functions.insert("202424_1".to_string(), solve_202424_1);
+    // functions.insert("202424_2".to_string(), solve_202424_2);
+    functions.insert("202425_1".to_string(), solve_202425_1);
+    functions.insert("202425_2".to_string(), solve_202425_2);
     functions
 }
 
