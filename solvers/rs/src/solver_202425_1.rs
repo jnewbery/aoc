@@ -1,20 +1,20 @@
 use itertools::Itertools;
 
 pub fn solve_202425_1(input: &str) -> String {
-    let mut locks: Vec<[u32; 5]> = Vec::new();
-    let mut keys: Vec<[u32; 5]> = Vec::new();
+    let mut locks: Vec<u64> = Vec::new();
+    let mut keys: Vec<u64> = Vec::new();
     for schematic in input.lines().into_iter().chunks(8).into_iter() {
-        let mut lock_key = [0; 5];
+        let mut lock_key = 0 as u64;
         for (i, row) in schematic.collect::<Vec<&str>>().iter().enumerate() {
             // println!("{:?}", row);
             for (j, c) in row.chars().enumerate() {
                 if c == '#' {
-                    lock_key[j] += 2u32.pow(i as u32);
+                    lock_key += 2u64.pow((i * 8 + j) as u32);
                 }
             }
         }
         // println!("{:?}", lock_key);
-        if lock_key[0] & 2u32.pow(6) != 0 {
+        if lock_key & 1 != 0 {
             locks.push(lock_key);
         } else {
             keys.push(lock_key);
@@ -25,7 +25,7 @@ pub fn solve_202425_1(input: &str) -> String {
     // println!("Keys\n{:?}", keys);
     let mut sol = 0;
     for (lock, key) in locks.iter().cartesian_product(keys.iter()) {
-        if (0..5).all(|i| lock[i] & key[i] == 0) {
+        if lock & key == 0 {
             sol += 1;
         }
     }
