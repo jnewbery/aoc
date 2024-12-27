@@ -1,7 +1,8 @@
-use std::collections::{HashMap, HashSet};
+use fxhash::{FxHashMap, FxHashSet};
 
-fn expand_subsets(subsets: &HashSet<Vec<String>>, pairs: &HashMap<String, Vec<String>>) -> HashSet<Vec<String>> {
-    let mut new_subsets = HashSet::new();
+
+fn expand_subsets(subsets: &FxHashSet<Vec<String>>, pairs: &FxHashMap<String, Vec<String>>) -> FxHashSet<Vec<String>> {
+    let mut new_subsets = FxHashSet::default();
     for subset in subsets.iter() {
         for next in pairs.get(&subset[0]).unwrap() {
             if subset.contains(next) {
@@ -19,8 +20,8 @@ fn expand_subsets(subsets: &HashSet<Vec<String>>, pairs: &HashMap<String, Vec<St
 }
 
 pub fn solve(input: &str) -> String {
-    let mut pairs: HashMap<String, Vec<String>> = HashMap::new();
-    let mut best_subsets: HashSet<Vec<String>> = HashSet::new();
+    let mut pairs: FxHashMap<String, Vec<String>> = FxHashMap::default();
+    let mut best_subsets: FxHashSet<Vec<String>> = FxHashSet::default();
     for line in input.lines() {
         // println!("{:?}", line);
         let mut parts = line.split("-");
