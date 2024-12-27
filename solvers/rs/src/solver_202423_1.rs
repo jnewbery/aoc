@@ -21,7 +21,8 @@ pub fn solve(input: &str) -> String {
             }
         }
     }
-    // println!("{:?}", pairs);
-    // println!("{:?}", trios);
+    // println!("{:?} terminals", pairs.keys().len());
+    // println!("{:?} pairs", pairs.values().map(Vec::len).sum::<usize>());
+    // println!("{:?} trios", trios.len());
     trios.len().to_string()
 }
