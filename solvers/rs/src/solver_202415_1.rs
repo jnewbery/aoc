@@ -140,7 +140,7 @@ fn score_grid(grid: &Vec<Vec<Cell>>) -> usize {
     score
 }
 
-pub fn solve_202415_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut lines = input.lines();
     let (mut grid, mut reindeer) = get_grid(&mut lines);
 

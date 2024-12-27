@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn solve_202401_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     // Parse lines into hashmaps of counts
     let (counts1, counts2) = input.lines().fold((HashMap::new(), HashMap::new()), |(mut acc1, mut acc2), line| {
         let parts: Vec<i32> = line

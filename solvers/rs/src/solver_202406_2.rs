@@ -58,7 +58,7 @@ fn makes_loop(lines: &Vec<&str>, loc: Location, dir: Direction, obstacle: Locati
     }
 }
 
-pub fn solve_202406_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let lines = input.lines().collect::<Vec<&str>>();
     let mut loc = find_start_location(&lines);
     let mut dir = DIRECTIONS[0];

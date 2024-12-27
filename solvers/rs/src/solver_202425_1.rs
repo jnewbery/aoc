@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-pub fn solve_202425_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut locks: Vec<u64> = Vec::new();
     let mut keys: Vec<u64> = Vec::new();
     for schematic in input.lines().into_iter().chunks(8).into_iter() {

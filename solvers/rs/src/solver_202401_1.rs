@@ -1,4 +1,4 @@
-pub fn solve_202401_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     // Parse lines into lists
     let mut lists: Vec<Vec<i32>> = vec![vec![], vec![]];
     input.lines().for_each(|line| {

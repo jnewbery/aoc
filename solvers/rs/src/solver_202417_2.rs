@@ -54,7 +54,7 @@ fn run_program(program: &Vec<u64>, mut reg_a: u64, mut reg_b: u64, mut reg_c: u6
     output
 }
 
-pub fn solve_202417_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut lines = input.lines();
 
     // registers

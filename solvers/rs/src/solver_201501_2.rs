@@ -1,4 +1,4 @@
-pub fn solve_201501_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     if let Some((pos, _)) = input.chars().enumerate().scan(0, |floor, (pos, c)| {
         match c {
             '(' => *floor += 1,

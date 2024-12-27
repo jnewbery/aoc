@@ -50,7 +50,7 @@ fn valid(grid: &Vec<Vec<char>>, x: usize, y: usize) -> i32 {
     0
 }
 
-pub fn solve_202404_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let grid: Vec<Vec<char>> = input.lines()
         .map(|line| line.chars().collect())
         .collect();

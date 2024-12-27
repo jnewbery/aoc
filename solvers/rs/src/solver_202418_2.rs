@@ -59,7 +59,7 @@ fn shortest_path(walls: &HashSet<Point>, grid_size: usize) -> bool {
     }
 }
 
-pub fn solve_202418_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let grid_size = if input[0..3] == *"5,4" { 7 } else { 71 };
     let walls: Vec<Point> = input.lines()
         .map(|line| {

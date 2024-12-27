@@ -174,7 +174,7 @@ fn score_warehouse(warehouse: &Warehouse) -> i32 {
     score
 }
 
-pub fn solve_202415_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut lines = input.lines().peekable();
     let mut warehouse = get_warehouse(&mut lines);
     // println!("{:?}", warehouse);

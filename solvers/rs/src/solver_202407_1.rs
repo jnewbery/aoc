@@ -28,7 +28,7 @@ fn test_line(line: &str) -> i64 {
     0
 }
 
-pub fn solve_202407_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let sol = input.lines().map(|line| test_line(line)).sum::<i64>();
     // println!("{:?}", sol);
     sol.to_string()

@@ -31,7 +31,7 @@ fn find_start_location(grid: &[&str]) -> Location {
         .expect("No start location found")
 }
 
-pub fn solve_202406_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let lines = input.lines().collect::<Vec<&str>>();
     let mut location = find_start_location(&lines);
     let mut dir = DIRECTIONS[0];

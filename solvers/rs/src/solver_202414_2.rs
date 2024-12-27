@@ -25,7 +25,7 @@ fn row_has_more_than_29(row: &Vec<bool>) -> bool {
     row.iter().filter(|cell| **cell).count() >= 20
 }
 
-pub fn solve_202414_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     if input.len() < 1000 {
         return "No part 2".to_string();
     }

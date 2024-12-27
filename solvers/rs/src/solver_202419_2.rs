@@ -19,7 +19,7 @@ fn make_designs<'a>(towels: &HashSet<&'a str>, memoized: &mut HashMap<&'a str, u
     ways
 }
 
-pub fn solve_202419_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut lines = input.lines();
     let towels: HashSet<&str> = lines
         .next()

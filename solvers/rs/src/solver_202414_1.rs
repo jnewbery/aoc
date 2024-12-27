@@ -8,7 +8,7 @@ fn positive_modulo(x: i32, n: i32) -> i32 {
     ((x % n) + n) % n
 }
 
-pub fn solve_202414_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let grid_size: Point = if input[0..3] == *"p=0" { (11, 7) } else { (101, 103) };  // hardcoded for the input
     let mut quads = HashMap::new();
     for line in input.lines() {

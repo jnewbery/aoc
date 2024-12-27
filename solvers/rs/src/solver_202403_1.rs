@@ -15,7 +15,7 @@ fn parse_mul_pairs(input: &str) -> Vec<(i32, i32)> {
     pairs
 }
 
-pub fn solve_202403_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let pairs = parse_mul_pairs(input);
     // println!("{:?}", pairs);
     let sol: i32 = pairs.iter().map(|(n, m)| n * m).sum();

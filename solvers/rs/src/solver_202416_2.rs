@@ -151,7 +151,7 @@ fn shortest_path(maze: &mut Maze) {
     }
 }
 
-pub fn solve_202416_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut lines = input.lines().peekable();
     let mut maze = get_maze(&mut lines);
     // println!("{:?}", maze);

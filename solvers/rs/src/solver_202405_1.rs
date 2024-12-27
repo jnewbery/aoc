@@ -46,7 +46,7 @@ fn test_single_line(line: &str, constraints: &HashMap<i32, HashSet<i32>>) -> i32
     values[(values.len() - 1) / 2]
 }
 
-pub fn solve_202405_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut lines = input.lines();
 
     // Call the function to process lines until a blank line is found

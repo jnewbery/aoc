@@ -66,7 +66,7 @@ fn test_single_line(line: &str, pairs: &Vec<(i32, i32)>) -> i32 {
     ordered_values[(ordered_values.len() - 1) / 2]
 }
 
-pub fn solve_202405_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut lines = input.lines();
 
     // Call the function to process lines until a blank line is found

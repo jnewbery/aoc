@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub fn solve_202403_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     const REGEX_PATTERN: &str = r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)";
     let re = Regex::new(REGEX_PATTERN).unwrap();
 

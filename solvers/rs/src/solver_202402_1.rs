@@ -18,7 +18,7 @@ fn is_safe(vec: &Vec<i32>) -> bool {
         .is_ok()
 }
 
-pub fn solve_202402_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let ret = input
         .lines()
         .map(|line| {

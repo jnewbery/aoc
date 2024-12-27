@@ -34,7 +34,7 @@ fn climb(cells: &mut Vec<Vec<Cell>>, x: i32, y: i32) -> i32 {
     rating
 }
 
-pub fn solve_202410_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut cells: Vec<Vec<Cell>> = input.lines().map(|line| {
         line.chars().map(|c| Cell { height: c.to_digit(10).unwrap() as i32, rating: None }).collect()
     }).collect();

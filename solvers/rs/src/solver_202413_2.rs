@@ -1,4 +1,4 @@
-fn solve(lines: &mut std::str::Lines) -> i64 {
+fn solve_line(lines: &mut std::str::Lines) -> i64 {
     // println!("Solving puzzle: {:?}", lines);
     let a = lines.next().unwrap().split(|c: char| !c.is_numeric()).filter_map(|s| s.parse::<i64>().ok()).collect::<Vec<i64>>();
     let b = lines.next().unwrap().split(|c: char| !c.is_numeric()).filter_map(|s| s.parse::<i64>().ok()).collect::<Vec<i64>>();
@@ -38,10 +38,10 @@ fn solve(lines: &mut std::str::Lines) -> i64 {
     3 * a_buttons + b_buttons
 }
 
-pub fn solve_202413_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let puzzles = &mut input.split("\n\n").map(|line| line.lines());
 
-    let sol = puzzles.map(|mut lines| { solve(&mut lines) }).sum::<i64>();
+    let sol = puzzles.map(|mut lines| { solve_line(&mut lines) }).sum::<i64>();
     // println!("{}", sol);
     sol.to_string()
 }

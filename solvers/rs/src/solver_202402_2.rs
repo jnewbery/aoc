@@ -27,7 +27,7 @@ fn missing_element_iterator(vec: Vec<i32>) -> impl Iterator<Item = Vec<i32>> {
     })
 }
 
-pub fn solve_202402_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let sol = input
         .lines()
         .map(|line| {

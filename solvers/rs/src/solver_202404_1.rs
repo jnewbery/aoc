@@ -29,7 +29,7 @@ fn dfs(grid: &Vec<Vec<char>>, x: usize, y: usize, target: &str, dir: &(i32, i32)
     dfs(grid, (x as i32 + dir.0) as usize, (y as i32 + dir.1) as usize, &target[1..], dir)
 }
 
-pub fn solve_202404_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let target = "XMAS";
     let grid: Vec<Vec<char>> = input.lines()
         .map(|line| line.chars().collect())

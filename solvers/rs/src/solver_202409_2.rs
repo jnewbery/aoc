@@ -20,7 +20,7 @@ fn files_to_blocks(files: &Vec<File>) -> Vec<Option<i32>> {
     blocks
 }
 
-pub fn solve_202409_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut files: Vec<File> = Vec::new();
     let mut spaces: Vec<File> = Vec::new();
     let mut id = 0;

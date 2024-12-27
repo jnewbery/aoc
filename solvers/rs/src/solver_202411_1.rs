@@ -36,7 +36,7 @@ fn blink_n_times(stones: &HashMap<i64, i64>, n: i64) -> i64 {
     blink_n_times(&new_stones, n - 1)
 }
 
-pub fn solve_202411_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     // Get count of stones from input
     let stones = input.split(|c: char| !c.is_numeric() && c != '-')
         .filter_map(|s| s.parse::<i64>().ok()).fold(HashMap::new(), |mut acc, s| {

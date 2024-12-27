@@ -55,7 +55,7 @@ fn shortest_path(walls: &HashSet<Point>, grid_size: usize) -> i32 {
     }
 }
 
-pub fn solve_202418_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let grid_size = if input[0..3] == *"5,4" { 7 } else { 71 };
     let num_bytes = if input[0..3] == *"5,4" { 12 } else { 1024 };
     let walls: HashSet<Point> = input.lines()

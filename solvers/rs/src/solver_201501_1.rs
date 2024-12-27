@@ -1,4 +1,4 @@
-pub fn solve_201501_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let sol = input.trim().chars().map(|c| match c {
         '(' => 1,
         ')' => -1,

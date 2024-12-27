@@ -38,7 +38,7 @@ fn walk(grid: &Vec<Vec<char>>, visited: &mut HashSet<Coord>, coord: Coord, crop:
     })
 }
 
-pub fn solve_202412_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     // Parse the square of chars
     let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 

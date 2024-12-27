@@ -114,7 +114,7 @@ fn solve_line(line: &str, numeric_keypad: &HashMap<char, Point>, directional_key
     numeric_part * paths_lens as i32
 }
 
-pub fn solve_202421_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let mut numeric_keypad: HashMap<char, Point> = HashMap::new();
     for i in 1..=9 {
         numeric_keypad.insert((i + '0' as u8) as char, Point { x: ((i - 1) % 3) as i32, y: ((i-1) / 3 + 1) as i32 });

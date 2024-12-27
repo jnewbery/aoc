@@ -78,7 +78,7 @@ fn count_sides(fences: &mut HashSet<Fence>) -> i32 {
     sides
 }
 
-pub fn solve_202412_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     // Parse the square of chars
     let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
     let mut visited = HashSet::new();

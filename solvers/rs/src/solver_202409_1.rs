@@ -73,7 +73,7 @@ fn expand(disk: &str) -> Vec<i32> {
     compressed_disk
 }
 
-pub fn solve_202409_1(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let disk = expand(input.trim());
     // println!("{:?}", disk);
     let sol = disk.iter().enumerate().fold(0 as i64, |acc, (i, x)| acc + (x * i as i32) as i64);

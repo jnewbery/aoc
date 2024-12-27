@@ -34,7 +34,7 @@ fn get_antinodes_for_freq(antennae: &[(i32, i32)], bounds: (i32, i32)) -> HashSe
         .collect()
 }
 
-pub fn solve_202408_2(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     let lines: Vec<&str> = input.lines().collect();
     let bounds = (lines[0].len() as i32, lines.len() as i32);
     let antennae = parse_map(lines);
