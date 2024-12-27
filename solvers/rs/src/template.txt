@@ -1,4 +1,4 @@
-fn main(input: &str) -> String {
+pub fn solve(input: &str) -> String {
     // println!("{}", input);
     return input.to_string();
 }

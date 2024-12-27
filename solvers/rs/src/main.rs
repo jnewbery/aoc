@@ -49,7 +49,7 @@ pub mod solver_202420_1;
 pub mod solver_202420_2;
 pub mod solver_202421_1;
 // pub mod solver_202421_2;
-// pub mod solver_202422_1;
+pub mod solver_202422_1;
 // pub mod solver_202422_2;
 // pub mod solver_202423_1;
 // pub mod solver_202423_2;
@@ -120,7 +120,7 @@ fn get_functions() -> HashMap<std::string::String, fn(&str) -> std::string::Stri
     functions.insert("202420_2".to_string(), solver_202420_2::solve);
     functions.insert("202421_1".to_string(), solver_202421_1::solve);
     // functions.insert("202421_2".to_string(), solver_202421_2::solve);
-    // functions.insert("202422_1".to_string(), solver_202422_1::solve);
+    functions.insert("202422_1".to_string(), solver_202422_1::solve);
     // functions.insert("202422_2".to_string(), solver_202422_2::solve);
     // functions.insert("202423_1".to_string(), solver_202423_1::solve);
     // functions.insert("202423_2".to_string(), solver_202423_2::solve);
