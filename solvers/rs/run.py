@@ -109,33 +109,44 @@ def run_solvers(years: list[int], days: list[int], parts: list[int], test: bool)
     return results
 
 def print_year_results(year: int, results: list[ExecutionResult], console: Console) -> None:
+    part1s = [result for result in results if result.part == 1]
+    part2s = [result for result in results if result.part == 2]
     table = Table(title=f"{year} Results" , row_styles=["", "on grey23"])
     table.add_column("Day", style="bold")
-    table.add_column("Part 1")
-    table.add_column("(time)", style="italic", header_style="italic")
-    table.add_column("Part 2")
-    table.add_column("(time)", style="italic", header_style="italic")
+    if part1s:
+        table.add_column("Part 1")
+        table.add_column("(time)", style="italic", header_style="italic")
+    if part2s:
+        table.add_column("Part 2")
+        table.add_column("(time)", style="italic", header_style="italic")
 
     for day in {result.day for result in results}: 
         part1 = next((result for result in results if result.day == day and result.part == 1), None)
         part2 = next((result for result in results if result.day == day and result.part == 2), None)
         if (part1 == None or part1.result == Result.NOT_IMPLEMENTED) and (part2 == None or part2.result == Result.NOT_IMPLEMENTED):
             continue
-        table.add_row(
-            f"Day {day}",
-            part1.result_str if part1 else f"[bold blue]Unexecuted",
-            format_execution_time(part1.execution_time_micro_seconds) if part1 else "",
-            part2.result_str if part2 else f"[bold blue]Unexecuted",
-            format_execution_time(part2.execution_time_micro_seconds) if part2 else ""
-        )
+        row = [f"Day {day}"]
+        if part1s:
+            row.append(part1.result_str if part1 else f"[bold blue]Unexecuted")
+            row.append(format_execution_time(part1.execution_time_micro_seconds) if part1 else "")
+        if part2s:
+            row.append(part2.result_str if part2 else f"[bold blue]Unexecuted")
+            row.append(format_execution_time(part2.execution_time_micro_seconds) if part2 else "")
+        table.add_row(*row)
+
+    if table.row_count > 1:
+        # Add a total row
+        table.add_section()
+        total_row = ["TOTAL"]
+        if part1s:
+            total_row.append(f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in part1s) else f"[bold blue]INCOMPLETE")
+            total_row.append(format_execution_time(sum([result.execution_time_micro_seconds for result in part1s if result.execution_time_micro_seconds is not None])))
+        if part2s:
+            total_row.append(f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in part2s) else f"[bold blue]INCOMPLETE")
+            total_row.append(format_execution_time(sum([result.execution_time_micro_seconds for result in part2s if result.execution_time_micro_seconds is not None])))
+        table.add_row(*total_row)
 
     if table.row_count > 0:
-        table.add_section()
-        part1_outcome = f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in results if result.part == 1) else f"[bold blue]INCOMPLETE"
-        total_part1_times = sum([result.execution_time_micro_seconds for result in results if result.part == 1 and result.execution_time_micro_seconds is not None])
-        part2_outcome = f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in results if result.part == 2) else f"[bold blue]INCOMPLETE"
-        total_part2_times = sum([result.execution_time_micro_seconds for result in results if result.part == 2 and result.execution_time_micro_seconds is not None])
-        table.add_row("TOTAL", part1_outcome, format_execution_time(total_part1_times), part2_outcome, format_execution_time(total_part2_times))
         console.print(table)
 
 def print_results(results: list[ExecutionResult]) -> None:
