@@ -88,14 +88,37 @@ pub fn solve(input: &str) -> String {
     // println!("{:?}", wires);
     // println!("{:?}", wires.len());
 
-    let mut z_wires: Vec<(String, u32)> = wires.iter().filter(|(key, _)| key.starts_with("z")).map(|(k, v)| (k.clone(), match v {
+    let all_wires: Vec<(String, u32)> = wires.iter().map(|(k, v)| (k.clone(), match v {
         Input::WireVariant(val) => if *val { 1 } else { 0 },
         Input::GateVariant(_) => panic!("Invalid input"),
     })).collect::<Vec<(String, u32)>>();
+    let mut x_wires = all_wires.iter().filter(|(key, _)| key.starts_with("x")).collect::<Vec<_>>();
+    x_wires.sort_by_key(|(key, _)| key.clone());
+    x_wires.reverse();
+    // println!(" {}", x_wires.iter().map(|(_, val)| format!("{}", val)).collect::<Vec<String>>().join(""));
+    let x_binary = x_wires.iter().map(|(_, val)| format!("{}", val)).collect::<Vec<String>>().join("");
+    let x = u64::from_str_radix(x_binary.as_str(), 2).unwrap();
+    // println!("x = {:?}", x);
+
+    let mut y_wires = all_wires.iter().filter(|(key, _)| key.starts_with("y")).collect::<Vec<_>>();
+    y_wires.sort_by_key(|(key, _)| key.clone());
+    y_wires.reverse();
+    // println!(" {}", y_wires.iter().map(|(_, val)| format!("{}", val)).collect::<Vec<String>>().join(""));
+    let y_binary = y_wires.iter().map(|(_, val)| format!("{}", val)).collect::<Vec<String>>().join("");
+    let y = u64::from_str_radix(y_binary.as_str(), 2).unwrap();
+    // println!("y = {:?}", y);
+    // println!("x + y = {:?}", x + y);
+    println!("{:b}", x + y);
+
+
+    let mut z_wires = all_wires.iter().filter(|(key, _)| key.starts_with("z")).collect::<Vec<_>>();
     z_wires.sort_by_key(|(key, _)| key.clone());
     z_wires.reverse();
-    // println!("{:?}", z_wires.iter().map(|(_, val)| format!("{}", val)).collect::<Vec<String>>().join(""));
-    let sol = z_wires.iter().fold(0 as u64, |acc, (_, val)| 2 * acc + (*val as u64));
+    println!("{}", z_wires.iter().map(|(_, val)| format!("{}", val)).collect::<Vec<String>>().join(""));
+    let z_binary = z_wires.iter().map(|(_, val)| format!("{}", val)).collect::<Vec<String>>().join("");
+    let z = u64::from_str_radix(z_binary.as_str(), 2).unwrap();
+    // println!("z = {:?}", z);
+    // let sol = z_wires.iter().fold(0 as u64, |acc, (_, val)| 2 * acc + (*val as u64));
 
-    return sol.to_string();
+    return z.to_string();
 }
