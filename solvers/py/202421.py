@@ -71,10 +71,10 @@ class Solution(BaseSolution):
     def part2(self, ll: list[str]) -> str:
         sol = 0
         for l in ll:
-            len = solve_string(l, 26, True) 
+            path_len = solve_string(l, 26, True) 
             numeric_part = int("".join([c for c in l if c.isnumeric()]))
-            # print(f"Length: {len} * {numeric_part} = {len * numeric_part}")
-            sol += len * numeric_part
+            # print(f"Length: {path_len} * {numeric_part} = {path_len * numeric_part}")
+            sol += path_len * numeric_part
         return str(sol)
 
 if __name__ == "__main__":
