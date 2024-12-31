@@ -9,8 +9,8 @@ fn get_pairs(code: &str) -> Vec<(char, char)> {
         .collect()
 }
 
-fn type_pair(pair: (Point, Point)) -> Vec<Vec<char>> {
-    // println!("{:?} -> {:?}", from, to);
+fn type_pair(pair: (Point, Point), numeric: bool) -> HashSet<String> {
+    // let mut paths = type_pair(pair);
     let from_point: Point = pair.0;
     let to_point = pair.1;
     // println!("{:?} -> {:?}", from_point, to_point);
@@ -25,93 +25,93 @@ fn type_pair(pair: (Point, Point)) -> Vec<Vec<char>> {
     } else if from_point.x > to_point.x {
         path.extend((to_point.x..from_point.x).map(|_| '<'));
     }
-    path.clone().into_iter().permutations(path.len()).unique().collect()
-}
+    let mut paths: Vec<_> = path.clone().into_iter().permutations(path.len()).unique().collect();
 
-fn type_directional_pair(pair: (Point, Point)) -> HashSet<String> {
-    let mut paths = type_pair(pair);
-
-    // Prune out paths that visit (0, 1) (ie all 'v's followed by all '>'s)
-    if pair.0.x == 0 && pair.1.y == 1 {
-        paths.retain(|p| {
-            if p.windows(2).all(|c| c == ['^', '^'] || c == ['^', '>'] || c == ['>', '>']) {
-                return false;
-            }
-            true
-        });
-    } else if pair.0.y == 1 && pair.1.x == 0 {
-        paths.retain(|p| {
-            if p.windows(2).all(|c| c == ['<', '<'] || c == ['<', 'v'] || c == ['v', 'v']) {
-                return false;
-            }
-            true
-        });
-    }
-
-    paths.into_iter().map(|p| p.into_iter().collect()).collect()
-}
-
-fn type_directional_code(codes: &HashSet<String>, directional_keypad: &HashMap<char, Point>) -> HashSet<String> {
-    let mut paths: HashSet<String> = HashSet::new();
-    for code in codes {
-        // Construct pairs of buttons that the arm must move between
-        let pairs = get_pairs(&code);
-
-        // For each pair, calculate the path the arm must take
-        let pair_paths: Vec<HashSet<String>> = pairs
-            .iter()
-            .map(|pair| type_directional_pair((*directional_keypad.get(&pair.0).unwrap(), *directional_keypad.get(&pair.1).unwrap())))
-            .collect();
-        paths.extend(pair_paths.iter().map(|set| set.iter()).multi_cartesian_product().map(|v| v.into_iter().join("A") + "A"));
-    }
-    paths
-}
-
-fn type_numeric_pair(pair: (char, char), numeric_keypad: &HashMap<char, Point>) -> HashSet<String> {
-    let from_point = *numeric_keypad.get(&pair.0).unwrap();
-    let to_point = *numeric_keypad.get(&pair.1).unwrap();
-    let pair = (from_point, to_point);
-    let mut paths = type_pair(pair);
-
-    // Prune out paths that visit (0, 0) (ie all 'v's followed by all '>'s)
-    if pair.0.x == 0 && pair.1.y == 0 {
-        paths.retain(|p| {
-            // println!("Testing {:?}", p.windows(2).collect::<Vec<_>>());
-            if p.windows(2).all(|c| c == ['v', 'v'] || c == ['v', '>'] || c == ['>', '>']) {
-                return false;
-            }
-            true
-        });
-    } else if pair.0.y == 0 && pair.1.x == 0 {
-        paths.retain(|p| {
-            // println!("Testing {:?}", p.windows(2).collect::<Vec<_>>());
-            if p.windows(2).all(|c| c == ['<', '<'] || c == ['<', '^'] || c == ['^', '^']) {
-                return false;
-            }
-            true
-        });
+    if numeric {
+        // Prune out paths that visit (0, 0) (ie all 'v's followed by all '>'s or all '<'s followed by all '^'s)
+        if pair.0.x == 0 && pair.1.y == 0 {
+            paths.retain(|p| {
+                // println!("Testing {:?}", p.windows(2).collect::<Vec<_>>());
+                if p.windows(2).all(|c| c == ['v', 'v'] || c == ['v', '>'] || c == ['>', '>']) {
+                    return false;
+                }
+                true
+            });
+        } else if pair.0.y == 0 && pair.1.x == 0 {
+            paths.retain(|p| {
+                // println!("Testing {:?}", p.windows(2).collect::<Vec<_>>());
+                if p.windows(2).all(|c| c == ['<', '<'] || c == ['<', '^'] || c == ['^', '^']) {
+                    return false;
+                }
+                true
+            });
+        }
+    } else {  // Directional
+        // Prune out paths that visit (0, 1) (ie all 'v's followed by all '>'s)
+        if pair.0.x == 0 && pair.1.y == 1 {
+            paths.retain(|p| {
+                if p.windows(2).all(|c| c == ['^', '^'] || c == ['^', '>'] || c == ['>', '>']) {
+                    return false;
+                }
+                true
+            });
+        } else if pair.0.y == 1 && pair.1.x == 0 {
+            paths.retain(|p| {
+                if p.windows(2).all(|c| c == ['<', '<'] || c == ['<', 'v'] || c == ['v', 'v']) {
+                    return false;
+                }
+                true
+            });
+        }
     }
 
     paths.into_iter().map(|p| p.into_iter().collect::<String>() + "A").collect()
 }
 
-fn solve_line(line: &str, numeric_keypad: &HashMap<char, Point>, directional_keypad: &HashMap<char, Point>) -> i32 {
-    let numeric_part = line.chars().filter(|c| c.is_numeric()).collect::<String>().parse::<i32>().unwrap();
-    let mut paths_lens = 0;
-    for pair in get_pairs(&line) {
-        // println!("{:?}", pair);
-        let strings = type_numeric_pair(pair, numeric_keypad);
-        // println!("{:?}", strings);
-        let strings = type_directional_code(&strings, &directional_keypad);
-        // println!("{:?}", strings);
-        let strings = type_directional_code(&strings, &directional_keypad);
-        // println!("{:?}", strings);
-        let sols_len = strings.into_iter().map(|s| s.len()).min().unwrap();
-        // println!("{}", sols_len);
-        paths_lens += sols_len;
+fn type_code(
+    code: &str,
+    depth: u32,
+    numeric: bool,
+    directional_keypad: &HashMap<char, Point>,
+    numeric_keypad: &HashMap<char, Point>,
+    cache: &mut HashMap<(String, u32, bool), u32>) -> u32
+{
+    // println!("type_code({}, {}, {})", code, depth, numeric);
+    if cache.contains_key(&(code.to_string(), depth, numeric)) {
+        return *cache.get(&(code.to_string(), depth, numeric)).unwrap();
+    } else if depth == 0 {
+        return code.len() as u32;
     }
-    // println!("numeric_part: {}, paths_lens: {}, score: {}", numeric_part, paths_lens, numeric_part * paths_lens as i32);
-    numeric_part * paths_lens as i32
+    let mut length = 0;
+    let pairs = get_pairs(&code);
+    for pair in pairs {
+        // println!("solving {:?}", pair);
+        let strings = if numeric {
+            type_pair((*numeric_keypad.get(&pair.0).unwrap(), *numeric_keypad.get(&pair.1).unwrap()), true)
+        } else {
+            type_pair((*directional_keypad.get(&pair.0).unwrap(), *directional_keypad.get(&pair.1).unwrap()), false)
+        };
+        // println!("strings: {:?}", strings);
+
+        length += strings.iter().map(|s| {
+            let result = type_code(&s, depth - 1, false, directional_keypad, numeric_keypad, cache);
+            result
+        }).min().unwrap();
+    }
+    cache.insert((code.to_string(), depth, numeric), length);
+    length
+}
+
+fn solve_line(
+    line: &str,
+    numeric_keypad: &HashMap<char, Point>,
+    directional_keypad: &HashMap<char, Point>,
+    cache: &mut HashMap<(String, u32, bool), u32>) -> u32
+{
+    let numeric_part = line.chars().filter(|c| c.is_numeric()).collect::<String>().parse::<u32>().unwrap();
+    let path_len = type_code(line, 3, true, directional_keypad, numeric_keypad, cache);
+    // println!("numeric_part: {}, path_len: {}, score: {}", numeric_part, path_len, numeric_part * path_len);
+    numeric_part * path_len
 }
 
 pub fn solve(input: &str) -> String {
@@ -132,10 +132,11 @@ pub fn solve(input: &str) -> String {
     // println!("{:?}", directional_keypad);
 
     let lines = input.lines();
-    let mut score = 0;
+    let mut score: u32 = 0;
+    let mut cache: HashMap<(String, u32, bool), u32> = HashMap::new();
     for line in lines {
         // println!("Solving line: {}", line);
-        score += solve_line(line, &numeric_keypad, &directional_keypad);
+        score += solve_line(line, &numeric_keypad, &directional_keypad, &mut cache);
     }
     // println!("{:?}", score);
     score.to_string()
