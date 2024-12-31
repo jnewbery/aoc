@@ -1,5 +1,3 @@
-// TODO: implement the Bron-Kerbosch algorithm to find maximal cliques
-// https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
 use fxhash::{FxHashMap, FxHashSet};
 
 fn expand_subsets(subsets: &FxHashSet<Vec<String>>, pairs: &FxHashMap<String, Vec<String>>) -> FxHashSet<Vec<String>> {
