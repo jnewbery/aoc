@@ -15,6 +15,9 @@ struct Gate {
 }
 
 pub fn solve(input: &str) -> String {
+    if input.lines().count() < 100 {
+        return "No part 2".to_string();
+    }
     let mut gates: Vec<Gate> = Vec::new();
     for line in input.lines() {
         if line.contains("->") {
