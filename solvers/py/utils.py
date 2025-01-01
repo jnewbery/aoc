@@ -27,8 +27,8 @@ class BaseSolution:
         """Get the part and input"""
         parser = argparse.ArgumentParser()
         parser.add_argument("part", choices=["1", "2"])
-        parser.add_argument("-t", "--test", action="store_true")
-        parser.add_argument("-v", "--verbose", action="store_true", help="Print solution and extra information")
+        parser.add_argument("-t", "--test", action="store_true", help="Run solver on test input. Defaults to false")
+        parser.add_argument("-v", "--verbose", action="store_true", help="Print solution and execution information as JSON. Defaults to false")
 
         args = parser.parse_args()
 

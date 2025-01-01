@@ -15,8 +15,12 @@ struct Args {
     day: Option<u32>,
     #[arg(short, long)]
     part: Option<u32>,
+
+    /// Run solver on test input. Defaults to false.
     #[arg(short, long, action = ArgAction::SetTrue)]
     test: bool,
+
+    /// Print solution and execution information as JSON. Defaults to false.
     #[arg(short, long, action = ArgAction::SetTrue)]
     verbose: bool,
 }

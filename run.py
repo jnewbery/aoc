@@ -232,7 +232,7 @@ def print_results(results: list[DayExecution], order: Order) -> None:
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-y", "--year", default=None, help=f"Which year to run. Default is to run all years")
+    parser.add_argument("-y", "--year", type=int, help=f"Which year to run. Default is to run all years")
     parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
