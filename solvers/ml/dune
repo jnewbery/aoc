@@ -1,8 +1,10 @@
 (executable
- (name solver_201901_1)
+ (name main)
+ (modules main solver_201901_1 solver_201901_2)
  (preprocess (pps ppx_blob))
  (preprocessor_deps 
    (file inputs/test/201901_1.txt)
+   (file inputs/test/201901_2.txt)
    (file inputs/full/201901.txt)
  )
  (libraries unix))

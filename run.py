@@ -178,7 +178,7 @@ def run_solvers(implementation: Implementation, years: list[int], days: list[int
                 command.append("-t")
             parts_dict = {part_number: PartExecution(command + ["-p", str(part_number)]) for part_number in parts}
         elif day_implementation == Implementation.OCAML:
-            commands = [[f"{Path(__file__).parent}/solvers/ml/_build/default/solver_{year}{day:02}_{part_number}.exe"] for part_number in parts]
+            commands = [[f"{Path(__file__).parent}/solvers/ml/_build/default/main.exe", str(year), f"{day:02}", str(part_number)] for part_number in parts]
             if test:
                 for command in commands:
                     command.append("-t")
