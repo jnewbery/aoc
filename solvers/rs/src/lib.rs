@@ -1,6 +1,7 @@
 pub mod utils {
     use std::fmt;
     
+    // A two-dimensional point
     #[derive(Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
     pub struct Point {
         pub x: i32,
@@ -16,7 +17,7 @@ pub mod utils {
         }
     }
 
-    // Implement multiplication by a scalar on points (i32, i32)
+    // Implement multiplication of a Point by a scalar
     impl std::ops::Mul<i32> for Point {
         type Output = Point;
 
@@ -25,7 +26,7 @@ pub mod utils {
         }
     }
 
-    // Implement scalar multiplication on points (i32, i32)
+    // Implement multiplication of a scalar by a Point
     impl std::ops::Mul<Point> for i32 {
         type Output = Point;
 
@@ -34,6 +35,7 @@ pub mod utils {
         }
     }
 
+    // Turning operations
     impl Point {
         pub fn turn_left(&self) -> Point {
             Point { x: -self.y, y: self.x }
@@ -44,14 +46,15 @@ pub mod utils {
         }
     }
 
-    // Implement print for maze
+    // Implement debug printing for Point
     impl fmt::Debug for Point {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "({}, {})", self.x, self.y)?;
-            Ok(()) // Return success
+            Ok(())
         }
     }
 
+    // A directional position, consisting of a location and a direction
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
     pub struct Position {
         pub location: Point,
