@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from functools import cache
 import argparse
 from datetime import date
 import enum
@@ -8,7 +9,12 @@ from subprocess import run
 from itertools import product
 from rich.console import Console
 from rich.table import Table
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import tomllib
+
+YEARS = list(range(2015, date.today().year + 1))
+DAYS = list(range(1, 26))
+PARTS = [1, 2]
 
 class EXIT_CODES(enum.Enum):
     # Must match utils.EXIT_CODES
@@ -27,8 +33,15 @@ class Order(enum.StrEnum):
     CHRONOLOGICAL = enum.auto()
     EXECUTION_TIME = enum.auto()
 
+class Implementation(enum.StrEnum):
+    PYTHON = "py"
+    RUST = "rs"
+    MANIFEST = "@"
+    NONE = enum.auto()
+
 @dataclass
-class Part:
+class PartExecution:
+    command: list[str] = field(default_factory=list)
     result: Result = Result.UNEXECUTED
     solution: str | None = None
     execution_time_micro_seconds: int | None = None
@@ -49,10 +62,11 @@ class Part:
             return f"[blue]Unexecuted"
 
 @dataclass
-class ExecutionResult:
+class DayExecution:
+    implementation: Implementation
     year: int
     day: int
-    parts: dict[int, Part]
+    parts: dict[int, PartExecution]
     test: bool
 
     @property
@@ -67,13 +81,13 @@ def format_execution_time(execution_time_micro_seconds: int| None) -> str:
     if execution_time_micro_seconds is None:
         return ""
     if execution_time_micro_seconds < 1000:
-        return f"[italic green]{execution_time_micro_seconds}µs"
+        return f"{execution_time_micro_seconds}µs"
     elif execution_time_micro_seconds < 100_000:
-        return f"[italic green]{execution_time_micro_seconds / 1000:.1f}ms"
+        return f"{execution_time_micro_seconds / 1000:.1f}ms"
     elif execution_time_micro_seconds < 1_000_000:
-        return f"[italic green]{int(execution_time_micro_seconds // 1_000)}ms"
+        return f"{int(execution_time_micro_seconds // 1_000)}ms"
     else:
-        return f"[italic green]{execution_time_micro_seconds / 1_000_000:.1f}s"
+        return f"{execution_time_micro_seconds / 1_000_000:.1f}s"
 
 def get_solution(year: int, day: int, part: int, test: bool) -> str:
     file_path = Path(__file__).resolve().parent.joinpath(f"solutions/{'test' if test else 'full'}/{year}.txt")
@@ -81,53 +95,82 @@ def get_solution(year: int, day: int, part: int, test: bool) -> str:
         line_num = (day - 1) * 2 + (part - 1)
         return f.readlines()[line_num].strip()
 
-def run_solver(result: ExecutionResult) -> None:
-    for part_number, part_result in result.parts.items():
-        command = [f"{Path(__file__).parent}/solvers/rs/target/release/aoc", "-y", str(result.year), "-d", str(result.day), "-p", str(part_number), "-v"]
-        if result.test:
-            command.append("-t")
+def run_solver(day_execution: DayExecution) -> None:
+    for part_number, part_execution in day_execution.parts.items():
+        if day_execution.implementation == Implementation.NONE:
+            part_execution.result = Result.NOT_IMPLEMENTED
+            continue
 
-        script_output = run(command, capture_output=True, text=True)
+        script_output = run(part_execution.command, capture_output=True, text=True)
 
         if script_output.returncode == EXIT_CODES.NOT_IMPLEMENTED.value:
-            part_result.result = Result.NOT_IMPLEMENTED
+            part_execution.result = Result.NOT_IMPLEMENTED
             continue
 
         try:
             solver_output = json.loads(script_output.stdout.strip())
         except json.decoder.JSONDecodeError:
-            part_result.result = Result.BAD_OUTPUT
+            part_execution.result = Result.BAD_OUTPUT
             continue
-        part_result.solution = solver_output["solution"]
+        part_execution.solution = solver_output["solution"]
 
         try:
-            actual_sol = get_solution(result.year, result.day, part_number, result.test)
+            actual_sol = get_solution(day_execution.year, day_execution.day, part_number, day_execution.test)
         except KeyError:
-            part_result.result = Result.INCONCLUSIVE
+            part_execution.result = Result.INCONCLUSIVE
             continue
 
-        if part_result.solution != actual_sol:
-            part_result.result = Result.FAILURE
+        if part_execution.solution != actual_sol:
+            part_execution.result = Result.FAILURE
         else:
-            part_result.result = Result.SUCCESS
-            part_result.execution_time_micro_seconds = int(solver_output["execution_time"])
+            part_execution.result = Result.SUCCESS
+            part_execution.execution_time_micro_seconds = int(solver_output["execution_time"])
 
-        result.parts[part_number] = part_result
+        day_execution.parts[part_number] = part_execution
 
+@cache
+def get_manifest() -> dict[tuple[int, int], Implementation]:
+    manifest: dict[tuple[int, int], Implementation] = {}
+    manifest_path = Path(__file__).resolve().parent.joinpath(".config/manifest.toml")
+    with open(manifest_path, "rb") as f:
+        t = tomllib.load(f)
+    for day, year in product(DAYS, YEARS):
+        if t.get(str(year), {}).get(str(day), None) is not None:
+            manifest[(year, day)] = Implementation(t[str(year)][str(day)])
+        else:
+            manifest[(year, day)] = Implementation.NONE
+    return manifest
 
-def run_solvers(years: list[int], days: list[int], parts: list[int], test: bool) -> list[ExecutionResult]:
-    results: list[ExecutionResult] = []
+def get_implementation(implementation: Implementation, year: int, day: int) -> Implementation:
+    if implementation != Implementation.MANIFEST:
+        return implementation
+    return get_manifest().get((year, day), Implementation.NONE)
+
+def run_solvers(implementation: Implementation, years: list[int], days: list[int], parts: list[int], test: bool) -> list[DayExecution]:
+    results: list[DayExecution] = []
 
     for year, day in product(years, days):
-        parts_dict = {part: Part() for part in parts}
-        result = ExecutionResult(year=year, day=day, parts=parts_dict, test=test)
-        run_solver(result)
-        if result.implemented:
-            results.append(result)
+        parts_dict = {}
+        day_implementation = get_implementation(implementation, year, day)
+        if day_implementation == Implementation.NONE:
+            parts_dict = {part_number: PartExecution(result=Result.NOT_IMPLEMENTED) for part_number in parts}
+        elif day_implementation == Implementation.PYTHON:
+            command = [f"{Path(__file__).parent}/solvers/py/{year}{day:02}.py"]
+            if test:
+                command.append("-t")
+            parts_dict = {part_number: PartExecution(command + [str(part_number), "-v"]) for part_number in parts}
+        elif day_implementation == Implementation.RUST:
+            command = [f"{Path(__file__).parent}/solvers/rs/target/release/aoc", "-y", str(year), "-d", str(day), "-v"]
+            if test:
+                command.append("-t")
+            parts_dict = {part_number: PartExecution(command + ["-p", str(part_number)]) for part_number in parts}
+        execution = DayExecution(implementation=day_implementation, year=year, day=day, parts=parts_dict, test=test)
+        run_solver(execution)
+        results.append(execution)
 
     return results
 
-def print_year_results(year: int, results: list[ExecutionResult], order: Order, console: Console) -> None:
+def print_year_results(year: int, results: list[DayExecution], order: Order, console: Console) -> None:
     if order == Order.CHRONOLOGICAL:
         results.sort(key=lambda result: result.day)
     else:
@@ -137,6 +180,7 @@ def print_year_results(year: int, results: list[ExecutionResult], order: Order, 
     part2s = [result.parts[2] for result in results if result.parts.get(2, None) is not None]
     table = Table(title=f"{year} Results" , row_styles=["", "on grey23"])
     table.add_column("Day", style="bold")
+    table.add_column("Implementation", header_style="bold")
     if part1s:
         table.add_column("Part 1")
         table.add_column("(time)", style="italic", header_style="italic")
@@ -151,62 +195,60 @@ def print_year_results(year: int, results: list[ExecutionResult], order: Order, 
         if (part1 == None or part1.result == Result.NOT_IMPLEMENTED) and (part2 == None or part2.result == Result.NOT_IMPLEMENTED):
             continue
         row = [f"Day {result.day}"]
+        row.append(f"{result.implementation.value}")
         if part1s:
             row.append(part1.result_str if part1 else f"[bold blue]Unexecuted")
-            row.append(format_execution_time(part1.execution_time_micro_seconds) if part1 else "")
+            row.append(f"[italic green]{format_execution_time(part1.execution_time_micro_seconds)}" if part1 else "")
         if part2s:
             row.append(part2.result_str if part2 else f"[bold blue]Unexecuted")
-            row.append(format_execution_time(part2.execution_time_micro_seconds) if part2 else "")
-        row.append(format_execution_time(result.total_execution_time))
+            row.append(f"[italic green]{format_execution_time(part2.execution_time_micro_seconds)}" if part2 else "")
+        row.append(f"[italic green]{format_execution_time(result.total_execution_time)}")
         table.add_row(*row)
 
-    if table.row_count > 1:
+    if table.row_count > 0:
         # Add a total row
         table.add_section()
-        total_row = ["TOTAL"]
+        total_row = ["TOTAL", ""]
         if part1s:
             total_row.append(f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in part1s) else f"[bold blue]INCOMPLETE")
-            total_row.append(format_execution_time(sum([result.execution_time_micro_seconds for result in part1s if result.execution_time_micro_seconds is not None])))
+            total_row.append(f"[italic green]{format_execution_time(sum([result.execution_time_micro_seconds for result in part1s if result.execution_time_micro_seconds is not None]))}")
         if part2s:
             total_row.append(f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in part2s) else f"[bold blue]INCOMPLETE")
-            total_row.append(format_execution_time(sum([result.execution_time_micro_seconds for result in part2s if result.execution_time_micro_seconds is not None])))
-        total_row.append(format_execution_time(sum([result.total_execution_time for result in results if result.total_execution_time is not None])))
+            total_row.append(f"[italic green]{format_execution_time(sum([result.execution_time_micro_seconds for result in part2s if result.execution_time_micro_seconds is not None]))}")
+        total_row.append(f"[italic green]{format_execution_time(sum([result.total_execution_time for result in results if result.total_execution_time is not None]))}")
         table.add_row(*total_row)
 
-    if table.row_count > 0:
         console.print(table)
 
-def print_results(results: list[ExecutionResult], order: Order) -> None:
+def print_results(results: list[DayExecution], order: Order) -> None:
     console = Console()
     for year in sorted({result.year for result in results}):
         print_year_results(year, [result for result in results if result.year == year], order, console)
 
+    total_time = sum([result.total_execution_time for result in results if result.total_execution_time is not None])
+    total_stars = len([1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS])
+    console.print(f"Total stars: {total_stars} ⭐️, Total time: {format_execution_time(total_time)}", highlight=False)
+
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-a", "--args",  action="store_true", help="Print args")
     parser.add_argument("-y", "--year", default=None, help=f"Which year to run. Default is to run all years")
     parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
     parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
+    parser.add_argument("-i", "--implementation", type=Implementation, choices=[implementation.value for implementation in Implementation], default=Implementation.MANIFEST, help="Which implementation to run. Pass '@' to use the manifest file.")
     parser.add_argument("-o", "--order", type=Order, choices=[order.value for order in Order], default=Order.CHRONOLOGICAL, help="Order to display results in.")
 
     args = parser.parse_args()
 
 
-    years = [int(args.year)] if args.year else list(range(2015, date.today().year + 1))
-    days = [args.day] if args.day else list(range(1, 26))
-    parts = [args.part] if args.part else [1, 2]
-
-    if args.args:
-        print(f"years: {years}")
-        print(f"days: {days}")
-        print(f"test: {args.test}")
-        print(f"parts: {parts}")
+    years = [int(args.year)] if args.year else YEARS
+    days = [args.day] if args.day else DAYS
+    parts = [args.part] if args.part else PARTS
 
     print("Building solutions...")
     run(["just", "build"])
-    results = run_solvers(years, days, parts, args.test)
+    results = run_solvers(args.implementation, years, days, parts, args.test)
 
     print_results(results, args.order)
 

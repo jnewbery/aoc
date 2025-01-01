@@ -70,7 +70,7 @@ class BaseSolution:
         execution_time = time.time_ns() - start
 
         if self.verbose:
-            print(json.dumps({"solution": str(sol), "execution_time": f"{int(execution_time // 1e6)}ms"}))
+            print(json.dumps({"solution": str(sol), "execution_time": f"{int(execution_time // 1e3)}"}))
         else:
             print(str(sol))
 
