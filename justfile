@@ -1,0 +1,2 @@
+build:
+    just solvers/rs/

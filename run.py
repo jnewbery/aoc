@@ -76,15 +76,14 @@ def format_execution_time(execution_time_micro_seconds: int| None) -> str:
         return f"[italic green]{execution_time_micro_seconds / 1_000_000:.1f}s"
 
 def get_solution(year: int, day: int, part: int, test: bool) -> str:
-    # print(f"Reading solution for {day} part {part} {'test' if test else 'full'}")
-    file_path = Path(f"../../solutions/{'test' if test else 'full'}/{year}.txt")
+    file_path = Path(__file__).resolve().parent.joinpath(f"solutions/{'test' if test else 'full'}/{year}.txt")
     with open(file_path, "r") as f:
         line_num = (day - 1) * 2 + (part - 1)
         return f.readlines()[line_num].strip()
 
 def run_solver(result: ExecutionResult) -> None:
     for part_number, part_result in result.parts.items():
-        command = ["./target/release/aoc", "-y", str(result.year), "-d", str(result.day), "-p", str(part_number), "-v"]
+        command = [f"{Path(__file__).parent}/solvers/rs/target/release/aoc", "-y", str(result.year), "-d", str(result.day), "-p", str(part_number), "-v"]
         if result.test:
             command.append("-t")
 
@@ -206,7 +205,7 @@ def main():
         print(f"parts: {parts}")
 
     print("Building solutions...")
-    run(["cargo", "build", "--release"])
+    run(["just", "build"])
     results = run_solvers(years, days, parts, args.test)
 
     print_results(results, args.order)
