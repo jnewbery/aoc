@@ -1,10 +1,4 @@
-#load "unix.cma"
-
-let read_integers_from_file filename =
-  let input_channel = open_in filename in
-  (* Read the entire file into a string *)
-  let content = really_input_string input_channel (in_channel_length input_channel) in
-  close_in input_channel;
+let read_integers_from_file content =
   (* Split on newlines to get a list of strings *)
   let string_list = 
     content 
@@ -15,16 +9,20 @@ let read_integers_from_file filename =
   |> List.filter (fun s -> String.trim s <> "")  (* Remove empty strings *)
   |> List.map int_of_string  (* Convert to integers *)
 
+(* Embed file contents during compilation *)
+let test_content = [%blob "inputs/test/201901_1.txt"]
+let full_content = [%blob "inputs/full/201901.txt"]
+
 let () =
   let args = Array.to_list Sys.argv in
-  let file_path =
+  let file_content =
     if List.exists ((=) "-t") args then
-      "../../inputs/test/201901_1.txt"
+      test_content
     else
-      "../../inputs/full/201901_1.txt"
+      full_content
   in
   let start_time = Unix.gettimeofday () in
-  let integers = read_integers_from_file file_path in
+  let integers = read_integers_from_file file_content in
   let fuel = List.fold_left (fun acc mass -> acc + (mass / 3) - 2) 0 integers in
   let end_time = Unix.gettimeofday () in
   let execution_time = (end_time -. start_time) *. 1_000_000.0 in (* Convert to microseconds *)

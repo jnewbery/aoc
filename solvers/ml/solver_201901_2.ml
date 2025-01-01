@@ -1,5 +1,3 @@
-#load "unix.cma"
-
 let () =
   let start_time = Unix.gettimeofday () in
   let end_time = Unix.gettimeofday () in

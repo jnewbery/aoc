@@ -1,0 +1,3 @@
+build:
+  rsync -r --delete ../../inputs/ inputs/
+  dune build
