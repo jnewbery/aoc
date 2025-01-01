@@ -49,17 +49,17 @@ class PartExecution:
     @property
     def result_str(self) -> str:
         if self.result == Result.SUCCESS:
-            return f"[green]{self.solution}"
+            return f"⭐ [green]{self.solution}[/green]"
         elif self.result == Result.FAILURE:
-            return f"[red]{self.solution}"
+            return f"[red]{self.solution}[/red]"
         elif self.result == Result.INCONCLUSIVE:
-            return f"[yellow]Inconclusive"
+            return f"[yellow]Inconclusive[/yellow]"
         elif self.result == Result.NOT_IMPLEMENTED:
-            return f"[blue]Not Implemented"
+            return f"[blue]Not Implemented[/blue]"
         elif self.result == Result.BAD_OUTPUT:
-            return f"[red]Bad Output"
+            return f"[red]Bad Output[/red]"
         else:
-            return f"[blue]Unexecuted"
+            return f"[blue]Unexecuted[/blue]"
 
 @dataclass
 class DayExecution:
