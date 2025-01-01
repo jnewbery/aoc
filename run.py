@@ -34,10 +34,23 @@ class Order(enum.StrEnum):
     EXECUTION_TIME = enum.auto()
 
 class Implementation(enum.StrEnum):
+    OCAML = "ml"
     PYTHON = "py"
     RUST = "rs"
     MANIFEST = "@"
     NONE = enum.auto()
+
+    @property
+    def display_name(self) -> str:
+        match self:
+            case Implementation.OCAML:
+                return "OCaml"
+            case Implementation.PYTHON:
+                return "Python"
+            case Implementation.RUST:
+                return "Rust"
+            case _:
+                return self.value
 
 @dataclass
 class PartExecution:
@@ -164,6 +177,13 @@ def run_solvers(implementation: Implementation, years: list[int], days: list[int
             if test:
                 command.append("-t")
             parts_dict = {part_number: PartExecution(command + ["-p", str(part_number)]) for part_number in parts}
+        elif day_implementation == Implementation.OCAML:
+            paths = [f"{Path(__file__).parent}/solvers/ml/{year}{day:02}_{part_number}.ml" for part_number in parts]
+            commands = [["ocaml", "-I", "+unix", path, "-v"] for path in paths]
+            if test:
+                for command in commands:
+                    command.append("-t")
+            parts_dict = {part_number: PartExecution(command) for part_number, command in zip(parts, commands)}
         execution = DayExecution(implementation=day_implementation, year=year, day=day, parts=parts_dict, test=test)
         run_solver(execution)
         results.append(execution)
@@ -195,7 +215,7 @@ def print_year_results(year: int, results: list[DayExecution], order: Order, con
         if (part1 == None or part1.result == Result.NOT_IMPLEMENTED) and (part2 == None or part2.result == Result.NOT_IMPLEMENTED):
             continue
         row = [f"Day {result.day}"]
-        row.append(f"{result.implementation.value}")
+        row.append(f"{result.implementation.display_name}")
         if part1s:
             row.append(part1.result_str if part1 else f"[bold blue]Unexecuted")
             row.append(f"[italic green]{format_execution_time(part1.execution_time_micro_seconds)}" if part1 else "")
