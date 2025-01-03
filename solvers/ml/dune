@@ -1,6 +1,6 @@
 (executable
  (name main)
- (modules main solver_201901_1 solver_201901_2)
+ (modules main solver_2019011 solver_2019012)
  (preprocess (pps ppx_blob))
  (preprocessor_deps 
    (file inputs/test/201901_1.txt)

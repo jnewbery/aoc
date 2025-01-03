@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 from functools import cache
 import argparse
 from datetime import date
@@ -159,10 +160,12 @@ def get_implementation(implementation: Implementation, year: int, day: int) -> I
         return implementation
     return get_manifest().get((year, day), Implementation.NONE)
 
-def run_solvers(implementation: Implementation, years: list[int], days: list[int], parts: list[int], test: bool) -> list[DayExecution]:
+def run_solvers(implementation: Implementation, year_days: list[str], parts: list[int], test: bool) -> list[DayExecution]:
     results: list[DayExecution] = []
 
-    for year, day in product(years, days):
+    for year_day in year_days:
+        year = int(year_day[:4])
+        day = int(year_day[4:6])
         parts_dict = {}
         day_implementation = get_implementation(implementation, year, day)
         if day_implementation == Implementation.NONE:
@@ -173,12 +176,13 @@ def run_solvers(implementation: Implementation, years: list[int], days: list[int
                 command.append("-t")
             parts_dict = {part_number: PartExecution(command + [str(part_number), "-v"]) for part_number in parts}
         elif day_implementation == Implementation.RUST:
-            command = [f"{Path(__file__).parent}/solvers/rs/target/release/aoc", "-y", str(year), "-d", str(day), "-v"]
+            commands = [[f"{Path(__file__).parent}/solvers/rs/target/release/aoc", f"{year_day}{part}", "-v"] for part in parts]
             if test:
-                command.append("-t")
-            parts_dict = {part_number: PartExecution(command + ["-p", str(part_number)]) for part_number in parts}
+                for command in commands:
+                    command.append("-t")
+            parts_dict = {part_number: PartExecution(command) for part_number, command in zip(parts, commands)}
         elif day_implementation == Implementation.OCAML:
-            commands = [[f"{Path(__file__).parent}/solvers/ml/_build/default/main.exe", str(year), f"{day:02}", str(part_number)] for part_number in parts]
+            commands = [[f"{Path(__file__).parent}/solvers/ml/_build/default/main.exe", f"{year_day}{part}"] for part in parts]
             if test:
                 for command in commands:
                     command.append("-t")
@@ -251,23 +255,30 @@ def print_results(results: list[DayExecution], order: Order) -> None:
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-y", "--year", type=int, help=f"Which year to run. Default is to run all years")
-    parser.add_argument("-d", "--day",  type=int, help="Advent of code day. Leave blank to run all days.")
-    parser.add_argument("-p", "--part", type=int, help="Which part to run. Leave blank to run both parts.")
+    parser.add_argument("puzzles", help=f"Which puzzles to run, in format YYYYDDP. Any prefix can be used. For example, pass 2015 to run all puzzles from 2015, or 201501 to run both parts of day 1 from 2015.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
-    parser.add_argument("-i", "--implementation", type=Implementation, choices=[implementation.value for implementation in Implementation], default=Implementation.MANIFEST, help="Which implementation to run. Pass '@' to use the manifest file.")
+    parser.add_argument(
+        "-i",
+        "--implementation",
+        type=Implementation,
+        choices=[implementation.value for implementation in Implementation],
+        default=Implementation.MANIFEST,
+        help="Which implementation to run. Pass '@' to use the manifest file."
+    )
     parser.add_argument("-o", "--order", type=Order, choices=[order.value for order in Order], default=Order.CHRONOLOGICAL, help="Order to display results in.")
 
     args = parser.parse_args()
 
-
-    years = [int(args.year)] if args.year else YEARS
-    days = [args.day] if args.day else DAYS
-    parts = [args.part] if args.part else PARTS
+    all_days = [f"{year}{day:02}" for year, day in product(YEARS, DAYS)]
+    days = [str(day) for day in all_days if str(day).startswith(args.puzzles[:6])]
+    if not days:
+        print("No days found")
+        sys.exit(1)
+    parts = [int(args.puzzles[6])] if len(args.puzzles) == 7 else PARTS
 
     print("Building solutions...")
     run(["just", "build"])
-    results = run_solvers(args.implementation, years, days, parts, args.test)
+    results = run_solvers(args.implementation, days, parts, args.test)
 
     print_results(results, args.order)
 

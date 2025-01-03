@@ -4,20 +4,17 @@ let full_content_201901 = [%blob "inputs/full/201901.txt"]
 
 let () =
   let args = Array.to_list Sys.argv in
-  let year = List.nth args 1 in
-  let day = List.nth args 2 in
-  let part = List.nth args 3 in
+  let puzzle = List.nth args 1 in
   let file_content =
     if List.exists ((=) "-t") args then
-      if part = "1" then
+      if String.get puzzle 6 = '1' then
         test_content_201901_1
       else
         test_content_201901_2
     else
       full_content_201901
   in
-  let solver_name = Printf.sprintf "%s%s_%s" year day part in
-  match solver_name with
-  | "201901_1" -> Solver_201901_1.solve file_content
-  | "201901_2" -> Solver_201901_2.solve file_content
-  | _ -> Printf.eprintf "Unknown solver: %s\n" solver_name
+  match puzzle with
+  | "2019011" -> Solver_2019011.solve file_content
+  | "2019012" -> Solver_2019012.solve file_content
+  | _ -> Printf.eprintf "Unknown solver: %s\n" puzzle
