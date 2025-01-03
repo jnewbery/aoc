@@ -170,20 +170,11 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
         day_implementation = get_implementation(implementation, year, day)
         if day_implementation == Implementation.NONE:
             parts_dict = {part_number: PartExecution(result=Result.NOT_IMPLEMENTED) for part_number in parts}
-        elif day_implementation == Implementation.PYTHON:
-            commands = [[f"{Path(__file__).parent}/solvers/py/main.py", f"{year_day}{part}", "-v"] for part in parts]
-            if test:
-                for command in commands:
-                    command.append("-t")
-            parts_dict = {part_number: PartExecution(command) for part_number, command in zip(parts, commands)}
-        elif day_implementation == Implementation.RUST:
-            commands = [[f"{Path(__file__).parent}/solvers/rs/target/release/aoc", f"{year_day}{part}", "-v"] for part in parts]
-            if test:
-                for command in commands:
-                    command.append("-t")
-            parts_dict = {part_number: PartExecution(command) for part_number, command in zip(parts, commands)}
-        elif day_implementation == Implementation.OCAML:
-            commands = [[f"{Path(__file__).parent}/solvers/ml/_build/default/main.exe", f"{year_day}{part}"] for part in parts]
+        elif day_implementation == Implementation.MANIFEST:
+            raise AssertionError("Implementation should not be MANIFEST at this point")
+        else:
+            assert day_implementation in {Implementation.PYTHON, Implementation.RUST, Implementation.OCAML}
+            commands = [["just", "--justfile", f"{Path(__file__).parent}/solvers/{day_implementation.value}/justfile", "run", f"{year_day}{part}", "-v"] for part in parts]
             if test:
                 for command in commands:
                     command.append("-t")
