@@ -171,10 +171,11 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
         if day_implementation == Implementation.NONE:
             parts_dict = {part_number: PartExecution(result=Result.NOT_IMPLEMENTED) for part_number in parts}
         elif day_implementation == Implementation.PYTHON:
-            command = [f"{Path(__file__).parent}/solvers/py/{year}{day:02}.py"]
+            commands = [[f"{Path(__file__).parent}/solvers/py/main.py", f"{year_day}{part}", "-v"] for part in parts]
             if test:
-                command.append("-t")
-            parts_dict = {part_number: PartExecution(command + [str(part_number), "-v"]) for part_number in parts}
+                for command in commands:
+                    command.append("-t")
+            parts_dict = {part_number: PartExecution(command) for part_number, command in zip(parts, commands)}
         elif day_implementation == Implementation.RUST:
             commands = [[f"{Path(__file__).parent}/solvers/rs/target/release/aoc", f"{year_day}{part}", "-v"] for part in parts]
             if test:
@@ -255,7 +256,7 @@ def print_results(results: list[DayExecution], order: Order) -> None:
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("puzzles", help=f"Which puzzles to run, in format YYYYDDP. Any prefix can be used. For example, pass 2015 to run all puzzles from 2015, or 201501 to run both parts of day 1 from 2015.")
+    parser.add_argument("puzzles", nargs="?", default="", help=f"Which puzzles to run, in format YYYYDDP. Any prefix can be used. For example, pass 2015 to run all puzzles from 2015, or 201501 to run both parts of day 1 from 2015.")
     parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
     parser.add_argument(
         "-i",
