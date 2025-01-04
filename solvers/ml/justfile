@@ -2,4 +2,4 @@ build:
   dune build
 
 run +argv:
-  ./_build/default/main.exe {{argv}}
+  ./run.sh {{argv}}

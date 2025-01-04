@@ -1,2 +1,2 @@
 run +argv:
-  @./main.py {{argv}}
+  @./run.sh {{argv}}

@@ -174,7 +174,7 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
             raise AssertionError("Implementation should not be MANIFEST at this point")
         else:
             assert day_implementation in {Implementation.PYTHON, Implementation.RUST, Implementation.OCAML}
-            commands = [["just", "--justfile", f"{Path(__file__).parent}/solvers/{day_implementation.value}/justfile", "run", f"{year_day}{part}", "-v"] for part in parts]
+            commands = [[f"{Path(__file__).parent}/solvers/{day_implementation.value}/run.sh", f"{year_day}{part}", "-v"] for part in parts]
             if test:
                 for command in commands:
                     command.append("-t")

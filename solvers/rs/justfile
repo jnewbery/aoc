@@ -2,4 +2,4 @@ build:
     cargo build --release
 
 run +argv:
-  ./target/release/aoc {{argv}}
+  @./run.sh {{argv}}
