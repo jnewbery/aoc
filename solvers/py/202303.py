@@ -6,7 +6,7 @@ def get_symbols(ll) -> dict[tuple[int, int], list[int]]:
     """Returns dict of (x,y) -> [] for all symbols in the grid."""
     board_width = len(ll[0])
     board_height = len(ll)
-    symbols = {(r, c): [] for r in range(board_width) for c in range(board_height)
+    symbols: dict[tuple[int,int], list[int]] = {(r, c): [] for r in range(board_width) for c in range(board_height)
                     if ll[r][c] not in '01234566789.'}
 
     for r, row in enumerate(ll):
