@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
 from dataclasses import dataclass
 import functools
-
-from utils import BaseSolution
 
 @dataclass
 class Hand:
@@ -46,17 +43,13 @@ def fewest_number(line: str) -> int:
     line = line.split(':')[1].strip()
     return functools.reduce(lambda x, y: x.merge(y), [Hand.from_txt(hand) for hand in line.split(';')]).power()
 
-class Solution(BaseSolution):
 
-    def part1(self, ll: list[str]) -> str:
-        ret = 0
-        for ix, game in enumerate(ll):
-            if play_game(game):
-                ret += ix + 1
-        return str(ret)
+def part1(ll: list[str]) -> str:
+    ret = 0
+    for ix, game in enumerate(ll):
+        if play_game(game):
+            ret += ix + 1
+    return str(ret)
 
-    def part2(self, ll) -> str:
-        return str(sum(fewest_number(game) for game in ll))
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    return str(sum(fewest_number(game) for game in ll))

@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
 import functools
 
 def get_pairs(ll):
@@ -37,21 +34,17 @@ def compare(a: list | int, b: list | int) -> int:
     # else type(b) == list and type(a) == int:
     return compare([a], b)
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        sol = 0
-        for i, pair in enumerate(get_pairs(ll)):
-            # print(i + 1, pair)
-            if compare(pair[0], pair[1]) == -1:
-                # print("in order")
-                sol += i + 1
-        return str(sol)
+def part1(ll: list[str]) -> str:
+    sol = 0
+    for i, pair in enumerate(get_pairs(ll)):
+        # print(i + 1, pair)
+        if compare(pair[0], pair[1]) == -1:
+            # print("in order")
+            sol += i + 1
+    return str(sol)
 
-    def part2(self, ll) -> str:
-        signals: list[list[list[int]]] = [eval(l) for l in ll if l]
-        signals += [[[2]], [[6]]]
-        signals.sort(key=functools.cmp_to_key(compare))
-        return str((signals.index([[2]]) + 1) * (signals.index([[6]]) + 1))
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    signals: list[list[list[int]]] = [eval(l) for l in ll if l]
+    signals += [[[2]], [[6]]]
+    signals.sort(key=functools.cmp_to_key(compare))
+    return str((signals.index([[2]]) + 1) * (signals.index([[6]]) + 1))

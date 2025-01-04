@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
 import itertools
 
 def construct_grid(ll):
@@ -41,37 +38,33 @@ def visible_from(row):
     # print(ret)
     return ret
 
-class Solution(BaseSolution):
-    def part1(self, ll: list[str]) -> str:
-        grid = construct_grid(ll)
-        vis = set()
+def part1(ll: list[str]) -> str:
+    grid = construct_grid(ll)
+    vis = set()
 
-        for row in grid:
-            vis |= visible(row)
-            vis |= visible(reversed(row))
-        transposed_grid = list(zip(*grid))
-        for row in transposed_grid:
-            vis |= visible(row)
-            vis |= visible(reversed(row))
+    for row in grid:
+        vis |= visible(row)
+        vis |= visible(reversed(row))
+    transposed_grid = list(zip(*grid))
+    for row in transposed_grid:
+        vis |= visible(row)
+        vis |= visible(reversed(row))
 
-        return str(len(vis))
+    return str(len(vis))
 
-    def part2(self, ll) -> str:
-        grid = construct_grid(ll)
+def part2(ll: list[str]) -> str:
+    grid = construct_grid(ll)
 
-        sol = 0
-        for x, y in itertools.product(range(1, len(grid[0]) - 1), range(1, len(grid) - 1)):
-            # print(f"({x},{y})")
-            scenic = visible_from(grid[y][x:])
-            scenic *= visible_from(list(reversed(grid[y][:x + 1])))
-            scenic *= visible_from([grid[i][x] for i in range(y, len(grid))])
-            scenic *= visible_from(list(reversed([grid[i][x] for i in range(y + 1)])))
+    sol = 0
+    for x, y in itertools.product(range(1, len(grid[0]) - 1), range(1, len(grid) - 1)):
+        # print(f"({x},{y})")
+        scenic = visible_from(grid[y][x:])
+        scenic *= visible_from(list(reversed(grid[y][:x + 1])))
+        scenic *= visible_from([grid[i][x] for i in range(y, len(grid))])
+        scenic *= visible_from(list(reversed([grid[i][x] for i in range(y + 1)])))
 
-            # print(f"({x},{y}): {scenic}")
-            if scenic > sol:
-                sol = max(sol, scenic)
+        # print(f"({x},{y}): {scenic}")
+        if scenic > sol:
+            sol = max(sol, scenic)
 
-        return str(sol)
-
-if __name__ == "__main__":
-    Solution()
+    return str(sol)

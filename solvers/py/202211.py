@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
 from functools import reduce
 import operator
 
@@ -52,27 +49,23 @@ def monkey_round(monkeys, worry_operation):
     # for monkey in monkeys:
     #     print(monkey)
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        monkeys = get_monkeys(ll)
-        for _ in range(20):
-            monkey_round(monkeys, lambda x: x // 3)
+def part1(ll: list[str]) -> str:
+    monkeys = get_monkeys(ll)
+    for _ in range(20):
+        monkey_round(monkeys, lambda x: x // 3)
 
-        inspections = sorted([m.inspections for m in monkeys])
-        # print(inspections)
+    inspections = sorted([m.inspections for m in monkeys])
+    # print(inspections)
 
-        return inspections[-2] * inspections[-1]
+    return inspections[-2] * inspections[-1]
 
-    def part2(self, ll) -> str:
-        monkeys = get_monkeys(ll)
-        divisor = reduce(operator.mul, [monkey.test_divisor for monkey in monkeys], 1)
-        for _ in range(10000):
-            monkey_round(monkeys, lambda x: x % divisor)
+def part2(ll: list[str]) -> str:
+    monkeys = get_monkeys(ll)
+    divisor = reduce(operator.mul, [monkey.test_divisor for monkey in monkeys], 1)
+    for _ in range(10000):
+        monkey_round(monkeys, lambda x: x % divisor)
 
-        inspections = sorted([m.inspections for m in monkeys])
-        # print(inspections)
+    inspections = sorted([m.inspections for m in monkeys])
+    # print(inspections)
 
-        return inspections[-2] * inspections[-1]
-
-if __name__ == "__main__":
-    Solution()
+    return inspections[-2] * inspections[-1]

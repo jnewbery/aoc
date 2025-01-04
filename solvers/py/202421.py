@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
 from functools import cache
 import itertools
 
@@ -58,24 +56,20 @@ def solve_string(s: str, depth: int, numeric: bool) -> int:
 
     return length
 
-class Solution(BaseSolution):
-    def part1(self, ll: list[str]) -> str:
-        sol = 0
-        for l in ll:
-            len = solve_string(l, 3, True) 
-            numeric_part = int("".join([c for c in l if c.isnumeric()]))
-            # print(f"Length: {len} * {numeric_part} = {len * numeric_part}")
-            sol += len * numeric_part
-        return str(sol)
+def part1(ll: list[str]) -> str:
+    sol = 0
+    for l in ll:
+        len = solve_string(l, 3, True) 
+        numeric_part = int("".join([c for c in l if c.isnumeric()]))
+        # print(f"Length: {len} * {numeric_part} = {len * numeric_part}")
+        sol += len * numeric_part
+    return str(sol)
 
-    def part2(self, ll: list[str]) -> str:
-        sol = 0
-        for l in ll:
-            path_len = solve_string(l, 26, True) 
-            numeric_part = int("".join([c for c in l if c.isnumeric()]))
-            # print(f"Length: {path_len} * {numeric_part} = {path_len * numeric_part}")
-            sol += path_len * numeric_part
-        return str(sol)
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    sol = 0
+    for l in ll:
+        path_len = solve_string(l, 26, True) 
+        numeric_part = int("".join([c for c in l if c.isnumeric()]))
+        # print(f"Length: {path_len} * {numeric_part} = {path_len * numeric_part}")
+        sol += path_len * numeric_part
+    return str(sol)

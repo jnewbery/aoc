@@ -32,7 +32,7 @@ def main(puzzle: str, test: bool, verbose: bool) -> None:
         sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)
 
     puzzle_input = get_puzzle_input(puzzle, test)
-    solver = importlib.import_module(puzzle[:6]).Solution()
+    solver = importlib.import_module(puzzle[:6])
     start = time.time_ns()
     func = getattr(solver, f"part{puzzle[6]}")
     try:

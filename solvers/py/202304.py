@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-from utils import BaseSolution, get_numbers
+from utils import get_numbers
 
 def get_winning_numbers_and_numbers_we_have(line: str) -> tuple[set[int], set[int]]:
     line = line.split(":")[1]
@@ -18,17 +17,13 @@ def overlaps_to_score(overlaps: int) -> int:
         return 0
     return 2 ** (overlaps - 1)
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        return str(sum(overlaps_to_score(get_number_overlaps(l)) for l in ll))
+def part1(ll: list[str]) -> str:
+    return str(sum(overlaps_to_score(get_number_overlaps(l)) for l in ll))
 
-    def part2(self, ll) -> str:
-        cards = [1 for _ in ll]
-        for i in range(len(ll)):
-            overlaps = get_number_overlaps(ll[i])
-            for j in range(overlaps):
-                cards[i + j + 1] += cards[i]
-        return str(sum(cards))
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    cards = [1 for _ in ll]
+    for i in range(len(ll)):
+        overlaps = get_number_overlaps(ll[i])
+        for j in range(overlaps):
+            cards[i + j + 1] += cards[i]
+    return str(sum(cards))

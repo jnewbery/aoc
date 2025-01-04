@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
-"""Normalize 1 -> 1 , 0 -> -1"""
 def norm1(n):
+    """Normalize 1 -> 1 , 0 -> -1"""
     return 2 * int(n) - 1
 
-"""Normalize +ve -> 1, -ve -> 0"""
 def norm2(n):
+    """Normalize +ve -> 1, -ve -> 0"""
     assert n != 0
     return ((n // abs(n)) + 1) // 2
 
@@ -46,31 +43,27 @@ class Node:
                 node = node.zeros
         return number
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        normed_lines = list([map(norm1, l) for l in ll])
-        line_len = len(ll[0])
-        columns = list(sum(l) for l in zip(*normed_lines))
-        gamma_list = list(map(norm2, columns))
+def part1(ll: list[str]) -> str:
+    normed_lines = list([map(norm1, l) for l in ll])
+    line_len = len(ll[0])
+    columns = list(sum(l) for l in zip(*normed_lines))
+    gamma_list = list(map(norm2, columns))
 
-        gamma = 0
-        for i, d in enumerate(reversed(gamma_list)):
-            gamma += d * 2**i
+    gamma = 0
+    for i, d in enumerate(reversed(gamma_list)):
+        gamma += d * 2**i
 
-        epsilon = 2 ** line_len - 1 - gamma
+    epsilon = 2 ** line_len - 1 - gamma
 
-        return gamma * epsilon
+    return gamma * epsilon
 
-    def part2(self, ll) -> str:
-        root = Node()
-        for l in ll:
-            number = int(''.join(list(l)), 2)
-            root.store(list(l), number)
+def part2(ll: list[str]) -> str:
+    root = Node()
+    for l in ll:
+        number = int(''.join(list(l)), 2)
+        root.store(list(l), number)
 
-        o2 = root.rating(True)
-        co2 = root.rating(False)
-        
-        return str(o2 * co2)
-
-if __name__ == '__main__':
-    Solution()
+    o2 = root.rating(True)
+    co2 = root.rating(False)
+    
+    return str(o2 * co2)

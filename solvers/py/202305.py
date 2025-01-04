@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 from dataclasses import dataclass
 from typing import Iterable, Self
-from utils import BaseSolution, get_numbers
+from utils import get_numbers
 
 @dataclass
 class Map:
@@ -41,17 +40,13 @@ def apply_maps(maps: list[Map], x: int) -> int:
         x = m.apply(x)
     return x
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        seeds = get_numbers(ll[0])
-        # print(seeds)
-        maps = [Map.from_map_string(s) for s in (get_map_strings(ll[2:]))]
-        # print(maps)
-        return str(min([apply_maps(maps, s) for s in seeds]))
+def part1(ll: list[str]) -> str:
+    seeds = get_numbers(ll[0])
+    # print(seeds)
+    maps = [Map.from_map_string(s) for s in (get_map_strings(ll[2:]))]
+    # print(maps)
+    return str(min([apply_maps(maps, s) for s in seeds]))
 
-    def part2(self, ll) -> str:
-        del ll
-        raise NotImplementedError
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    del ll
+    raise NotImplementedError

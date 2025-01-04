@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
 from typing import Generator
 
 from itertools import count
@@ -72,26 +70,22 @@ def get_cave(ll):
 
     return (cave, entrance)
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        cave, entrance = get_cave(ll)
-        for n in count():
-            new_sand = add_sand(cave, entrance)
-            if new_sand[0] == len(cave) - 2:
-                return str(n)
-            # time.sleep(0.01)
-            # print("\033c", end="\033[A")
-            # print_cave(cave)
-        assert False, "No solution found"
-
-    def part2(self, ll) -> str:
-        cave, entrance = get_cave(ll)
+def part1(ll: list[str]) -> str:
+    cave, entrance = get_cave(ll)
+    for n in count():
+        new_sand = add_sand(cave, entrance)
+        if new_sand[0] == len(cave) - 2:
+            return str(n)
+        # time.sleep(0.01)
+        # print("\033c", end="\033[A")
         # print_cave(cave)
-        for n in count():
-            new_sand = add_sand(cave, entrance)
-            if new_sand[0] == entrance[0] and new_sand[1] == entrance[1]:
-                return str(n + 1)
-        assert False, "No solution found"
+    assert False, "No solution found"
 
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    cave, entrance = get_cave(ll)
+    # print_cave(cave)
+    for n in count():
+        new_sand = add_sand(cave, entrance)
+        if new_sand[0] == entrance[0] and new_sand[1] == entrance[1]:
+            return str(n + 1)
+    assert False, "No solution found"

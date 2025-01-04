@@ -1,16 +1,11 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
+from utils import exit_not_implemented
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        self.exit_not_implemented()
-        del ll
-        return ""
+def part1(ll: list[str]) -> str:
+    exit_not_implemented()
+    del ll
+    return ""
 
-    def part2(self, ll) -> str:
-        self.exit_not_implemented()
-        del ll
-        return ""
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    exit_not_implemented()
+    del ll
+    return ""

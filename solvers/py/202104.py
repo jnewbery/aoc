@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
 class Board:
     def __init__(self, numbers, index):
         """Takes a list of lists of numbers"""
@@ -34,38 +31,34 @@ def parse_input(ll: list[str]) -> tuple[list[int], list[Board | None]]:
 
     return draws, boards
 
-class Solution(BaseSolution):
-    def part1(self, ll: list[str]) -> str:
-        draws, boards = parse_input(ll)
+def part1(ll: list[str]) -> str:
+    draws, boards = parse_input(ll)
 
-        for d in draws:
-            for b in boards:
-                assert b is not None
-                ret = b.draw(d)
-                if ret != False:
+    for d in draws:
+        for b in boards:
+            assert b is not None
+            ret = b.draw(d)
+            if ret != False:
+                return ret
+    assert False, "no solution found"
+
+def part2(ll: list[str]) -> str:
+    draws, boards = parse_input(ll)
+
+    num_boards = len(boards)
+    # print(f"{num_boards} boards")
+    remaining_boards = num_boards
+    for d in draws:
+        # print(f"draw {d}")
+        for i, b in enumerate(boards):
+            if not b:
+                continue
+            ret = b.draw(d)
+            if ret is not False:
+                # print(f"board {num_boards - remaining_boards + 1} complete!")
+                # print(f"score {ret}")
+                if remaining_boards == 1:
                     return ret
-        assert False, "no solution found"
-
-    def part2(self, ll: list[str]) -> str:
-        draws, boards = parse_input(ll)
-
-        num_boards = len(boards)
-        # print(f"{num_boards} boards")
-        remaining_boards = num_boards
-        for d in draws:
-            # print(f"draw {d}")
-            for i, b in enumerate(boards):
-                if not b:
-                    continue
-                ret = b.draw(d)
-                if ret is not False:
-                    # print(f"board {num_boards - remaining_boards + 1} complete!")
-                    # print(f"score {ret}")
-                    if remaining_boards == 1:
-                        return ret
-                    boards[i] = None
-                    remaining_boards -= 1
-        assert False, "no solution found"
-
-if __name__ == '__main__':
-    Solution()
+                boards[i] = None
+                remaining_boards -= 1
+    assert False, "no solution found"

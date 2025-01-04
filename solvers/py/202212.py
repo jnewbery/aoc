@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
 import itertools
 
 def adjacents(coord, grid):
@@ -48,12 +45,8 @@ def solve(ll, part):
 
             # print(distances)
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        return str(solve(ll, 1))
+def part1(ll: list[str]) -> str:
+    return str(solve(ll, 1))
 
-    def part2(self, ll) -> str:
-        return str(solve(ll, 2))
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    return str(solve(ll, 2))

@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
 from collections import defaultdict
 from itertools import accumulate
 
@@ -25,22 +22,18 @@ def get_directories(ll):
 
     return dirs
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        directories = get_directories(ll)
+def part1(ll: list[str]) -> str:
+    directories = get_directories(ll)
 
-        sol = 0
-        for v in directories.values():
-            if v <= 100000:
-                sol += v
+    sol = 0
+    for v in directories.values():
+        if v <= 100000:
+            sol += v
 
-        return str(sol)
+    return str(sol)
 
-    def part2(self, ll) -> str:
-        directories = get_directories(ll)
-        target = directories[("/")] - 40000000
-        sol = min(x for x in directories.values() if x > target)
-        return str(sol)
-
-if __name__ == "__main__":
-    Solution()
+def part2(ll: list[str]) -> str:
+    directories = get_directories(ll)
+    target = directories[("/")] - 40000000
+    sol = min(x for x in directories.values() if x > target)
+    return str(sol)

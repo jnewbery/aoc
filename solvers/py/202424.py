@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
 from dataclasses import dataclass
 
 @dataclass
@@ -36,53 +34,49 @@ def resolve_wire(wire_name: str, wires: dict[str, Gate]) -> int:
     wire.resolved = output
     return output
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        wires: dict[str, Gate] = {}
-        for l in ll:
-            if ":" in l:
-                wire, value = l.split(": ")
-                wires[wire.strip()] = Gate(inputs=("", ""), output=wire.strip(), operation="", resolved=int(value.strip()))
-            elif "->" in l:
-                parts = l.split(" ")
-                operation = parts[1]
-                gate = Gate(inputs=(parts[0], parts[2]), output=parts[4], operation=operation)
-                wires[gate.output] = gate
+def part1(ll: list[str]) -> str:
+    wires: dict[str, Gate] = {}
+    for l in ll:
+        if ":" in l:
+            wire, value = l.split(": ")
+            wires[wire.strip()] = Gate(inputs=("", ""), output=wire.strip(), operation="", resolved=int(value.strip()))
+        elif "->" in l:
+            parts = l.split(" ")
+            operation = parts[1]
+            gate = Gate(inputs=(parts[0], parts[2]), output=parts[4], operation=operation)
+            wires[gate.output] = gate
 
-        for wire_name in wires:
-            resolve_wire(wire_name, wires)
+    for wire_name in wires:
+        resolve_wire(wire_name, wires)
 
-        wires_list = list(wires.values())
-        wires_list.sort(key=lambda x: x.output, reverse=True)
-        z_values = "".join([str(wire.resolved) for wire in wires_list if wire.output[0] == "z"])
-        return(str(int(z_values, 2)))
+    wires_list = list(wires.values())
+    wires_list.sort(key=lambda x: x.output, reverse=True)
+    z_values = "".join([str(wire.resolved) for wire in wires_list if wire.output[0] == "z"])
+    return(str(int(z_values, 2)))
 
-    def part2(self, ll) -> str:
-        gates: list[Gate] = []
-        for l in ll:
-            if "->" in l:
-                parts = l.split(" ")
-                operation = parts[1]
-                assert operation is not None
-                gates.append(Gate(inputs=(parts[0], parts[2]), output=parts[4], operation=operation))
+def part2(ll: list[str]) -> str:
+    gates: list[Gate] = []
+    for l in ll:
+        if "->" in l:
+            parts = l.split(" ")
+            operation = parts[1]
+            assert operation is not None
+            gates.append(Gate(inputs=(parts[0], parts[2]), output=parts[4], operation=operation))
 
-        bad_gates: set[str] = set()
-        for gate in gates:
-            if gate.output[0] == 'z' and not (gate.output == 'z45' or gate.operation == 'XOR'):
-                bad_gates.add(gate.output)
-            elif gate.operation == 'XOR' and not (gate.inputs[0][0] == 'x' or gate.inputs[1][0] == 'x' or gate.output[0] == 'z'):
-                bad_gates.add(gate.output)
-            if gate.operation == "AND" and "x00" not in (gate.inputs[0], gate.inputs[1]):
-                for subgate in gates:
-                    if (gate.output in subgate.inputs) and subgate.operation != "OR":
-                        bad_gates.add(gate.output)
-            if gate.operation == "XOR":
-                for subgate in gates:
-                    if (gate.output in subgate.inputs) and subgate.operation == "OR":
-                        bad_gates.add(gate.output)
+    bad_gates: set[str] = set()
+    for gate in gates:
+        if gate.output[0] == 'z' and not (gate.output == 'z45' or gate.operation == 'XOR'):
+            bad_gates.add(gate.output)
+        elif gate.operation == 'XOR' and not (gate.inputs[0][0] == 'x' or gate.inputs[1][0] == 'x' or gate.output[0] == 'z'):
+            bad_gates.add(gate.output)
+        if gate.operation == "AND" and "x00" not in (gate.inputs[0], gate.inputs[1]):
+            for subgate in gates:
+                if (gate.output in subgate.inputs) and subgate.operation != "OR":
+                    bad_gates.add(gate.output)
+        if gate.operation == "XOR":
+            for subgate in gates:
+                if (gate.output in subgate.inputs) and subgate.operation == "OR":
+                    bad_gates.add(gate.output)
 
-        return ",".join(sorted(bad_gates))
+    return ",".join(sorted(bad_gates))
 
-
-if __name__ == "__main__":
-    Solution()

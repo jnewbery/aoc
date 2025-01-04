@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
-"""Return a list of pairs (x_change, y_change [challenge 1] | aim_change [challenge 2])"""
 def get_moves(ll):
+    """Return a list of pairs (x_change, y_change [challenge 1] | aim_change [challenge 2])"""
     moves = []
     for l in ll:
         size = int(l.split(' ')[1])
@@ -15,28 +12,24 @@ def get_moves(ll):
 
     return moves
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        moves = get_moves(ll)
+def part1(ll: list[str]) -> str:
+    moves = get_moves(ll)
 
-        x, y = 0, 0
-        for x_change, y_change in moves:
+    x, y = 0, 0
+    for x_change, y_change in moves:
+        x += x_change
+        y += y_change
+    return str(x * y)
+
+def part2(ll: list[str]) -> str:
+    moves = get_moves(ll)
+
+    x, y, aim = 0, 0, 0
+    for x_change, aim_change in moves:
+        if x_change:
             x += x_change
-            y += y_change
-        return str(x * y)
+            y += aim * x_change
+        else:
+            aim += aim_change
 
-    def part2(self, ll) -> str:
-        moves = get_moves(ll)
-
-        x, y, aim = 0, 0, 0
-        for x_change, aim_change in moves:
-            if x_change:
-                x += x_change
-                y += aim * x_change
-            else:
-                aim += aim_change
-
-        return str(x * y)
-
-if __name__ == '__main__':
-    Solution()
+    return str(x * y)

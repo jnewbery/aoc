@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from utils import BaseSolution
-
 import re
 import itertools
 
@@ -42,56 +39,52 @@ def tuning_freq(coord):
     return coord[0] * 4_000_000 + coord[1]
 
 
-class Solution(BaseSolution):
-    def part1(self, ll) -> str:
-        if len(ll) == 14:
-            ROW = 10  # test input
-        else:
-            ROW = 2_000_000  # full input
+def part1(ll: list[str]) -> str:
+    if len(ll) == 14:
+        ROW = 10  # test input
+    else:
+        ROW = 2_000_000  # full input
 
-        sbrs = [sbr for sbr in get_sensor_beacon_radius(ll)]
+    sbrs = [sbr for sbr in get_sensor_beacon_radius(ll)]
 
-        covers = []
-        for sbr in sbrs:
-            cover = row_cover(ROW, sbr[0], sbr[1], sbr[2])
-            if cover:
-                covers.append(cover)
-        merge_covers(covers)
+    covers = []
+    for sbr in sbrs:
+        cover = row_cover(ROW, sbr[0], sbr[1], sbr[2])
+        if cover:
+            covers.append(cover)
+    merge_covers(covers)
 
-        return str(sum([cover[1] - cover[0] + 1 for cover in covers]))
+    return str(sum([cover[1] - cover[0] + 1 for cover in covers]))
 
-    def part2(self, ll) -> str:
-        if len(ll) == 14:
-            MAX_X = 20  # test input
-        else:
-            MAX_X = 4_000_000  # full input
+def part2(ll: list[str]) -> str:
+    if len(ll) == 14:
+        MAX_X = 20  # test input
+    else:
+        MAX_X = 4_000_000  # full input
 
-        sbrs = [sbr for sbr in get_sensor_beacon_radius(ll)]
+    sbrs = [sbr for sbr in get_sensor_beacon_radius(ll)]
 
-        # Each sensor sweep zone is defined by 4 perimeter lines. Two with gradient of +1:
-        # - y = x + (sy-sx+r+1)
-        # - y = x + (sy-sx-r-1)
-        #
-        # and two of gradient -1:
-        # - y = -x + (sx+sy+r+1)
-        # - y = -x + (sx+sy-r-1)
-        #
-        # (where (sx, sy) are the sensor's coordinates and r is the sensor's sweep radius
-        acoeffs, bcoeffs = set(), set()
-        for sbr in sbrs:
-            acoeffs.add(sbr[0][1] - sbr[0][0] + sbr[2] + 1)
-            acoeffs.add(sbr[0][1] - sbr[0][0] - sbr[2] - 1)
-            bcoeffs.add(sbr[0][1] + sbr[0][0] + sbr[2] + 1)
-            bcoeffs.add(sbr[0][1] + sbr[0][0] - sbr[2] - 1)
+    # Each sensor sweep zone is defined by 4 perimeter lines. Two with gradient of +1:
+    # - y = x + (sy-sx+r+1)
+    # - y = x + (sy-sx-r-1)
+    #
+    # and two of gradient -1:
+    # - y = -x + (sx+sy+r+1)
+    # - y = -x + (sx+sy-r-1)
+    #
+    # (where (sx, sy) are the sensor's coordinates and r is the sensor's sweep radius
+    acoeffs, bcoeffs = set(), set()
+    for sbr in sbrs:
+        acoeffs.add(sbr[0][1] - sbr[0][0] + sbr[2] + 1)
+        acoeffs.add(sbr[0][1] - sbr[0][0] - sbr[2] - 1)
+        bcoeffs.add(sbr[0][1] + sbr[0][0] + sbr[2] + 1)
+        bcoeffs.add(sbr[0][1] + sbr[0][0] - sbr[2] - 1)
 
-        # The solution coordinate must lie on the intersection of an "a" line and a "b" line
-        for a, b in itertools.product(acoeffs, bcoeffs):
-            p = ((b-a)//2, (a+b)//2)
-            if all(0 < c and c < MAX_X for c in p):
-                if all(distance(p, sbr[0]) > sbr[2] for sbr in sbrs):
-                    return(str(tuning_freq(p)))
+    # The solution coordinate must lie on the intersection of an "a" line and a "b" line
+    for a, b in itertools.product(acoeffs, bcoeffs):
+        p = ((b-a)//2, (a+b)//2)
+        if all(0 < c and c < MAX_X for c in p):
+            if all(distance(p, sbr[0]) > sbr[2] for sbr in sbrs):
+                return(str(tuning_freq(p)))
 
-        assert False, "No solution found"
-
-if __name__ == "__main__":
-    Solution()
+    assert False, "No solution found"
