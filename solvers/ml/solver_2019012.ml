@@ -22,9 +22,6 @@ let sum_transformed_list lst op pred =
   |> List.fold_left (+) 0
 
 let solve content =
-  let start_time = Unix.gettimeofday () in
   let integers = read_integers_from_file content in
-  let fuel = sum_transformed_list integers (fun x -> x / 3 - 2) ((>=) 0) in
-  let end_time = Unix.gettimeofday () in
-  let execution_time = (end_time -. start_time) *. 1_000_000.0 in (* Convert to microseconds *)
-  Printf.printf "{\"solution\": \"%d\", \"execution_time\": %.0f}\n" fuel execution_time
+  let result = sum_transformed_list integers (fun x -> x / 3 - 2) ((>=) 0) in
+  string_of_int result

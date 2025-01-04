@@ -2,4 +2,4 @@ build:
   dune build
 
 run +argv:
-  ./run.sh {{argv}}
+  @./run.sh {{argv}}
