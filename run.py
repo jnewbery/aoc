@@ -258,6 +258,7 @@ def main():
         help="Which implementation to run. Pass '@' to use the manifest file."
     )
     parser.add_argument("-o", "--order", type=Order, choices=[order.value for order in Order], default=Order.CHRONOLOGICAL, help="Order to display results in.")
+    parser.add_argument("--build", action=argparse.BooleanOptionalAction, help="Build the solutions before running them", default=True)
 
     args = parser.parse_args()
 
@@ -268,8 +269,9 @@ def main():
         sys.exit(1)
     parts = [int(args.puzzles[6])] if len(args.puzzles) == 7 else PARTS
 
-    print("Building solutions...")
-    run(["just", "build"])
+    if args.build:
+        print("Building solutions...")
+        run(["just", "build"])
     results = run_solvers(args.implementation, days, parts, args.test)
 
     print_results(results, args.order)
