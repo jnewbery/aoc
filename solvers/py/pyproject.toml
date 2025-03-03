@@ -1,0 +1,14 @@
+[project]
+name = "aoc-py"
+version = "0.1.0"
+description = "Python solvers for Advent of Code"
+requires-python = ">=3.14"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+fix=true
