@@ -17,15 +17,11 @@ def part2(ll: list[str]) -> str:
         if l[0] == 'R':
             rots, pos = divmod(pos + int(l[1:]), 100)
             ret += rots
-            # print(int(l[1:]), pos, rots)
-            # print(f"{ret=}")
         else:
             if pos == 0:
                 ret -= 1
             rots, pos = divmod(pos - int(l[1:]), 100)
             ret += abs(rots)
-            # print(int(l[1:]), pos, rots)
-            # print(f"{ret=}")
             if pos == 0:
                 ret += 1
     return str(ret)
