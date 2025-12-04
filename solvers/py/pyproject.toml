@@ -3,6 +3,10 @@ name = "aoc-py"
 version = "0.1.0"
 description = "Python solvers for Advent of Code"
 requires-python = ">=3.14"
+dependencies = [
+    "numpy>=2.3.5",
+    "scipy>=1.16.3",
+]
 
 [tool.black]
 line-length = 120
