@@ -8,12 +8,10 @@ def get_joltage(l: str) -> int:
             p1 = i
             p2 = i + 1
     for j in range(p1 + 1, len(l)):
-        # print(p1, p2, j)
         if int(l[j]) > int(l[p2]):
             p2 = j
-    # print(p1, p2)
+
     joltage = int(l[p1]) * 10 + int(l[p2])
-    # print(joltage)
     return joltage
 
 def part1(ll: list[str]) -> str:

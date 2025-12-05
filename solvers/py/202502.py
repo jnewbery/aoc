@@ -17,12 +17,10 @@ def rep_digit_block_nums_below(x: int) -> set[int]:
     digits = int(math.log10(x)) + 1
 
     rdbns: set[int] = set()
-    # find the number of RDB numbers of digit length digits, less than x
-    # print(f"{digits=}")
+    # Find the number of RDB numbers of digit length digits, less than x
     if digits % 2 == 0:
         n = digits / 2
         top_rdbn = math.floor(x / (10 ** n + 1))
-        # print(f"{top_rdbn=}")
         rdbns.update({i * int(10 ** n + 1) for i in range(int(10 ** (n - 1)), top_rdbn + 1)})
         n -= 1
     else:
@@ -38,9 +36,7 @@ def part1(ll: list[str]) -> str:
     invalids: set[int] = set()
     for pair in ll[0].split(','):
         lower, higher = pair.split('-')
-        # print(f"{lower=}, {higher=}")
         new_invalids = rep_digit_block_nums_below(int(higher)) - rep_digit_block_nums_below(int(lower) - 1)
-        # print(f"{new_invalids=}")
         invalids ^= new_invalids
     return str(sum(invalids))
 
