@@ -11,6 +11,7 @@ import json
 class EXIT_CODES(enum.Enum):
     SUCCESS = 0
     NOT_IMPLEMENTED = 38
+    NO_INPUT = 39
 
 def get_puzzle_input(puzzle: str, test: bool) -> list[str]:
     if test:
@@ -20,8 +21,10 @@ def get_puzzle_input(puzzle: str, test: bool) -> list[str]:
 
     if os.path.exists(input_dir / f"{puzzle[0:6]}_{puzzle[6]}.txt"):
         input_file = input_dir / f"{puzzle[0:6]}_{puzzle[6]}.txt"
-    else:
+    elif os.path.exists(input_dir / f"{puzzle[0:6]}.txt"):
         input_file = input_dir / f"{puzzle[0:6]}.txt"
+    else:
+        sys.exit(EXIT_CODES.NO_INPUT.value)
 
     with open(input_file) as f:
         return f.read().splitlines()

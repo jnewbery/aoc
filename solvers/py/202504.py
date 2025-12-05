@@ -15,7 +15,7 @@ def part1(ll: list[str]) -> str:
     A = np.array([[1 if c == '@' else 0 for c in line] for line in ll])
 
     accessible = get_accessible(A)
-    return accessible.sum()
+    return str(accessible.sum())
 
 def part2(ll: list[str]) -> str:
     A = np.array([[1 if c == '@' else 0 for c in line] for line in ll])

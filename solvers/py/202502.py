@@ -1,3 +1,4 @@
+from utils import exit_not_implemented
 import math
 
 def rep_digit_block_nums_below(x: int) -> set[int]:
@@ -41,5 +42,6 @@ def part1(ll: list[str]) -> str:
     return str(sum(invalids))
 
 def part2(ll: list[str]) -> str:
+    exit_not_implemented()
     del ll
     return ""

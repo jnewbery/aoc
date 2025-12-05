@@ -5,6 +5,7 @@ import sys
 class EXIT_CODES(enum.Enum):
     SUCCESS = 0
     NOT_IMPLEMENTED = 38
+    NO_INPUT = 38
 
 def exit_not_implemented():
     sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)

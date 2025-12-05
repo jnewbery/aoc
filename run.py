@@ -21,6 +21,7 @@ class EXIT_CODES(enum.Enum):
     # Must match utils.EXIT_CODES
     SUCCESS = 0
     NOT_IMPLEMENTED = 38
+    NO_INPUT = 39
 
 class Result(enum.StrEnum):
     UNEXECUTED = enum.auto()
@@ -28,6 +29,7 @@ class Result(enum.StrEnum):
     FAILURE = enum.auto()
     INCONCLUSIVE = enum.auto()
     NOT_IMPLEMENTED = enum.auto()
+    NO_INPUT = enum.auto()
     BAD_OUTPUT = enum.auto()
 
 class Order(enum.StrEnum):
@@ -70,6 +72,8 @@ class PartExecution:
             return f"[yellow]Inconclusive[/yellow]"
         elif self.result == Result.NOT_IMPLEMENTED:
             return f"[blue]Not Implemented[/blue]"
+        elif self.result == Result.NO_INPUT:
+            return f"[blue]No Input[/blue]"
         elif self.result == Result.BAD_OUTPUT:
             return f"[red]Bad Output[/red]"
         else:
@@ -119,6 +123,9 @@ def run_solver(day_execution: DayExecution) -> None:
 
         if script_output.returncode == EXIT_CODES.NOT_IMPLEMENTED.value:
             part_execution.result = Result.NOT_IMPLEMENTED
+            continue
+        elif script_output.returncode == EXIT_CODES.NO_INPUT.value:
+            part_execution.result = Result.NO_INPUT
             continue
 
         try:
