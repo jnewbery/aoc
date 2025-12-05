@@ -22,7 +22,7 @@ def part1(ll: list[str]) -> str:
 
 def part2(ll: list[str]) -> str:
     A = np.array([[1 if c == '@' else 0 for c in line] for line in ll])
-    ret = 0
+    ret: int = 0
     accessible = np.zeros_like(A)
     # print(f"A=\n{A}\n")
     # print(f"accessible=\n{accessible}\n")
@@ -36,4 +36,4 @@ def part2(ll: list[str]) -> str:
         # print(f"Adding {ret}")
         ret += accessible.sum()
         A -= accessible
-    return ret
+    return str(ret)
