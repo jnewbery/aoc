@@ -1,5 +1,3 @@
-from utils import exit_not_implemented
-
 def get_best_digit(l: list[int], n: int):
     """
     Get the position of the 'best' digit from a list, excluding the last n digits.
@@ -12,24 +10,27 @@ def get_best_digit(l: list[int], n: int):
             p = i
     return p
 
-def get_joltage(l: list[int]) -> int:
-    p1 = get_best_digit(l, 1)
-    d1 = l[p1]
-    l = l[p1 + 1:]
+def get_n_joltage(l: list[int], n: int) -> int:
+    """
+    Get the joltage of length n
+    """
+    joltage = 0
+    for i in range(n):
+        joltage *= 10
+        p = get_best_digit(l, n - i - 1)
+        joltage += l[p]
+        l = l[p + 1:]
 
-    p2 = get_best_digit(l, 0)
-    d2 = l[p2]
-
-    joltage = d1 * 10 + d2
     return(joltage)
 
 def part1(ll: list[str]) -> str:
     ret = 0
     for l in ll:
-        ret += get_joltage([int(c) for c in l])
+        ret += get_n_joltage([int(c) for c in l], 2)
     return str(ret)
 
 def part2(ll: list[str]) -> str:
-    exit_not_implemented()
-    del ll
-    return ""
+    ret = 0
+    for l in ll:
+        ret += get_n_joltage([int(c) for c in l], 12)
+    return str(ret)
