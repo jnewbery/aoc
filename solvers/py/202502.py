@@ -29,32 +29,37 @@ def merge_and_split(pairs: list[tuple[int, int]]) -> list[tuple[int, int]]:
 
     return pairs
 
+def sum_rep_digit_block_nums_between(lower: int, higher: int) -> int:
+    rdbns: set[int] = set()
+    for repeats in range(2, len(str(lower)) + 1):
+        rdbns |= sum_rep_n_digit_block_nums_between(lower, higher, repeats)
 
-def sum_rep_2_digit_block_nums_between(lower: int, higher: int) -> int:
+    return sum(rdbns)
+
+
+def sum_rep_n_digit_block_nums_between(lower: int, higher: int, repeats: int) -> set[int]:
     """
-    An R2DB (repeated-2-digit-block) number is of the form 'abcabc', eg 183183.
-    If the block is n digits, then the RDB number is x * (10^n + 1).
+    An R2DB (repeated-n-digit-block) number is of the form 'abcabc' (repeated repeats times), eg 183183.
+    If the block is block_len digits, then the RDB number is x * (10^m + 1).
 
-    x * (10^n + 1) is a RDB number for all 10^(n-1) <= x <= 10^n - 1.
+    x * (10^m + 1) is a R2DB number for all 10^(repeats-1) <= x <= 10^m - 1.
 
-    For example, if n is 2, then 1010, 1111, 1212, ..., 9898, 9999 are all RDB numbers.
+    For example, if m is 2, then 1010, 1111, 1212, ..., 9898, 9999 are all R2DB numbers.
 
-    This function returns a sum of all of the RDB numbers below a given value, with a length equal to the given value.
+    This function returns the set of all of the RnDB numbers below a given value, with a length equal to the given value.
     """
-    # assert len(str(lower)) == len(str(higher)), "Solver only implemented for pairs of numbers of length differing by at most one"
     digits = int(math.log10(lower)) + 1
 
-    if digits % 2 != 0:
-        return 0
+    if digits % repeats != 0:
+        return set()
 
     # Find the RDB numbers of digit length digits, less than higher but more than lower
-    n = digits / 2
-    top_rdbn = math.floor(higher / (10 ** n + 1))
-    bottom_rdbn = math.ceil(lower / (10 ** n + 1))
-    rdbs = [i * int(10 ** n + 1) for i in range(bottom_rdbn, top_rdbn + 1)]
-    # print(f"{rdbs=}")
-    # print(f"{sum(rdbs)=}")
-    return sum(rdbs)
+    block_len = digits / repeats
+    divisor = int(int(str(int(10 ** (block_len - 1))) * repeats) / int(10 ** (block_len - 1)))
+    bottom_rdbn = math.ceil(lower / divisor)
+    top_rdbn = math.floor(higher / divisor)
+    rdbs = {i * divisor for i in range(bottom_rdbn, top_rdbn + 1)}
+    return rdbs
 
 def part1(ll: list[str]) -> str:
     invalids: int = 0
@@ -65,12 +70,17 @@ def part1(ll: list[str]) -> str:
     pairs = merge_and_split(pairs)
 
     for pair in pairs:
-        new_invalids = sum_rep_2_digit_block_nums_between(*pair)
-        invalids += new_invalids
+        invalids += sum(sum_rep_n_digit_block_nums_between(*pair, 2))
     return str(invalids)
 
 def part2(ll: list[str]) -> str:
-    for pair in ll[0].split(','):
-        lower, higher = pair.split('-')
-        assert abs(len(lower) - len(higher)) <= 1, "Solver only implemented for pairs of numbers of length differing by at most one"
-    return ""
+    invalids: int = 0
+    pairs: list[tuple[int, int]] = []
+    for str_pair in ll[0].split(','):
+        pair = str_pair.split('-')
+        pairs.append((int(pair[0]), int(pair[1])))
+    pairs = merge_and_split(pairs)
+
+    for pair in pairs:
+        invalids += sum_rep_digit_block_nums_between(*pair)
+    return str(invalids)
