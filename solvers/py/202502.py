@@ -1,4 +1,3 @@
-from utils import exit_not_implemented
 import math
 
 def rep_digit_block_nums_below(x: int) -> set[int]:
@@ -27,9 +26,7 @@ def rep_digit_block_nums_below(x: int) -> set[int]:
     else:
         n = (digits - 1) / 2
 
-    while n > 0:
-        rdbns.update({i * int(10 ** n + 1) for i in range(int(10 ** (n - 1)), int(10 ** n))})
-        n -= 1
+    rdbns.update({i * int(10 ** n + 1) for i in range(int(10 ** (n - 1)), int(10 ** n))})
 
     return rdbns
 
@@ -37,11 +34,13 @@ def part1(ll: list[str]) -> str:
     invalids: set[int] = set()
     for pair in ll[0].split(','):
         lower, higher = pair.split('-')
+        assert abs(len(lower) - len(higher)) <= 1, "Solver only implemented for pairs of numbers of length differing by at most one"
         new_invalids = rep_digit_block_nums_below(int(higher)) - rep_digit_block_nums_below(int(lower) - 1)
         invalids ^= new_invalids
     return str(sum(invalids))
 
 def part2(ll: list[str]) -> str:
-    exit_not_implemented()
-    del ll
+    for pair in ll[0].split(','):
+        lower, higher = pair.split('-')
+        assert abs(len(lower) - len(higher)) <= 1, "Solver only implemented for pairs of numbers of length differing by at most one"
     return ""
