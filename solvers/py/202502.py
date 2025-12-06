@@ -17,13 +17,12 @@ def merge_and_split(pairs: list[tuple[int, int]]) -> list[tuple[int, int]]:
             i += 1
 
     i = 0
-    while i < len(pairs) - 1:
+    while i < len(pairs):
         pair = pairs[i]
         if len(str(pair[0])) != len(str(pair[1])):
             pairs.pop(i)
             pairs.insert(i, (10 ** len(str(pair[0])), pair[1]))
             pairs.insert(i, (pair[0], 10 ** len(str(pair[0])) - 1))
-            i += 2
         else:
             i += 1
 
