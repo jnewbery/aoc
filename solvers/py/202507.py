@@ -3,8 +3,9 @@ from collections import defaultdict
 
 def part1(ll: list[str]) -> str:
     height, width = len(ll), len(ll[0])
-    splitters: list[tuple[int, int]] = []
     start = (ll[0].find("S"), 0)
+
+    splitters: int = 0
     to_visit: dict[tuple[int, int], bool] = {start: True}
     visited: set[tuple[int, int]] = set()
 
@@ -19,13 +20,13 @@ def part1(ll: list[str]) -> str:
             if (i, j + 1) not in to_visit and (i, j + 1) not in visited:
                 to_visit[(i, j + 1)] = True
         elif ll[j + 1][i] == '^':
-            splitters.append((i, j))
+            splitters += 1
             if (i + 1) <= width and (i + 1, j) not in to_visit and (i + 1, j) not in visited:
                 to_visit[(i + 1, j + 1)] = True
             if (i - 1) >= 0 and (i - 1, j) not in to_visit and (i - 1, j) not in visited:
                 to_visit[(i - 1, j + 1)] = True
 
-    return str(len(splitters))
+    return str(splitters)
 
 def part2(ll: list[str]) -> str:
     height, width = len(ll), len(ll[0])
