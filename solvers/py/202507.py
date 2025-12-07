@@ -1,5 +1,5 @@
-from utils import exit_not_implemented
 from itertools import product
+from collections import defaultdict
 
 def part1(ll: list[str]) -> str:
     height, width = len(ll), len(ll[0])
@@ -30,6 +30,29 @@ def part1(ll: list[str]) -> str:
     return str(sum((s for s in splitters.values() if s)))
 
 def part2(ll: list[str]) -> str:
-    exit_not_implemented()
-    del ll
-    return ""
+    height, width = len(ll), len(ll[0])
+    quantum_path: defaultdict[tuple[int, int], int] = defaultdict(int)
+    count = 0
+
+    for i, j in product(range(width), range(height)):
+        if ll[j][i] == "S":
+            quantum_path[(i, j)] = 1
+            break
+
+    while quantum_path:
+        pos, timelines = next(iter(quantum_path.items()))
+        del quantum_path[pos]
+        i, j = pos
+        if j >= height - 1:
+            # reached the bottom
+            count += timelines
+            continue
+        elif ll[j + 1][i] == '.':
+            quantum_path[(i, j + 1)] += timelines
+        elif ll[j + 1][i] == '^':
+            if (i + 1) <= width:
+                quantum_path[(i + 1, j + 1)] += timelines
+            if (i - 1) >= 0:
+                quantum_path[(i - 1, j + 1)] += timelines
+
+    return str(count)
