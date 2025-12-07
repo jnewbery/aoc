@@ -3,31 +3,29 @@ from collections import defaultdict
 
 def part1(ll: list[str]) -> str:
     height, width = len(ll), len(ll[0])
-    splitters: dict[tuple[int, int], bool] = {}
-    to_visit: set[tuple[int, int]] = set()
+    splitters: list[tuple[int, int]] = []
+    start = (ll[0].find("S"), 0)
+    to_visit: dict[tuple[int, int], bool] = {start: True}
     visited: set[tuple[int, int]] = set()
-    for i, j in product(range(width), range(height)):
-        if ll[j][i] == "S":
-            to_visit.add((i, j))
-        elif ll[j][i] == "^":
-            splitters[(i, j)] = False
 
     while to_visit:
-        i, j = to_visit.pop()
+        key, _ = next(iter(to_visit.items()))
+        i, j = key
+        del to_visit[key]
         if j >= height - 1:
             # reached the bottom
             continue
         elif ll[j + 1][i] == '.':
             if (i, j + 1) not in to_visit and (i, j + 1) not in visited:
-                to_visit.add((i, j + 1))
+                to_visit[(i, j + 1)] = True
         elif ll[j + 1][i] == '^':
-            splitters[(i, j)] = True
+            splitters.append((i, j))
             if (i + 1) <= width and (i + 1, j) not in to_visit and (i + 1, j) not in visited:
-                to_visit.add((i + 1, j + 1))
+                to_visit[(i + 1, j + 1)] = True
             if (i - 1) >= 0 and (i - 1, j) not in to_visit and (i - 1, j) not in visited:
-                to_visit.add((i - 1, j + 1))
+                to_visit[(i - 1, j + 1)] = True
 
-    return str(sum((s for s in splitters.values() if s)))
+    return str(len(splitters))
 
 def part2(ll: list[str]) -> str:
     height, width = len(ll), len(ll[0])
