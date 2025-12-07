@@ -7,7 +7,6 @@ def part1(ll: list[str]) -> str:
 
     splitters: int = 0
     to_visit: dict[tuple[int, int], bool] = {start: True}
-    visited: set[tuple[int, int]] = set()
 
     while to_visit:
         key, _ = next(iter(to_visit.items()))
@@ -17,13 +16,12 @@ def part1(ll: list[str]) -> str:
             # reached the bottom
             continue
         elif ll[j + 1][i] == '.':
-            if (i, j + 1) not in to_visit and (i, j + 1) not in visited:
-                to_visit[(i, j + 1)] = True
+            to_visit[(i, j + 1)] = True
         elif ll[j + 1][i] == '^':
             splitters += 1
-            if (i + 1) <= width and (i + 1, j) not in to_visit and (i + 1, j) not in visited:
+            if (i + 1) <= width:
                 to_visit[(i + 1, j + 1)] = True
-            if (i - 1) >= 0 and (i - 1, j) not in to_visit and (i - 1, j) not in visited:
+            if (i - 1) >= 0:
                 to_visit[(i - 1, j + 1)] = True
 
     return str(splitters)
