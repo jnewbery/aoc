@@ -2,6 +2,7 @@ from collections import defaultdict
 
 def part1(ll: list[str]) -> str:
     height, width = len(ll), len(ll[0])
+    # The start position is always in the first row
     start = (ll[0].find("S"), 0)
 
     # path is the cells that are in the path that we haven't yet processed. Since dicts
@@ -26,15 +27,16 @@ def part1(ll: list[str]) -> str:
             # splitter below, path branches. We can only hit the splitter from one
             # cell in the path (directly above), so there's no chance of double counting
             splitters += 1
-            if (i + 1) <= width:
+            if i < width - 1:
                 path[(i + 1, j + 1)] = True
-            if (i - 1) >= 0:
+            if i > 0:
                 path[(i - 1, j + 1)] = True
 
     return str(splitters)
 
 def part2(ll: list[str]) -> str:
     height, width = len(ll), len(ll[0])
+    # The start position is always in the first row
     start = (ll[0].find("S"), 0)
 
     # quantum_path is the cells that are in the path that we haven't yet processed. Since defaultdicts
@@ -59,9 +61,9 @@ def part2(ll: list[str]) -> str:
             quantum_path[(i, j + 1)] += timelines
         elif ll[j + 1][i] == '^':
             # splitter below, path branches. Add superpositions to down-left and down-right.
-            if (i + 1) <= width:
+            if i < width - 1:
                 quantum_path[(i + 1, j + 1)] += timelines
-            if (i - 1) >= 0:
+            if i > 0:
                 quantum_path[(i - 1, j + 1)] += timelines
 
     return str(superpositions)
