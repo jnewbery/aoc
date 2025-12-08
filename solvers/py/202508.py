@@ -25,12 +25,17 @@ def get_d_squared_to_relays(relays: list[tuple[int, int, int]]) -> list[tuple[in
     return d_squared_relays
 
 def part1(ll: list[str]) -> str:
+    if len(ll) == 20:
+        # test input
+        generations = 10
+    else:
+        generations = 1000
     relays = get_relays(ll)
 
     d_squared_relays = get_d_squared_to_relays(relays)
 
     relay_to_circuit: dict[int, set[int]] = {}
-    for i in range(1000):
+    for i in range(generations):
         _, relay_ij = heapq.heappop(d_squared_relays)
         i, j = relay_ij
         if i not in relay_to_circuit and j not in relay_to_circuit:
