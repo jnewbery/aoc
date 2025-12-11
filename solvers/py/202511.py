@@ -8,25 +8,28 @@ class Device():
     depth: None | int  # greatest depth (longest path from start)
     paths: int # number of different paths to reach this device
 
-def part1(ll: list[str]) -> str:
+def get_devices(ll: list[str], start_name: str) -> dict[str, Device]:
     devices: dict[str, Device] = {}
-    to_visit: list[str] = []
 
     for l in ll:
         from_device, to_devices_str = l.split(": ")
         to_devices = to_devices_str.split()
         if "you" in to_devices:
             continue
-        elif from_device == "you":
+        elif from_device == start_name:
             depth = 0
             paths = 1
         else:
             depth = None
             paths = 0
         devices[from_device] = Device(name=from_device, to_devices=to_devices, depth=depth, paths=paths)
+    return devices
+
+def part1(ll: list[str]) -> str:
+    devices: dict[str, Device] = get_devices(ll, "you")
 
     # calculate depths
-    to_visit = ["you"]
+    to_visit: list[str] = ["you"]
     while to_visit:
         visiting = devices[to_visit.pop()]
         assert visiting.depth is not None
@@ -35,7 +38,6 @@ def part1(ll: list[str]) -> str:
                 continue
             to_visit_device = devices[to_visit_str]
 
-            depth = to_visit_device.depth
             if to_visit_device.depth == None or to_visit_device.depth < visiting.depth + 1:
                 to_visit_device.depth = visiting.depth + 1
                 to_visit.append(to_visit_str)
