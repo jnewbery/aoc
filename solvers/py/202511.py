@@ -31,8 +31,6 @@ def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> li
         visiting = devices[to_visit.pop()]
         assert visiting.depth is not None
         for to_visit_str in visiting.to_devices:
-            # if to_visit_str == end_name:
-            #     continue
             to_visit_device = devices[to_visit_str]
 
             if to_visit_device.depth == None or to_visit_device.depth < visiting.depth + 1:
@@ -47,7 +45,7 @@ def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> li
 def get_paths(devices: dict[str, Device], devices_by_depth: list[str], end_name: str):
     for visiting_name in devices_by_depth:
         visiting = devices[visiting_name]
-        if devices == end_name:
+        if visiting_name == end_name:
             return
         for to_visit_str in visiting.to_devices:
             devices[to_visit_str].paths += visiting.paths
@@ -75,15 +73,15 @@ def part2(ll: list[str]) -> str:
     # calculate depths
     devices_by_depth = get_depths(devices, START_NAME, END_NAME)
 
-    waypoints = WAYPOINTS[:]
-    waypoints.sort(key=lambda w: devices[w].depth or 0)
-    waypoints.append(END_NAME)
+    sorted_waypoints = sorted(WAYPOINTS[:], key=lambda w: devices[w].depth or 0) + [END_NAME]
 
     # BFS by depth to each waypoint in turn
-    for waypoint in waypoints:
+    for waypoint in sorted_waypoints:
         get_paths(devices, devices_by_depth, waypoint)
         for d in devices.values():
             if d.name != waypoint:
+                # Clear out the number of paths to each node, except for the
+                # just-calculated paths to the waypoint.
                 d.paths = 0
 
     return str(devices[END_NAME].paths)
