@@ -25,16 +25,13 @@ def get_devices(ll: list[str], start_name: str) -> dict[str, Device]:
         devices[from_device] = Device(name=from_device, to_devices=to_devices, depth=depth, paths=paths)
     return devices
 
-def part1(ll: list[str]) -> str:
-    devices: dict[str, Device] = get_devices(ll, "you")
-
-    # calculate depths
-    to_visit: list[str] = ["you"]
+def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> list[str]:
+    to_visit: list[str] = [start_name]
     while to_visit:
         visiting = devices[to_visit.pop()]
         assert visiting.depth is not None
         for to_visit_str in visiting.to_devices:
-            if to_visit_str == "out":
+            if to_visit_str == end_name:
                 continue
             to_visit_device = devices[to_visit_str]
 
@@ -45,10 +42,18 @@ def part1(ll: list[str]) -> str:
     devices_by_depth: list[Device] = [d for d in devices.values() if d.depth is not None]
     devices_by_depth.sort(key=lambda d: d.depth, reverse=True)
 
+    return [d.name for d in devices_by_depth]
+
+def part1(ll: list[str]) -> str:
+    devices: dict[str, Device] = get_devices(ll, "you")
+
+    # calculate depths
+    devices_by_depth = get_depths(devices, "you", "out")
+
     # BFS by depth
     ret = 0
     while devices_by_depth:
-        visiting = devices_by_depth.pop()
+        visiting = devices[devices_by_depth.pop()]
         for to_visit_str in visiting.to_devices:
             if to_visit_str == "out":
                 ret += visiting.paths
