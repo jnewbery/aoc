@@ -44,6 +44,18 @@ def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> li
 
     return [d.name for d in devices_by_depth]
 
+def get_paths(devices: dict[str, Device], devices_by_depth: list[str]) -> int:
+    paths = 0
+    while devices_by_depth:
+        visiting = devices[devices_by_depth.pop()]
+        for to_visit_str in visiting.to_devices:
+            if to_visit_str == "out":
+                paths += visiting.paths
+                continue
+            devices[to_visit_str].paths += visiting.paths
+
+    return paths
+
 def part1(ll: list[str]) -> str:
     devices: dict[str, Device] = get_devices(ll, "you")
 
@@ -51,14 +63,7 @@ def part1(ll: list[str]) -> str:
     devices_by_depth = get_depths(devices, "you", "out")
 
     # BFS by depth
-    ret = 0
-    while devices_by_depth:
-        visiting = devices[devices_by_depth.pop()]
-        for to_visit_str in visiting.to_devices:
-            if to_visit_str == "out":
-                ret += visiting.paths
-                continue
-            devices[to_visit_str].paths += visiting.paths
+    ret = get_paths(devices, devices_by_depth)
 
     return str(ret)
 
