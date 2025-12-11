@@ -7,7 +7,7 @@ class Device():
     depth: None | int  # greatest depth (longest path from start)
     paths: int # number of different paths to reach this device
 
-def get_devices(ll: list[str], start_name: str) -> dict[str, Device]:
+def get_devices(ll: list[str], start_name: str, end_name: str) -> dict[str, Device]:
     devices: dict[str, Device] = {}
 
     for l in ll:
@@ -22,6 +22,7 @@ def get_devices(ll: list[str], start_name: str) -> dict[str, Device]:
             depth = None
             paths = 0
         devices[from_device] = Device(name=from_device, to_devices=to_devices, depth=depth, paths=paths)
+    devices[end_name] = Device(name=end_name, to_devices=[], depth=None, paths=0)
     return devices
 
 def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> list[str]:
@@ -39,7 +40,7 @@ def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> li
                 to_visit.append(to_visit_str)
 
     devices_by_depth: list[Device] = [d for d in devices.values() if d.depth is not None]
-    devices_by_depth.sort(key=lambda d: d.depth)
+    devices_by_depth.sort(key=lambda d: d.depth or 0)
 
     return [d.name for d in devices_by_depth]
 
@@ -56,10 +57,12 @@ def get_paths(devices: dict[str, Device], devices_by_depth: list[str]) -> int:
     return paths
 
 def part1(ll: list[str]) -> str:
-    devices: dict[str, Device] = get_devices(ll, "you")
+    START_NAME = "you"
+    END_NAME = "out"
+    devices: dict[str, Device] = get_devices(ll, START_NAME, END_NAME)
 
     # calculate depths
-    devices_by_depth = get_depths(devices, "you", "out")
+    devices_by_depth = get_depths(devices, START_NAME, END_NAME)
 
     # BFS by depth
     ret = get_paths(devices, devices_by_depth)
@@ -67,10 +70,12 @@ def part1(ll: list[str]) -> str:
     return str(ret)
 
 def part2(ll: list[str]) -> str:
-    devices: dict[str, Device] = get_devices(ll, "svr")
+    START_NAME = "svr"
+    END_NAME = "out"
+    devices: dict[str, Device] = get_devices(ll, START_NAME, END_NAME)
 
     # calculate depths
-    devices_by_depth = get_depths(devices, "svr", "out")
+    devices_by_depth = get_depths(devices, START_NAME, END_NAME)
 
     waypoints = ["fft", "dac"]
     waypoints.sort(key=lambda waypoint: devices_by_depth.index(waypoint))
