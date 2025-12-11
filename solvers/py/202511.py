@@ -31,8 +31,8 @@ def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> li
         visiting = devices[to_visit.pop()]
         assert visiting.depth is not None
         for to_visit_str in visiting.to_devices:
-            if to_visit_str == end_name:
-                continue
+            # if to_visit_str == end_name:
+            #     continue
             to_visit_device = devices[to_visit_str]
 
             if to_visit_device.depth == None or to_visit_device.depth < visiting.depth + 1:
@@ -42,19 +42,13 @@ def get_depths(devices: dict[str, Device], start_name: str, end_name: str) -> li
     devices_by_depth: list[Device] = [d for d in devices.values() if d.depth is not None]
     devices_by_depth.sort(key=lambda d: d.depth or 0)
 
-    return [d.name for d in devices_by_depth]
+    return [d.name for d in devices_by_depth] + [end_name]
 
-def get_paths(devices: dict[str, Device], devices_by_depth: list[str]) -> int:
-    paths = 0
+def get_paths(devices: dict[str, Device], devices_by_depth: list[str]):
     while devices_by_depth:
         visiting = devices[devices_by_depth.pop(0)]
         for to_visit_str in visiting.to_devices:
-            if to_visit_str == "out":
-                paths += visiting.paths
-                continue
             devices[to_visit_str].paths += visiting.paths
-
-    return paths
 
 def part1(ll: list[str]) -> str:
     START_NAME = "you"
@@ -65,9 +59,9 @@ def part1(ll: list[str]) -> str:
     devices_by_depth = get_depths(devices, START_NAME, END_NAME)
 
     # BFS by depth
-    ret = get_paths(devices, devices_by_depth)
+    get_paths(devices, devices_by_depth)
 
-    return str(ret)
+    return str(devices[END_NAME].paths)
 
 def part2(ll: list[str]) -> str:
     START_NAME = "svr"
@@ -89,6 +83,6 @@ def part2(ll: list[str]) -> str:
     for d in devices.values():
         if d.name != waypoints[1]:
             d.paths = 0
-    ret = get_paths(devices, devices_by_depth[devices_by_depth.index(waypoints[1]):])
+    get_paths(devices, devices_by_depth[devices_by_depth.index(waypoints[1]):])
 
-    return str(ret)
+    return devices[END_NAME].paths
