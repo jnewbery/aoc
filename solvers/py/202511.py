@@ -79,12 +79,11 @@ def part2(ll: list[str]) -> str:
     waypoints.sort(key=lambda w: devices[w].depth or 0)
     waypoints.append(END_NAME)
 
-    # BFS by depth
+    # BFS by depth to each waypoint in turn
     for waypoint in waypoints:
         get_paths(devices, devices_by_depth, waypoint)
         for d in devices.values():
             if d.name != waypoint:
                 d.paths = 0
-    # get_paths(devices, devices_by_depth, END_NAME)
 
     return str(devices[END_NAME].paths)
