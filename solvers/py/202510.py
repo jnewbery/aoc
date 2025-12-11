@@ -4,7 +4,7 @@ from functools import reduce
 from operator import xor
 import numpy as np
 from numpy.typing import NDArray
-from utils import exit_not_implemented
+from scipy.optimize import milp, LinearConstraint, Bounds
 
 
 def part1(ll: list[str]) -> str:
@@ -54,7 +54,6 @@ def solve(buttons: list[NDArray], button_ix: int, target: NDArray) -> int | bool
 
 
 def part2(ll: list[str]) -> str:
-    return exit_not_implemented()
     pattern = re.compile(
         r'^\[(?P<A>[^\]]+)\]\s+(?P<B>.+?)\s+\{(?P<C>[^}]+)\}$'
     )
@@ -65,32 +64,35 @@ def part2(ll: list[str]) -> str:
         _, buttons_str, joltages_str = m.groups()
         # print(buttons_str, joltages_str)
 
-        buttons_list: list[list[int]] = []
-        for b_str in re.findall(r"\(([^)]*)\)", buttons_str):
-            buttons_list.append([int(l) for l in b_str.split(',')])
-
-        buttons_list.sort(key=lambda b: len(b), reverse=True)
-        # print(buttons)
-
         joltages_list = [int(j) for j in joltages_str.split(',')]
-        joltages: NDArray = np.array(joltages_list)
-        # joltages = np.array(joltages_list)
-        # print(joltages)
+        joltages: NDArray = np.array(joltages_list, dtype=float)
 
-        buttons: list[NDArray] = []
-        for b in buttons_list:
-            b_array = np.zeros_like(joltages)
-            for l in b:
-                b_array[l - 1] = 1
-            buttons.append(b_array)
+        buttons_strings: list[str] = re.findall(r"\(([^)]*)\)", buttons_str)
+        buttons: NDArray = np.zeros((len(buttons_strings), len(joltages)), dtype=int)
+        for i, b_str in enumerate(buttons_strings):
+            counters = [int(l) for l in b_str.split(',')]
+            buttons[i][counters] = 1
+        buttons = buttons.transpose()
 
-        # print(buttons)
+        num_buttons = len(buttons_strings)
+        c = np.ones(num_buttons, dtype=float)
 
-        # DFS the button presses
-        for i in range(len(buttons)):
-            if (presses := solve(buttons, i, joltages)) != False:
-                ret += presses
-                # print(ret)
-                break
+        # Equality constraint: A_eq x = b_eq
+        eq_con = LinearConstraint(buttons, lb=joltages, ub=joltages)  # pyright: ignore
+
+        # Non-negative variables: x_i >= 0 (no upper bound)
+        bounds = Bounds(lb=np.zeros(num_buttons), ub=np.full(num_buttons, np.inf))  # pyright: ignore
+
+        # All variables must be integer
+        integrality = np.ones(num_buttons, dtype=int)
+
+        res = milp(
+            c=c,
+            constraints=[eq_con],
+            bounds=bounds,
+            integrality=integrality,
+        )
+
+        ret += int(round(res.fun))
 
     return str(ret)
