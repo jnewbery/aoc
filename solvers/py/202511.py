@@ -1,9 +1,59 @@
 from utils import exit_not_implemented
+from dataclasses import dataclass
+
+@dataclass
+class Device():
+    name: str
+    to_devices: list[str]
+    depth: None | int  # greatest depth (longest path from start)
+    paths: int # number of different paths to reach this device
 
 def part1(ll: list[str]) -> str:
-    exit_not_implemented()
-    del ll
-    return ""
+    devices: dict[str, Device] = {}
+    to_visit: list[str] = []
+
+    for l in ll:
+        from_device, to_devices_str = l.split(": ")
+        to_devices = to_devices_str.split()
+        if "you" in to_devices:
+            continue
+        elif from_device == "you":
+            depth = 0
+            paths = 1
+        else:
+            depth = None
+            paths = 0
+        devices[from_device] = Device(name=from_device, to_devices=to_devices, depth=depth, paths=paths)
+
+    # calculate depths
+    to_visit = ["you"]
+    while to_visit:
+        visiting = devices[to_visit.pop()]
+        assert visiting.depth is not None
+        for to_visit_str in visiting.to_devices:
+            if to_visit_str == "out":
+                continue
+            to_visit_device = devices[to_visit_str]
+
+            depth = to_visit_device.depth
+            if to_visit_device.depth == None or to_visit_device.depth < visiting.depth + 1:
+                to_visit_device.depth = visiting.depth + 1
+                to_visit.append(to_visit_str)
+
+    devices_by_depth: list[Device] = [d for d in devices.values() if d.depth is not None]
+    devices_by_depth.sort(key=lambda d: d.depth, reverse=True)
+
+    # BFS by depth
+    ret = 0
+    while devices_by_depth:
+        visiting = devices_by_depth.pop()
+        for to_visit_str in visiting.to_devices:
+            if to_visit_str == "out":
+                ret += visiting.paths
+                continue
+            devices[to_visit_str].paths += visiting.paths
+
+    return str(ret)
 
 def part2(ll: list[str]) -> str:
     exit_not_implemented()
