@@ -75,15 +75,16 @@ def part2(ll: list[str]) -> str:
     # calculate depths
     devices_by_depth = get_depths(devices, START_NAME, END_NAME)
 
-    waypoints_by_depth = [(devices_by_depth.index(w), w) for w in WAYPOINTS]
-    waypoints_by_depth.sort()
+    waypoints = WAYPOINTS[:]
+    waypoints.sort(key=lambda w: devices[w].depth or 0)
+    waypoints.append(END_NAME)
 
     # BFS by depth
-    for depth, waypoint in waypoints_by_depth:
+    for waypoint in waypoints:
         get_paths(devices, devices_by_depth, waypoint)
         for d in devices.values():
             if d.name != waypoint:
                 d.paths = 0
-    get_paths(devices, devices_by_depth, END_NAME)
+    # get_paths(devices, devices_by_depth, END_NAME)
 
     return str(devices[END_NAME].paths)
