@@ -131,10 +131,10 @@ def part2(ll: list[str], args=None, visualize: bool = False) -> str:
         visualize_compressed_grid(compressed, borders, outside, output_path)
 
     max_area = 0
-    for i, p1 in enumerate(compressed):
-        for j, p2 in enumerate(compressed):
-            if j <= i:
-                continue
+    for i in range(len(compressed)):
+        for j in range(i + 1, len(compressed)):
+            p1 = compressed[i]
+            p2 = compressed[j]
             area = calculate_area((coordinates[i], coordinates[j]))
             if area <= max_area:
                 continue
