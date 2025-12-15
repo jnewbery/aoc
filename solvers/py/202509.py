@@ -1,4 +1,10 @@
+import os
+import sys
 from collections import deque
+from pathlib import Path
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 
 def compress_coordinates(coordinates):
     x_values = [c[0] for c in coordinates]
@@ -60,6 +66,41 @@ def rectangle_inside(p1, p2, polygon):
             return False
     return True
 
+def visualize_compressed_grid(compressed, borders, interior, output_path: Path) -> None:
+
+    points = set(compressed) | borders | interior
+    max_x = max(x for x, _ in points)
+    max_y = max(y for _, y in points)
+
+    grid = np.zeros((max_y + 1, max_x + 1), dtype=np.uint8)
+    for x, y in interior:
+        grid[y, x] = 1
+    for x, y in borders:
+        grid[y, x] = 2
+    for x, y in compressed:
+        grid[y, x] = 3
+
+    cmap = ListedColormap(["#f8f9fa", "#d0ebff", "#102a43", "#e67700"])
+    fig, ax = plt.subplots(figsize=(max(8, max_x / 6), max(6, max_y / 6)))
+    im = ax.imshow(grid, origin="lower", cmap=cmap, interpolation="nearest")
+
+    x_tick_step = max(1, (max_x + 1) // 20)
+    y_tick_step = max(1, (max_y + 1) // 20)
+    ax.set_xticks(range(0, max_x + 1, x_tick_step))
+    ax.set_yticks(range(0, max_y + 1, y_tick_step))
+    ax.set_xlabel("compressed x")
+    ax.set_ylabel("compressed y")
+    ax.set_title("2025-09 compressed grid")
+    ax.grid(color="#adb5bd", linestyle="--", linewidth=0.4)
+
+    cbar = fig.colorbar(im, ax=ax, ticks=[0.5, 1.5, 2.5, 3.5])
+    cbar.ax.set_yticklabels(["empty", "interior", "border", "corner"])
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=220)
+    plt.close(fig)
+
 def part1(ll: list[str]) -> str:
     corners = []
     for l in ll:
@@ -80,6 +121,11 @@ def part2(ll: list[str]) -> str:
     borders = create_borders(compressed)
     interior = flood_fill(borders, interior_seed)
     polygon = borders | interior
+
+    if os.getenv("AOC_202509_VISUALIZE"):
+        output_path = Path(__file__).parent / "plots" / "202509_compressed.png"
+        visualize_compressed_grid(compressed, borders, interior, output_path)
+
     max_area = 0
     for i, p1 in enumerate(compressed):
         for j, p2 in enumerate(compressed):
