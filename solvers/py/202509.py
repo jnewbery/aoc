@@ -1,5 +1,3 @@
-import os
-import sys
 from collections import deque
 from pathlib import Path
 import numpy as np
@@ -67,7 +65,6 @@ def rectangle_inside(p1, p2, polygon):
     return True
 
 def visualize_compressed_grid(compressed, borders, interior, output_path: Path) -> None:
-
     points = set(compressed) | borders | interior
     max_x = max(x for x, _ in points)
     max_y = max(y for _, y in points)
@@ -114,7 +111,7 @@ def part1(ll: list[str]) -> str:
 
     return str(largest)
 
-def part2(ll: list[str]) -> str:
+def part2(ll: list[str], args=None) -> str:
     coordinates = [[int(num) for num in l.split(",")] for l in ll]
     interior_seed = (150, 150)
     compressed = compress_coordinates(coordinates)
@@ -122,8 +119,8 @@ def part2(ll: list[str]) -> str:
     interior = flood_fill(borders, interior_seed)
     polygon = borders | interior
 
-    if os.getenv("AOC_202509_VISUALIZE"):
-        output_path = Path(__file__).parent / "plots" / "202509_compressed.png"
+    if bool(getattr(args, "visualize", False)):
+        output_path = Path(__file__).parent / "plots" / "202509b_compressed.png"
         visualize_compressed_grid(compressed, borders, interior, output_path)
 
     max_area = 0
