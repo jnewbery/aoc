@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Iterable, Self
-from utils import get_numbers
+from utils import get_numbers, exit_not_implemented
 
 @dataclass
 class Map:
@@ -48,5 +48,6 @@ def part1(ll: list[str]) -> str:
     return str(min([apply_maps(maps, s) for s in seeds]))
 
 def part2(ll: list[str]) -> str:
+    exit_not_implemented()
     del ll
-    raise NotImplementedError
+    return ""
