@@ -5,23 +5,9 @@ import requests
 from pathlib import Path
 import datetime
 
-BASE_URL = "http://adventofcode.com/"
+from utils import PUZZLES
 
-FIRST_YEAR = 2015
-DAYS_IN_YEAR = 25
-PUZZLES: dict[int, int] = {
-    2015: 25,
-    2016: 25,
-    2017: 25,
-    2018: 25,
-    2019: 25,
-    2020: 25,
-    2021: 25,
-    2022: 25,
-    2023: 25,
-    2024: 25,
-    2025: 12,
-}
+BASE_URL = "http://adventofcode.com/"
 
 def get_input(year: int, day: int, cookie: dict[str, str]) -> str:
     url = f'{BASE_URL}{year}/day/{day}/input'

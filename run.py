@@ -8,10 +8,15 @@ import json
 from pathlib import Path
 from subprocess import run
 from itertools import product
-from rich.console import Console
+from rich.console import Console, Group
+from rich.columns import Columns
+from rich.panel import Panel
 from rich.table import Table
+from rich import box
+from rich.text import Text
 from dataclasses import dataclass, field
 import tomllib
+from utils import PUZZLES
 
 YEARS = list(range(2015, date.today().year + 1))
 DAYS = list(range(1, 26))
@@ -35,6 +40,10 @@ class Result(enum.StrEnum):
 class Order(enum.StrEnum):
     CHRONOLOGICAL = enum.auto()
     EXECUTION_TIME = enum.auto()
+
+class DisplayFormat(enum.StrEnum):
+    TABLE = enum.auto()
+    GRID = enum.auto()
 
 class Implementation(enum.StrEnum):
     OCAML = "ml"
@@ -167,6 +176,12 @@ def get_implementation(implementation: Implementation, year: int, day: int) -> I
         return implementation
     return get_manifest().get((year, day), Implementation.NONE)
 
+def aggregate_total_time(executions: list[DayExecution]) -> int | None:
+    times = [result.total_execution_time for result in executions if result.total_execution_time is not None]
+    if not times:
+        return None
+    return sum(times)
+
 def run_solvers(implementation: Implementation, year_days: list[str], parts: list[int], test: bool) -> list[DayExecution]:
     results: list[DayExecution] = []
 
@@ -242,7 +257,7 @@ def print_year_results(year: int, results: list[DayExecution], order: Order, con
 
         console.print(table)
 
-def print_results(results: list[DayExecution], order: Order) -> None:
+def print_table_results(results: list[DayExecution], order: Order) -> None:
     console = Console()
     for year in sorted({result.year for result in results}):
         print_year_results(year, [result for result in results if result.year == year], order, console)
@@ -250,6 +265,72 @@ def print_results(results: list[DayExecution], order: Order) -> None:
     total_time = sum([result.total_execution_time for result in results if result.total_execution_time is not None])
     total_stars = len([1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS])
     console.print(f"Total stars: {total_stars} ⭐️, Total time: {format_execution_time(total_time)}", highlight=False)
+
+def get_day_cell(day_result: DayExecution | None) -> Text:
+    if day_result is None:
+        return Text("x", style="grey30 on grey8")
+
+    part_results = [day_result.parts.get(part_num) for part_num in PARTS]
+    successes = sum(1 for part in part_results if part and part.result == Result.SUCCESS)
+    failures = any(part and part.result == Result.FAILURE for part in part_results)
+    not_implemented = part_results and all(part and part.result == Result.NOT_IMPLEMENTED for part in part_results if part)
+
+    if successes == len([part for part in part_results if part]) and successes > 0:
+        return Text("★", style="gold1")
+    if successes > 0:
+        return Text("★", style="grey53")
+    if failures:
+        return Text("x", style="bold red")
+    if not_implemented or not any(part_results):
+        return Text("·", style="grey53")
+    return Text("x", style="bold red")
+
+def build_year_panel(year: int, results: list[DayExecution]) -> Panel:
+    day_lookup = {day_result.day: day_result for day_result in results}
+    cells = [get_day_cell(d) for d in day_lookup.values()]
+
+    if len(results) == 25:
+        width = 5
+    elif len(results) == 12:
+        width = 4
+    else:
+        assert False, "Unsupported number of days for grid display"
+    grid = Table.grid(padding=(0, 1))
+    for start in range(0, len(cells), width):
+        grid.add_row(*cells[start:start + width])
+
+    year_time = aggregate_total_time(results)
+    total_time_str = format_execution_time(year_time) if year_time is not None else "[TBD]"
+    year_stars = sum(1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS)
+
+    stars_txt = Text(f"Stars: {year_stars}/{len(results) * 2}", style="grey85")
+    time_txt = Text(f"Time: {total_time_str}", style="grey85")
+    content = Group(grid, "", stars_txt, time_txt)
+
+    return Panel(
+        content,
+        title=f"{year}",
+        padding=(1, 2),
+        border_style="grey85",
+        box=box.ROUNDED,
+    )
+
+def print_grid_results(results: list[DayExecution]) -> None:
+    console = Console()
+    panels = []
+    for year in sorted({result.year for result in results}):
+        year_results = [result for result in results if result.year == year]
+        if not year_results:
+            continue
+        panels.append(build_year_panel(year, year_results))
+
+    if panels:
+        console.print(Columns(panels, equal=True, expand=True, padding=(1, 2)))
+
+    overall_time = aggregate_total_time(results)
+    overall_time_str = format_execution_time(overall_time) if overall_time is not None else "[TBD]"
+    total_stars = len([1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS])
+    console.print(f"Total stars: {total_stars} ⭐️, Total time: {overall_time_str}", highlight=False)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -265,11 +346,14 @@ def main():
         help="Which implementation to run. Pass '@' to use the manifest file."
     )
     parser.add_argument("-o", "--order", type=Order, choices=[order.value for order in Order], default=Order.CHRONOLOGICAL, help="Order to display results in.")
+    parser.add_argument("-f", "--format", type=DisplayFormat, choices=[fmt.value for fmt in DisplayFormat], default=DisplayFormat.TABLE, help="Output format to display results in. 'grid' prints a calendar-style view.")
     parser.add_argument("--build", action=argparse.BooleanOptionalAction, help="Build the solutions before running them", default=True)
 
     args = parser.parse_args()
 
-    all_days = [f"{year}{day:02}" for year, day in product(YEARS, DAYS)]
+    all_days: list[str] = []
+    for year, no_puzzles in PUZZLES.items():
+        all_days += [f"{year}{day:02}" for day in range(1, no_puzzles + 1)]
     days = [str(day) for day in all_days if str(day).startswith(args.puzzles[:6])]
     if not days:
         print("No days found")
@@ -281,7 +365,10 @@ def main():
         run(["just", "build"])
     results = run_solvers(args.implementation, days, parts, args.test)
 
-    print_results(results, args.order)
+    if args.format == DisplayFormat.GRID:
+        print_grid_results(results)
+    else:
+        print_table_results(results, args.order)
 
 if __name__ == "__main__":
     main()
