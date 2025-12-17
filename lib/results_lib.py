@@ -4,7 +4,7 @@ from pathlib import Path
 
 # Shared constants
 PARTS = [1, 2]
-RESULTS_DIR = Path(__file__).resolve().parent.joinpath("results")
+RESULTS_DIR = Path(__file__).resolve().parent.parent.joinpath("results")
 
 
 class Result(enum.StrEnum):

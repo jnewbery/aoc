@@ -8,8 +8,8 @@ import json
 from pathlib import Path
 from subprocess import run
 import tomllib
-from results_display import print_grid_results, print_table_results
-from results_lib import (
+from lib.results_display import print_grid_results, print_table_results
+from lib.results_lib import (
     DisplayFormat,
     Implementation,
     Order,
@@ -19,7 +19,7 @@ from results_lib import (
     DayExecution,
     PartExecution,
 )
-from utils import iter_year_days
+from lib.utils import iter_year_days
 
 class EXIT_CODES(enum.Enum):
     # Must match utils.EXIT_CODES

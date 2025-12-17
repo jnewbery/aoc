@@ -5,7 +5,7 @@ import requests
 from pathlib import Path
 import datetime
 
-from utils import PUZZLES
+from lib.utils import PUZZLES
 
 BASE_URL = "http://adventofcode.com/"
 
