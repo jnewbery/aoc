@@ -111,7 +111,7 @@ def part1(ll: list[str]) -> str:
 
     return str(largest)
 
-def part2(ll: list[str], args=None, visualize: bool = False) -> str:
+def part2(ll: list[str], args=None) -> str:
     coordinates: list[tuple[int, int]] = []
     for l in ll:
         coord_str = l.split(",")
@@ -126,7 +126,7 @@ def part2(ll: list[str], args=None, visualize: bool = False) -> str:
     outside_seeds = [(0, 0), (0, y_bound), (x_bound, 0), (x_bound, y_bound)]
     outside = flood_fill(borders, outside_seeds, x_bound, y_bound)
 
-    if bool(getattr(args, "visualize", visualize)):
+    if bool(getattr(args, "visualize", False)):
         output_path = Path(__file__).parent / "plots" / "202509_compressed.png"
         visualize_compressed_grid(compressed, borders, outside, output_path)
 
