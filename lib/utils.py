@@ -14,6 +14,9 @@ PUZZLES: dict[int, int] = {
     2025: 12,
 }
 
+FIRST_YEAR = min(PUZZLES.keys())
+DAYS_IN_YEAR = max(PUZZLES.values())
+
 
 def iter_year_days() -> Generator[tuple[int, int], None, None]:
     """Return an ordered iterator of (year, day) combinations."""

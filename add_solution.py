@@ -4,12 +4,11 @@ import argparse
 import requests
 from pathlib import Path
 import datetime
+from lib.utils import DAYS_IN_YEAR, FIRST_YEAR
 
 BASE_URL = "http://adventofcode.com/"
 
-FIRST_YEAR = 2015
 THIS_YEAR = datetime.date.today().year
-DAYS_IN_YEAR = 25
 
 def get_input(year: int, day: int, cookie: dict[str, str]) -> str:
     url = f'{BASE_URL}{year}/day/{day}/input'

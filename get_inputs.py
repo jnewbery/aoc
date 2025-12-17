@@ -5,7 +5,7 @@ import requests
 from pathlib import Path
 import datetime
 
-from lib.utils import PUZZLES
+from lib.utils import PUZZLES, iter_year_days
 
 BASE_URL = "http://adventofcode.com/"
 
@@ -26,32 +26,37 @@ def _main(in_year: int | None, in_day: int | None, overwrite: bool):
             cookies[key] = value
 
     today = datetime.datetime.now()
-    years = [in_year] if in_year else list(PUZZLES.keys())
-    for year in years:
-        days = [in_day] if in_day else list(range(1, PUZZLES[year] + 1))
-        for day in days:
-            if year == today.year and day > today.day:
-                print(f"Skipping input for {year} day {day} - it's in the future")
-                continue
-            # Be considerate of the server - request inputs serially
-            input_file = Path(f"inputs/full/{year}{day:02}.txt")
+    if in_year and in_year not in PUZZLES:
+        raise ValueError(f"Year must be one of {sorted(PUZZLES.keys())}")
 
-            if input_file.exists() and not overwrite:
-                print(f"Input file for {year} day {day} already exists")
-                continue
+    for year, day in iter_year_days():
+        if in_year and year != in_year:
+            continue
+        if in_day and day != in_day:
+            continue
 
-            try:
-                input_text = get_input(year, day, cookies)
-            except Exception as e:
-                print(e)
-                continue
+        if year == today.year and day > today.day:
+            print(f"Skipping input for {year} day {day} - it's in the future")
+            continue
+        # Be considerate of the server - request inputs serially
+        input_file = Path(f"inputs/full/{year}{day:02}.txt")
 
-            first_line = input_text.splitlines()[0]
-            if len(first_line) > 30:
-                first_line = first_line[:30] + " ..."
-            print(f"Writing input file for {year} day {day}: {first_line}")
-            with open(input_file, 'w') as f:
-                f.write(input_text)
+        if input_file.exists() and not overwrite:
+            print(f"Input file for {year} day {day} already exists")
+            continue
+
+        try:
+            input_text = get_input(year, day, cookies)
+        except Exception as e:
+            print(e)
+            continue
+
+        first_line = input_text.splitlines()[0]
+        if len(first_line) > 30:
+            first_line = first_line[:30] + " ..."
+        print(f"Writing input file for {year} day {day}: {first_line}")
+        with open(input_file, 'w') as f:
+            f.write(input_text)
 
 
 if __name__ == '__main__':
