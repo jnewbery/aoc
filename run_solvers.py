@@ -8,8 +8,8 @@ import json
 from pathlib import Path
 from subprocess import run
 import tomllib
-from lib.results_display import print_grid_results, print_table_results
-from lib.results_lib import (
+from lib.display import print_grid_results, print_table_results
+from lib.results import (
     DisplayFormat,
     Implementation,
     Order,

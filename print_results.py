@@ -2,8 +2,8 @@
 import argparse
 import json
 import sys
-from lib.results_display import print_grid_results, print_table_results
-from lib.results_lib import (
+from lib.display import print_grid_results, print_table_results
+from lib.results import (
     DayExecution,
     DisplayFormat,
     Implementation,
