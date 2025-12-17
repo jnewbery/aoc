@@ -26,3 +26,9 @@ Where `YYYYDDP` is the puzzle identifier. Any prefix is acceptable, eg
 `./run.py 2019` will run all 2019 puzzles, and `./run.py 201901` will run
 both parts of day 1 of 2019. The `-i` flag can be used to specify the
 implementation to run, and the `-t` flag can be used to run the tests.
+
+To print previously saved results from `results/*.json`, run:
+
+```sh
+uv run print_results.py YYYYDDP [-t] [-f <table|grid>]
+```

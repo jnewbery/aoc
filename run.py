@@ -8,115 +8,28 @@ import json
 from pathlib import Path
 from subprocess import run
 from itertools import product
-from rich.console import Console, Group
-from rich.columns import Columns
-from rich.panel import Panel
-from rich.table import Table
-from rich import box
-from rich.text import Text
-from dataclasses import dataclass, field
 import tomllib
+from results_display import print_grid_results, print_table_results
+from results_lib import (
+    DisplayFormat,
+    Implementation,
+    Order,
+    PARTS,
+    Result,
+    RESULTS_DIR,
+    DayExecution,
+    PartExecution,
+)
 from utils import PUZZLES
 
 YEARS = list(range(2015, date.today().year + 1))
 DAYS = list(range(1, 26))
-PARTS = [1, 2]
-RESULTS_DIR = Path(__file__).resolve().parent.joinpath("results")
 
 class EXIT_CODES(enum.Enum):
     # Must match utils.EXIT_CODES
     SUCCESS = 0
     NOT_IMPLEMENTED = 38
     NO_INPUT = 39
-
-class Result(enum.StrEnum):
-    UNEXECUTED = enum.auto()
-    SUCCESS = enum.auto()
-    FAILURE = enum.auto()
-    INCONCLUSIVE = enum.auto()
-    NOT_IMPLEMENTED = enum.auto()
-    NO_INPUT = enum.auto()
-    BAD_OUTPUT = enum.auto()
-
-class Order(enum.StrEnum):
-    CHRONOLOGICAL = enum.auto()
-    EXECUTION_TIME = enum.auto()
-
-class DisplayFormat(enum.StrEnum):
-    TABLE = enum.auto()
-    GRID = enum.auto()
-
-class Implementation(enum.StrEnum):
-    OCAML = "ml"
-    PYTHON = "py"
-    RUST = "rs"
-    MANIFEST = "@"
-    NONE = enum.auto()
-
-    @property
-    def display_name(self) -> str:
-        match self:
-            case Implementation.OCAML:
-                return "OCaml"
-            case Implementation.PYTHON:
-                return "Python"
-            case Implementation.RUST:
-                return "Rust"
-            case _:
-                return self.value
-
-@dataclass
-class PartExecution:
-    command: list[str] = field(default_factory=list)
-    result: Result = Result.UNEXECUTED
-    solution: str | None = None
-    execution_time_micro_seconds: int | None = None
-    expected_solution: str | None = None
-
-    @property
-    def result_str(self) -> str:
-        if self.result == Result.SUCCESS:
-            return f"⭐ [green]{self.solution}[/green]"
-        elif self.result == Result.FAILURE:
-            return f"[red]{self.solution}[/red]"
-        elif self.result == Result.INCONCLUSIVE:
-            return f"[yellow]Inconclusive[/yellow]"
-        elif self.result == Result.NOT_IMPLEMENTED:
-            return f"[blue]Not Implemented[/blue]"
-        elif self.result == Result.NO_INPUT:
-            return f"[blue]No Input[/blue]"
-        elif self.result == Result.BAD_OUTPUT:
-            return f"[red]Bad Output[/red]"
-        else:
-            return f"[blue]Unexecuted[/blue]"
-
-@dataclass
-class DayExecution:
-    implementation: Implementation
-    year: int
-    day: int
-    parts: dict[int, PartExecution]
-    test: bool
-
-    @property
-    def total_execution_time(self) -> int | None:
-        return sum(part.execution_time_micro_seconds for part in self.parts.values() if part.execution_time_micro_seconds is not None)
-
-    @property
-    def implemented(self) -> bool:
-        return all(part.result != Result.NOT_IMPLEMENTED for part in self.parts.values())
-
-def format_execution_time(execution_time_micro_seconds: int| None) -> str:
-    if execution_time_micro_seconds is None:
-        return ""
-    if execution_time_micro_seconds < 1000:
-        return f"{execution_time_micro_seconds}µs"
-    elif execution_time_micro_seconds < 100_000:
-        return f"{execution_time_micro_seconds / 1000:.1f}ms"
-    elif execution_time_micro_seconds < 1_000_000:
-        return f"{int(execution_time_micro_seconds // 1_000)}ms"
-    else:
-        return f"{execution_time_micro_seconds / 1_000_000:.1f}s"
 
 def get_solution(year: int, day: int, part: int, test: bool) -> str:
     file_path = Path(__file__).resolve().parent.joinpath(f"solutions/{'test' if test else 'full'}/{year}.txt")
@@ -179,12 +92,6 @@ def get_implementation(implementation: Implementation, year: int, day: int) -> I
         return implementation
     return get_manifest().get((year, day), Implementation.NONE)
 
-def aggregate_total_time(executions: list[DayExecution]) -> int | None:
-    times = [result.total_execution_time for result in executions if result.total_execution_time is not None]
-    if not times:
-        return None
-    return sum(times)
-
 def get_result_filename(day_execution: DayExecution, part: int) -> Path:
     suffix = "t" if day_execution.test else ""
     return RESULTS_DIR / f"{day_execution.year}{day_execution.day:02}{part}{suffix}.json"
@@ -243,131 +150,6 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
         results.append(execution)
 
     return results
-
-def print_year_results(year: int, results: list[DayExecution], order: Order, console: Console) -> None:
-    if order == Order.CHRONOLOGICAL:
-        results.sort(key=lambda result: result.day)
-    else:
-        assert order == Order.EXECUTION_TIME
-        results.sort(key=lambda result: result.total_execution_time or 0, reverse=True)
-    part1s = [result.parts[1] for result in results if result.parts.get(1, None) is not None]
-    part2s = [result.parts[2] for result in results if result.parts.get(2, None) is not None]
-    table = Table(title=f"{year} Results" , row_styles=["", "on grey23"])
-    table.add_column("Day", style="bold")
-    table.add_column("Implementation", header_style="bold")
-    if part1s:
-        table.add_column("Part 1")
-        table.add_column("(time)", style="italic", header_style="italic")
-    if part2s:
-        table.add_column("Part 2")
-        table.add_column("(time)", style="italic", header_style="italic")
-    table.add_column("Total Time", style="italic", header_style="italic")
-
-    for result in results:
-        part1 = result.parts.get(1, None)
-        part2 = result.parts.get(2, None)
-        if (part1 == None or part1.result == Result.NOT_IMPLEMENTED) and (part2 == None or part2.result == Result.NOT_IMPLEMENTED):
-            continue
-        row = [f"Day {result.day}"]
-        row.append(f"{result.implementation.display_name}")
-        if part1s:
-            row.append(part1.result_str if part1 else f"[bold blue]Unexecuted")
-            row.append(f"[italic green]{format_execution_time(part1.execution_time_micro_seconds)}" if part1 else "")
-        if part2s:
-            row.append(part2.result_str if part2 else f"[bold blue]Unexecuted")
-            row.append(f"[italic green]{format_execution_time(part2.execution_time_micro_seconds)}" if part2 else "")
-        row.append(f"[italic green]{format_execution_time(result.total_execution_time)}")
-        table.add_row(*row)
-
-    if table.row_count > 0:
-        # Add a total row
-        table.add_section()
-        total_row = ["TOTAL", ""]
-        if part1s:
-            total_row.append(f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in part1s) else f"[bold blue]INCOMPLETE")
-            total_row.append(f"[italic green]{format_execution_time(sum([result.execution_time_micro_seconds for result in part1s if result.execution_time_micro_seconds is not None]))}")
-        if part2s:
-            total_row.append(f"[bold green]COMPLETE" if all(result.result == Result.SUCCESS for result in part2s) else f"[bold blue]INCOMPLETE")
-            total_row.append(f"[italic green]{format_execution_time(sum([result.execution_time_micro_seconds for result in part2s if result.execution_time_micro_seconds is not None]))}")
-        total_row.append(f"[italic green]{format_execution_time(sum([result.total_execution_time for result in results if result.total_execution_time is not None]))}")
-        table.add_row(*total_row)
-
-        console.print(table)
-
-def print_table_results(results: list[DayExecution], order: Order) -> None:
-    console = Console()
-    for year in sorted({result.year for result in results}):
-        print_year_results(year, [result for result in results if result.year == year], order, console)
-
-    total_time = sum([result.total_execution_time for result in results if result.total_execution_time is not None])
-    total_stars = len([1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS])
-    console.print(f"Total stars: {total_stars} ⭐️, Total time: {format_execution_time(total_time)}", highlight=False)
-
-def get_day_cell(day_result: DayExecution | None) -> Text:
-    if day_result is None:
-        return Text("x", style="grey30 on grey8")
-
-    part_results = [day_result.parts.get(part_num) for part_num in PARTS]
-    successes = sum(1 for part in part_results if part and part.result == Result.SUCCESS)
-    failures = any(part and part.result == Result.FAILURE for part in part_results)
-    not_implemented = part_results and all(part and part.result == Result.NOT_IMPLEMENTED for part in part_results if part)
-
-    if successes == len([part for part in part_results if part]) and successes > 0:
-        return Text("★", style="gold1")
-    if successes > 0:
-        return Text("★", style="grey53")
-    if failures:
-        return Text("x", style="bold red")
-    if not_implemented or not any(part_results):
-        return Text("·", style="grey53")
-    return Text("x", style="bold red")
-
-def build_year_panel(year: int, results: list[DayExecution]) -> Panel:
-    day_lookup = {day_result.day: day_result for day_result in results}
-    cells = [get_day_cell(d) for d in day_lookup.values()]
-
-    if len(results) == 25:
-        width = 5
-    elif len(results) == 12:
-        width = 4
-    else:
-        assert False, "Unsupported number of days for grid display"
-    grid = Table.grid(padding=(0, 1))
-    for start in range(0, len(cells), width):
-        grid.add_row(*cells[start:start + width])
-
-    year_time = aggregate_total_time(results)
-    total_time_str = format_execution_time(year_time) if year_time is not None else "[TBD]"
-    year_stars = sum(1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS)
-
-    stars_txt = Text(f"Stars: {year_stars}/{len(results) * 2}", style="grey85")
-    time_txt = Text(f"Time: {total_time_str}", style="grey85")
-    content = Group(grid, "", stars_txt, time_txt)
-
-    return Panel(
-        content,
-        title=f"{year}",
-        padding=(1, 2),
-        border_style="grey85",
-        box=box.ROUNDED,
-    )
-
-def print_grid_results(results: list[DayExecution]) -> None:
-    console = Console()
-    panels = []
-    for year in sorted({result.year for result in results}):
-        year_results = [result for result in results if result.year == year]
-        if not year_results:
-            continue
-        panels.append(build_year_panel(year, year_results))
-
-    if panels:
-        console.print(Columns(panels, equal=True, expand=True, padding=(1, 2)))
-
-    overall_time = aggregate_total_time(results)
-    overall_time_str = format_execution_time(overall_time) if overall_time is not None else "[TBD]"
-    total_stars = len([1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS])
-    console.print(f"Total stars: {total_stars} ⭐️, Total time: {overall_time_str}", highlight=False)
 
 def main():
     parser = argparse.ArgumentParser()
