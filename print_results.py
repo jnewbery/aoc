@@ -57,6 +57,7 @@ def load_results(puzzles: str, parts: list[int], test: bool) -> list[DayExecutio
                 day=day,
                 parts={},
                 test=bool(data.get("test", has_test_suffix)),
+                iterations=data.get("iterations", 1),
             )
         elif results[key].implementation == Implementation.NONE:
             results[key].implementation = implementation
@@ -72,6 +73,7 @@ def load_results(puzzles: str, parts: list[int], test: bool) -> list[DayExecutio
             solution=data.get("solution"),
             execution_time_micro_seconds=data.get("execution_time_micro_seconds"),
             expected_solution=data.get("expected_solution"),
+            iterations=data.get("iterations", 1),
         )
 
     return list(results.values())

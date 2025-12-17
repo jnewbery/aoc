@@ -33,40 +33,57 @@ def get_solution(year: int, day: int, part: int, test: bool) -> str:
         line_num = (day - 1) * 2 + (part - 1)
         return f.readlines()[line_num].strip()
 
-def run_solver(day_execution: DayExecution) -> None:
-    for part_number, part_execution in day_execution.parts.items():
-        if day_execution.implementation == Implementation.NONE:
-            part_execution.result = Result.NOT_IMPLEMENTED
-            continue
-
+def execute_solver_iterations(day_execution: DayExecution, part_number: int, part_execution: PartExecution) -> None:
+    """Run a part solver multiple times, updating part_execution in place."""
+    timings: list[int] = []
+    for _ in range(part_execution.iterations):
         script_output = run(part_execution.command, capture_output=True, text=True)
 
         if script_output.returncode == EXIT_CODES.NOT_IMPLEMENTED.value:
             part_execution.result = Result.NOT_IMPLEMENTED
-            continue
+            break
         elif script_output.returncode == EXIT_CODES.NO_INPUT.value:
             part_execution.result = Result.NO_INPUT
-            continue
+            break
 
         try:
             solver_output = json.loads(script_output.stdout.strip())
         except json.decoder.JSONDecodeError:
             part_execution.result = Result.BAD_OUTPUT
-            continue
-        part_execution.solution = solver_output["solution"]
+            break
+        part_execution.solution = solver_output.get("solution")
+
+        # Validate once, on the first successful iteration.
+        if part_execution.result in {Result.UNEXECUTED, Result.SUCCESS}:
+            try:
+                actual_sol = get_solution(day_execution.year, day_execution.day, part_number, day_execution.test)
+                part_execution.expected_solution = actual_sol
+            except KeyError:
+                part_execution.result = Result.INCONCLUSIVE
+                break
+
+            if part_execution.solution != actual_sol:
+                part_execution.result = Result.FAILURE
+                break
+            part_execution.result = Result.SUCCESS
 
         try:
-            actual_sol = get_solution(day_execution.year, day_execution.day, part_number, day_execution.test)
-            part_execution.expected_solution = actual_sol
-        except KeyError:
-            part_execution.result = Result.INCONCLUSIVE
+            timings.append(int(solver_output["execution_time"]))
+        except (KeyError, ValueError, TypeError):
+            part_execution.result = Result.BAD_OUTPUT
+            break
+
+    if part_execution.result == Result.SUCCESS and timings:
+        part_execution.execution_time_micro_seconds = int(sum(timings) / len(timings))
+
+def run_solver(day_execution: DayExecution) -> None:
+    for part_number, part_execution in day_execution.parts.items():
+        part_execution.iterations = day_execution.iterations
+        if day_execution.implementation == Implementation.NONE:
+            part_execution.result = Result.NOT_IMPLEMENTED
             continue
 
-        if part_execution.solution != actual_sol:
-            part_execution.result = Result.FAILURE
-        else:
-            part_execution.result = Result.SUCCESS
-            part_execution.execution_time_micro_seconds = int(solver_output["execution_time"])
+        execute_solver_iterations(day_execution, part_number, part_execution)
 
         day_execution.parts[part_number] = part_execution
 
@@ -109,6 +126,7 @@ def build_part_result(day_execution: DayExecution, part: int, run_at: str) -> di
         "expected_solution": part_execution.expected_solution,
         "execution_time_micro_seconds": part_execution.execution_time_micro_seconds,
         "command": part_execution.command,
+        "iterations": part_execution.iterations,
     }
 
 def save_results(executions: list[DayExecution]) -> None:
@@ -122,7 +140,7 @@ def save_results(executions: list[DayExecution]) -> None:
             with open(get_result_filename(execution, part), "w") as f:
                 json.dump(part_result, f, indent=2)
 
-def run_solvers(implementation: Implementation, year_days: list[str], parts: list[int], test: bool) -> list[DayExecution]:
+def run_solvers(implementation: Implementation, year_days: list[str], parts: list[int], test: bool, iterations: int) -> list[DayExecution]:
     results: list[DayExecution] = []
 
     for year_day in year_days:
@@ -131,7 +149,7 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
         parts_dict = {}
         day_implementation = get_implementation(implementation, year, day)
         if day_implementation == Implementation.NONE:
-            parts_dict = {part_number: PartExecution(result=Result.NOT_IMPLEMENTED) for part_number in parts}
+            parts_dict = {part_number: PartExecution(result=Result.NOT_IMPLEMENTED, iterations=iterations) for part_number in parts}
         elif day_implementation == Implementation.MANIFEST:
             raise AssertionError("Implementation should not be MANIFEST at this point")
         else:
@@ -140,8 +158,8 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
             if test:
                 for command in commands:
                     command.append("-t")
-            parts_dict = {part_number: PartExecution(command) for part_number, command in zip(parts, commands)}
-        execution = DayExecution(implementation=day_implementation, year=year, day=day, parts=parts_dict, test=test)
+            parts_dict = {part_number: PartExecution(command, iterations=iterations) for part_number, command in zip(parts, commands)}
+        execution = DayExecution(implementation=day_implementation, year=year, day=day, parts=parts_dict, test=test, iterations=iterations)
         run_solver(execution)
         results.append(execution)
 
@@ -150,6 +168,12 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
 def main():
     parser = argparse.ArgumentParser()
     add_display_arguments(parser)
+    parser.add_argument(
+        "--iterations",
+        type=int,
+        default=3,
+        help="Number of times to run each solver; execution time is averaged.",
+    )
     parser.add_argument(
         "-i",
         "--implementation",
@@ -174,7 +198,7 @@ def main():
     if args.build:
         print("Building solutions...")
         run(["just", "build"])
-    results = run_solvers(args.implementation, days, parts, args.test)
+    results = run_solvers(args.implementation, days, parts, args.test, args.iterations)
     save_results(results)
 
     if args.format == DisplayFormat.GRID:

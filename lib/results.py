@@ -54,6 +54,7 @@ class PartExecution:
     solution: str | None = None
     execution_time_micro_seconds: int | None = None
     expected_solution: str | None = None
+    iterations: int = 1
 
     @property
     def result_str(self) -> str:
@@ -80,6 +81,7 @@ class DayExecution:
     day: int
     parts: dict[int, PartExecution]
     test: bool
+    iterations: int = 1
 
     @property
     def total_execution_time(self) -> int | None:
