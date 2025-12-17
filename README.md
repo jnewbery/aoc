@@ -19,7 +19,7 @@ Solvers for [Advent of Code](https://adventofcode.com/) puzzles.
 To run the solvers, run:
 
 ```sh
-uv run run.py YYYYDDP [-i <implementation>] [-t]
+uv run run_solvers.py YYYYDDP [-i <implementation>] [-t]
 ```
 
 Where `YYYYDDP` is the puzzle identifier. Any prefix is acceptable, eg
