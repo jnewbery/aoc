@@ -7,12 +7,12 @@ import enum
 import json
 from pathlib import Path
 from subprocess import run
+from contextlib import nullcontext
 import tomllib
 from lib.display import add_display_arguments, print_grid_results, print_table_results
 from lib.results import (
     DisplayFormat,
     Implementation,
-    Order,
     PARTS,
     Result,
     RESULTS_DIR,
@@ -20,6 +20,14 @@ from lib.results import (
     PartExecution,
 )
 from lib.utils import iter_year_days
+from rich.progress import (
+    BarColumn,
+    Progress,
+    TaskProgressColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
 
 class EXIT_CODES(enum.Enum):
     # Must match utils.EXIT_CODES
@@ -76,16 +84,23 @@ def execute_solver_iterations(day_execution: DayExecution, part_number: int, par
     if part_execution.result == Result.SUCCESS and timings:
         part_execution.execution_time_micro_seconds = int(sum(timings) / len(timings))
 
-def run_solver(day_execution: DayExecution) -> None:
+def run_solver(day_execution: DayExecution, progress: Progress | None = None, progress_task: int | None = None) -> None:
     for part_number, part_execution in day_execution.parts.items():
         part_execution.iterations = day_execution.iterations
         if day_execution.implementation == Implementation.NONE:
             part_execution.result = Result.NOT_IMPLEMENTED
+            if progress and progress_task is not None:
+                progress.advance(progress_task)
             continue
+
+        if progress and progress_task is not None:
+            progress.update(progress_task, description=f"Running {day_execution.year}{day_execution.day:02}{part_number}")
 
         execute_solver_iterations(day_execution, part_number, part_execution)
 
         day_execution.parts[part_number] = part_execution
+        if progress and progress_task is not None:
+            progress.advance(progress_task)
 
 @cache
 def get_manifest() -> dict[tuple[int, int], Implementation]:
@@ -140,34 +155,60 @@ def save_results(executions: list[DayExecution]) -> None:
             with open(get_result_filename(execution, part), "w") as f:
                 json.dump(part_result, f, indent=2)
 
-def run_solvers(implementation: Implementation, year_days: list[str], parts: list[int], test: bool, iterations: int) -> list[DayExecution]:
+def run_solvers(implementation: Implementation, year_days: list[str], parts: list[int], test: bool, iterations: int, show_progress: bool) -> list[DayExecution]:
     results: list[DayExecution] = []
 
-    for year_day in year_days:
-        year = int(year_day[:4])
-        day = int(year_day[4:6])
-        parts_dict = {}
-        day_implementation = get_implementation(implementation, year, day)
-        if day_implementation == Implementation.NONE:
-            parts_dict = {part_number: PartExecution(result=Result.NOT_IMPLEMENTED, iterations=iterations) for part_number in parts}
-        elif day_implementation == Implementation.MANIFEST:
-            raise AssertionError("Implementation should not be MANIFEST at this point")
-        else:
-            assert day_implementation in {Implementation.PYTHON, Implementation.RUST, Implementation.OCAML}
-            commands = [[f"{Path(__file__).parent}/solvers/{day_implementation.value}/run.sh", f"{year_day}{part}", "-v"] for part in parts]
-            if test:
-                for command in commands:
-                    command.append("-t")
-            parts_dict = {part_number: PartExecution(command, iterations=iterations) for part_number, command in zip(parts, commands)}
-        execution = DayExecution(implementation=day_implementation, year=year, day=day, parts=parts_dict, test=test, iterations=iterations)
-        run_solver(execution)
-        results.append(execution)
+    total_parts = len(year_days) * len(parts)
+    progress_ctx = (
+        Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(bar_width=None),
+            TaskProgressColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+            transient=True,
+        )
+        if show_progress
+        else nullcontext()
+    )
+
+    with progress_ctx as progress:
+        progress_task = None
+        if isinstance(progress, Progress):
+            progress_task = progress.add_task("Running solvers", total=total_parts)
+
+        for year_day in year_days:
+            year = int(year_day[:4])
+            day = int(year_day[4:6])
+            parts_dict = {}
+            day_implementation = get_implementation(implementation, year, day)
+            if day_implementation == Implementation.NONE:
+                parts_dict = {part_number: PartExecution(result=Result.NOT_IMPLEMENTED, iterations=iterations) for part_number in parts}
+            elif day_implementation == Implementation.MANIFEST:
+                raise AssertionError("Implementation should not be MANIFEST at this point")
+            else:
+                assert day_implementation in {Implementation.PYTHON, Implementation.RUST, Implementation.OCAML}
+                commands = [[f"{Path(__file__).parent}/solvers/{day_implementation.value}/run.sh", f"{year_day}{part}", "-v"] for part in parts]
+                if test:
+                    for command in commands:
+                        command.append("-t")
+                parts_dict = {part_number: PartExecution(command, iterations=iterations) for part_number, command in zip(parts, commands)}
+            execution = DayExecution(implementation=day_implementation, year=year, day=day, parts=parts_dict, test=test, iterations=iterations)
+            run_solver(execution, progress if isinstance(progress, Progress) else None, progress_task)
+            results.append(execution)
 
     return results
 
 def main():
     parser = argparse.ArgumentParser()
     add_display_arguments(parser)
+    parser.add_argument(
+        "--progress",
+        dest="progress",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Show a Rich progress bar while running solvers.",
+    )
     parser.add_argument(
         "--iterations",
         type=int,
@@ -198,7 +239,7 @@ def main():
     if args.build:
         print("Building solutions...")
         run(["just", "build"])
-    results = run_solvers(args.implementation, days, parts, args.test, args.iterations)
+    results = run_solvers(args.implementation, days, parts, args.test, args.iterations, args.progress)
     save_results(results)
 
     if args.format == DisplayFormat.GRID:
