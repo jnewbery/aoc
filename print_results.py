@@ -2,16 +2,16 @@
 import argparse
 import json
 import sys
-from lib.display import print_grid_results, print_table_results
+from lib.display import add_display_arguments, print_grid_results, print_table_results
 from lib.results import (
     DayExecution,
-    DisplayFormat,
-    Implementation,
-    Order,
     PARTS,
     PartExecution,
     Result,
     RESULTS_DIR,
+    DisplayFormat,
+    Implementation,
+    Order,
 )
 
 
@@ -79,10 +79,7 @@ def load_results(puzzles: str, parts: list[int], test: bool) -> list[DayExecutio
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("puzzles", nargs="?", default="", help="Which puzzles to print, in format YYYYDDP. Any prefix can be used.")
-    parser.add_argument("-t", "--test", action="store_true", help="Whether to read test results. If false, reads full results.")
-    parser.add_argument("-o", "--order", type=Order, choices=[order.value for order in Order], default=Order.CHRONOLOGICAL, help="Order to display results in.")
-    parser.add_argument("-f", "--format", type=DisplayFormat, choices=[fmt.value for fmt in DisplayFormat], default=DisplayFormat.TABLE, help="Output format to display results in. 'grid' prints a calendar-style view.")
+    add_display_arguments(parser)
     args = parser.parse_args()
 
     parts = [int(args.puzzles[6])] if len(args.puzzles) == 7 else PARTS

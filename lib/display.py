@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from itertools import groupby
 from operator import attrgetter
 from rich import box
@@ -7,6 +8,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from .results import (
+    DisplayFormat,
     Order,
     Result,
     PARTS,
@@ -150,3 +152,36 @@ def print_grid_results(results) -> None:
     overall_time_str = format_execution_time(overall_time) if overall_time is not None else "[TBD]"
     total_stars = len([1 for day_result in results for part_result in day_result.parts.values() if part_result.result == Result.SUCCESS])
     console.print(f"Total stars: {total_stars} ⭐️, Total time: {overall_time_str}", highlight=False)
+
+
+def add_display_arguments(parser: ArgumentParser) -> None:
+    """Add common puzzle selection/display arguments to a parser."""
+    group = parser.add_argument_group("Puzzle selection & display")
+    group.add_argument(
+        "puzzles",
+        nargs="?",
+        default="",
+        help="Which puzzles to run/print, in format YYYYDDP. Any prefix can be used.",
+    )
+    group.add_argument(
+        "-t",
+        "--test",
+        action="store_true",
+        help="Whether to use test input/results. If false, use full input/results.",
+    )
+    group.add_argument(
+        "-o",
+        "--order",
+        type=Order,
+        choices=[order.value for order in Order],
+        default=Order.CHRONOLOGICAL,
+        help="Order to display results in.",
+    )
+    group.add_argument(
+        "-f",
+        "--format",
+        type=DisplayFormat,
+        choices=[fmt.value for fmt in DisplayFormat],
+        default=DisplayFormat.TABLE,
+        help="Output format to display results in. 'grid' prints a calendar-style view.",
+    )

@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from subprocess import run
 import tomllib
-from lib.display import print_grid_results, print_table_results
+from lib.display import add_display_arguments, print_grid_results, print_table_results
 from lib.results import (
     DisplayFormat,
     Implementation,
@@ -149,9 +149,7 @@ def run_solvers(implementation: Implementation, year_days: list[str], parts: lis
 
 def main():
     parser = argparse.ArgumentParser()
-
-    parser.add_argument("puzzles", nargs="?", default="", help=f"Which puzzles to run, in format YYYYDDP. Any prefix can be used. For example, pass 2015 to run all puzzles from 2015, or 201501 to run both parts of day 1 from 2015.")
-    parser.add_argument("-t", "--test", action="store_true", help="Whether to run with test input. If false, runs with full input.")
+    add_display_arguments(parser)
     parser.add_argument(
         "-i",
         "--implementation",
@@ -160,8 +158,6 @@ def main():
         default=Implementation.MANIFEST,
         help="Which implementation to run. Pass '@' to use the manifest file."
     )
-    parser.add_argument("-o", "--order", type=Order, choices=[order.value for order in Order], default=Order.CHRONOLOGICAL, help="Order to display results in.")
-    parser.add_argument("-f", "--format", type=DisplayFormat, choices=[fmt.value for fmt in DisplayFormat], default=DisplayFormat.TABLE, help="Output format to display results in. 'grid' prints a calendar-style view.")
     parser.add_argument("--build", action=argparse.BooleanOptionalAction, help="Build the solutions before running them", default=True)
 
     args = parser.parse_args()
