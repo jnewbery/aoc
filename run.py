@@ -2,12 +2,11 @@
 import sys
 from functools import cache
 import argparse
-from datetime import date, datetime
+from datetime import datetime
 import enum
 import json
 from pathlib import Path
 from subprocess import run
-from itertools import product
 import tomllib
 from results_display import print_grid_results, print_table_results
 from results_lib import (
@@ -20,10 +19,7 @@ from results_lib import (
     DayExecution,
     PartExecution,
 )
-from utils import PUZZLES
-
-YEARS = list(range(2015, date.today().year + 1))
-DAYS = list(range(1, 26))
+from utils import iter_year_days
 
 class EXIT_CODES(enum.Enum):
     # Must match utils.EXIT_CODES
@@ -80,7 +76,7 @@ def get_manifest() -> dict[tuple[int, int], Implementation]:
     manifest_path = Path(__file__).resolve().parent.joinpath(".config/manifest.toml")
     with open(manifest_path, "rb") as f:
         t = tomllib.load(f)
-    for day, year in product(DAYS, YEARS):
+    for year, day in iter_year_days():
         if t.get(str(year), {}).get(str(day), None) is not None:
             manifest[(year, day)] = Implementation(t[str(year)][str(day)])
         else:
@@ -171,8 +167,8 @@ def main():
     args = parser.parse_args()
 
     all_days: list[str] = []
-    for year, no_puzzles in PUZZLES.items():
-        all_days += [f"{year}{day:02}" for day in range(1, no_puzzles + 1)]
+    for year, day in iter_year_days():
+        all_days.append(f"{year}{day:02}")
     days = [str(day) for day in all_days if str(day).startswith(args.puzzles[:6])]
     if not days:
         print("No days found")
