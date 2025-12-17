@@ -2,7 +2,7 @@
 import sys
 from functools import cache
 import argparse
-from datetime import date
+from datetime import date, datetime
 import enum
 import json
 from pathlib import Path
@@ -21,6 +21,7 @@ from utils import PUZZLES
 YEARS = list(range(2015, date.today().year + 1))
 DAYS = list(range(1, 26))
 PARTS = [1, 2]
+RESULTS_DIR = Path(__file__).resolve().parent.joinpath("results")
 
 class EXIT_CODES(enum.Enum):
     # Must match utils.EXIT_CODES
@@ -70,6 +71,7 @@ class PartExecution:
     result: Result = Result.UNEXECUTED
     solution: str | None = None
     execution_time_micro_seconds: int | None = None
+    expected_solution: str | None = None
 
     @property
     def result_str(self) -> str:
@@ -146,6 +148,7 @@ def run_solver(day_execution: DayExecution) -> None:
 
         try:
             actual_sol = get_solution(day_execution.year, day_execution.day, part_number, day_execution.test)
+            part_execution.expected_solution = actual_sol
         except KeyError:
             part_execution.result = Result.INCONCLUSIVE
             continue
@@ -181,6 +184,40 @@ def aggregate_total_time(executions: list[DayExecution]) -> int | None:
     if not times:
         return None
     return sum(times)
+
+def get_result_filename(day_execution: DayExecution, part: int) -> Path:
+    suffix = "t" if day_execution.test else ""
+    return RESULTS_DIR / f"{day_execution.year}{day_execution.day:02}{part}{suffix}.json"
+
+def build_part_result(day_execution: DayExecution, part: int, run_at: str) -> dict | None:
+    part_execution = day_execution.parts.get(part)
+    if part_execution is None:
+        return None
+    return {
+        "run_at": run_at,
+        "year": day_execution.year,
+        "day": day_execution.day,
+        "part": part,
+        "test": day_execution.test,
+        "language": day_execution.implementation.display_name,
+        "implementation": day_execution.implementation.value,
+        "result": part_execution.result.value,
+        "solution": part_execution.solution,
+        "expected_solution": part_execution.expected_solution,
+        "execution_time_micro_seconds": part_execution.execution_time_micro_seconds,
+        "command": part_execution.command,
+    }
+
+def save_results(executions: list[DayExecution]) -> None:
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    run_at = datetime.now().isoformat()
+    for execution in executions:
+        for part in execution.parts:
+            part_result = build_part_result(execution, part, run_at)
+            if part_result is None:
+                continue
+            with open(get_result_filename(execution, part), "w") as f:
+                json.dump(part_result, f, indent=2)
 
 def run_solvers(implementation: Implementation, year_days: list[str], parts: list[int], test: bool) -> list[DayExecution]:
     results: list[DayExecution] = []
@@ -364,6 +401,7 @@ def main():
         print("Building solutions...")
         run(["just", "build"])
     results = run_solvers(args.implementation, days, parts, args.test)
+    save_results(results)
 
     if args.format == DisplayFormat.GRID:
         print_grid_results(results)
