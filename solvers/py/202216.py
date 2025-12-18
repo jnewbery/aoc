@@ -6,8 +6,8 @@ from collections import defaultdict
 from itertools import product
 from typing import Generator
 
-_DISTANCE = 30
 _INF = 100  # May as well be infinity for distances in this graph
+_STARTING_VALVE = "AA"
 
 def _visualize_valves(valves: dict[str, int], tunnels: dict[str, dict[str, int]]) -> None:
     output_path = Path(__file__).parent / "plots" / "202216_valves.png"
@@ -48,6 +48,7 @@ def _dfs(from_valve: str,
          distances: dict[str, dict[str, int]],
          weights: dict[str, int]) -> Generator[list[tuple[str, int]], None, None]:
     # print(from_valve, path, candidates, distance_left)
+    # TODO: pruning to avoid exploring bad branches
     reachable = {c for c in candidates if distances[from_valve][c] + 1 < distance_left and c != from_valve}
     if not reachable:
         yield path
@@ -61,8 +62,7 @@ def _dfs(from_valve: str,
                         distances=distances,
                         weights=weights)
 
-
-def part1(ll: list[str], args=None) -> str:
+def _get_graph(ll: list[str]) -> tuple[dict[str, int], dict[str, dict[str, int]]]:
     valves: dict[str, int] = {}
     tunnels: dict[str, dict[str, int]] = {}
 
@@ -96,11 +96,10 @@ def part1(ll: list[str], args=None) -> str:
                 simplified = True
                 break
     # print(f"Simplified number of valves: {len(valves)}, edges: {sum(len(v) for v in tunnels.values()) // 2}")
+    return valves, tunnels
 
-    if bool(getattr(args, "visualize", False)):
-        _visualize_valves(valves, tunnels)
-
-    # Use Floyd–Warshall to find shortest paths between all pairs of valves
+def _get_distances(valves: dict[str, int], tunnels: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
+    """ Use Floyd–Warshall to find shortest paths between all pairs of valves """
     # Initialize distances with neighbours
     distances: defaultdict[str, dict[str, int]] = defaultdict(dict)
     for from_valve, to_valve in product(valves.keys(), valves.keys()):
@@ -119,20 +118,55 @@ def part1(ll: list[str], args=None) -> str:
             distances[i][j] = distances[i][k] + distances[k][j]
     # _print_distances(distances)
 
+    return distances
+
+def part1(ll: list[str], args=None) -> str:
+    MINUTES = 30
+    valves, tunnels = _get_graph(ll)
+
+    if bool(getattr(args, "visualize", False)):
+        _visualize_valves(valves, tunnels)
+
+    distances: dict[str, dict[str, int]] = _get_distances(valves, tunnels)
+
     # DFS over the simplified graph to get all valid paths
-    # TODO: pruning to avoid exploring bad branches
-    candidate_valves = set(valves.keys())
-    from_valve = "AA"
-    candidate_valves -= {from_valve}
+    candidate_valves = set(valves.keys()) - {_STARTING_VALVE}
     max_score = 0
-    for path in _dfs(from_valve, [(from_valve, _DISTANCE)], candidate_valves, _DISTANCE, distances, valves):
+    for path in _dfs(_STARTING_VALVE, [], candidate_valves, MINUTES, distances, valves):
         # print(path, sum(valves[v] * t for v, t in path))
         max_score = max(max_score, sum(valves[v] * t for v, t in path))
 
-    return(str(max_score))
+    return str(max_score)
 
 def part2(ll: list[str], args=None) -> str:
-    exit_not_implemented()
-    del ll
-    del args
-    return ""
+    MINUTES = 26
+    valves, tunnels = _get_graph(ll)
+
+    valve_names = sorted(valves.keys())
+
+    def nodes_key(nodes: set[str]) -> int:
+        """ Create a unique key for a set of nodes """
+        key = 0
+        for name in valve_names:
+            key = (key << 1) | (1 if name in nodes else 0)
+        return key
+
+    if bool(getattr(args, "visualize", False)):
+        _visualize_valves(valves, tunnels)
+
+    distances: dict[str, dict[str, int]] = _get_distances(valves, tunnels)
+
+    # DFS over the simplified graph to get all valid paths
+    candidate_valves = set(valves.keys()) - {_STARTING_VALVE}
+    scores: dict[int, int] = {}
+    for path in _dfs(_STARTING_VALVE, [], candidate_valves, MINUTES, distances, valves):
+        path_key = nodes_key({v for v, _ in path})
+        scores[path_key] = max(scores.get(path_key, 0), sum(valves[v] * t for v, t in path))
+
+    ret = 0
+    for key1, score1 in scores.items():
+        for key2, score2 in scores.items():
+            if key1 & key2 == 0:
+                ret = max(ret, score1 + score2)
+
+    return str(ret)
