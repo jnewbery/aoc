@@ -45,10 +45,7 @@ def main(args: argparse.Namespace) -> None:
         sys.exit(EXIT_CODES.NOT_IMPLEMENTED.value)
     except TypeError:
         # Backwards compatibility: older solvers may not accept args or visualize yet.
-        try:
-            sol = func(puzzle_input, visualize=getattr(args, "visualize", False))
-        except TypeError:
-            sol = func(puzzle_input)
+        sol = func(puzzle_input)
 
     execution_time = time.time_ns() - start
     if args.verbose:
