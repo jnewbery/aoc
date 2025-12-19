@@ -94,9 +94,9 @@ def get_day_cell(day_result) -> Text:
     not_implemented = part_results and all(part and part.result == Result.NOT_IMPLEMENTED for part in part_results if part)
 
     if successes == len([part for part in part_results if part]) and successes > 0:
-        return Text("★", style="gold1")
+        return Text("*", style="gold1 bold")
     if successes > 0:
-        return Text("★", style="grey53")
+        return Text("*", style="grey53 bold")
     if failures:
         return Text("x", style="bold red")
     if not_implemented or not any(part_results):
