@@ -211,8 +211,9 @@ def main():
     )
     parser.add_argument(
         "--iterations",
+        "-I",
         type=int,
-        default=3,
+        default=1,
         help="Number of times to run each solver; execution time is averaged.",
     )
     parser.add_argument(
