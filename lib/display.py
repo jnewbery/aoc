@@ -146,7 +146,14 @@ def print_grid_results(results) -> None:
         panels.append(build_year_panel(year, year_results))
 
     if panels:
-        console.print(Columns(panels, equal=True, expand=True, padding=(1, 2)))
+        max_per_row = 4
+        padding = (1, 2)
+        sample_panel = panels[0]
+        panel_width = console.measure(sample_panel).maximum
+        per_column_width = panel_width + (padding[1] * 2)
+        max_columns_width = per_column_width * max_per_row
+        columns_console = Console(width=min(console.width, max_columns_width))
+        columns_console.print(Columns(panels, equal=True, expand=True, padding=padding))
 
     overall_time = aggregate_total_time(results)
     overall_time_str = format_execution_time(overall_time) if overall_time is not None else "[TBD]"
