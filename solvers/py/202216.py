@@ -1,4 +1,3 @@
-from utils import exit_not_implemented
 import networkx as nx
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -50,8 +49,8 @@ def _dfs(from_valve: str,
     # print(from_valve, path, candidates, distance_left)
     # TODO: pruning to avoid exploring bad branches
     reachable = {c for c in candidates if distances[from_valve][c] + 1 < distance_left and c != from_valve}
+    yield path
     if not reachable:
-        yield path
         return
     for candidate in reachable:
         step_distance = distances[from_valve][candidate] + 1
@@ -163,6 +162,7 @@ def part2(ll: list[str], args=None) -> str:
         path_key = nodes_key({v for v, _ in path})
         scores[path_key] = max(scores.get(path_key, 0), sum(valves[v] * t for v, t in path))
 
+    # breakpoint()
     ret = 0
     for key1, score1 in scores.items():
         for key2, score2 in scores.items():

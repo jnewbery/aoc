@@ -25,6 +25,11 @@ def part1(ll: list[str], args=None) -> str:
     return str(len(faces))
 
 def part2(ll: list[str], args=None) -> str:
+    # TODO:
+    # - expand space to +1 around lowest/highest values in each dimension
+    # - flood-fill entire outer space from (-1, -1, -1)
+    # - calculate exposed faces of flood-filled inverse space
+    # - subtract outer faces from inverse space
     exit_not_implemented()
     del ll
     del args
