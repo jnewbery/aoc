@@ -1,157 +1,174 @@
-from utils import exit_not_implemented, get_numbers
-import numpy as np
+from utils import get_numbers
 import enum
+from dataclasses import dataclass, replace
+from itertools import islice
 
-# Vector is (ore_robots, ore, clay_robots, clay, obs_robot, obs, geode_robot, geode)
-# Always start with 1 ord producing robot and nothing else
-_STARTING_VECTOR: np.typing.NDArray = np.array([1, 0, 0, 0, 0, 0, 0, 0])
-_MINING_MATRIX = np.array([
-    [1, 0, 0, 0, 0, 0, 0, 0],  # Ore robots stay the same
-    [1, 1, 0, 0, 0, 0, 0, 0],  # Ore = previous ore + ore robots
-    [0, 0, 1, 0, 0, 0, 0, 0],  # Clay robots stay the same
-    [0, 0, 1, 1, 0, 0, 0, 0],  # Clay = previous clay + clay robots
-    [0, 0, 0, 0, 1, 0, 0, 0],  # Obsidian robots stay the same
-    [0, 0, 0, 0, 1, 1, 0, 0],  # Obsidian = previous obsidian + obsidian robots
-    [0, 0, 0, 0, 0, 0, 1, 0],  # Geode robots stay the same
-    [0, 0, 0, 0, 0, 0, 1, 1]   # Geode = previous geode + geode robots
-    ])
-# _MINUTES = 24
-_MINUTES = 20
-
-class _ACTIONS(enum.Enum):
+class Action(enum.Enum):
     NONE = enum.auto()
     ORE = enum.auto()
     CLAY = enum.auto()
     OBS = enum.auto()
-    GEODE = enum.auto()
+    GEO = enum.auto()
 
-def _make_robot_building_vector(robot_index: int, costs: tuple[int, int, int, int]) -> np.typing.NDArray:
-    v = [0, 0, 0, 0, 0, 0, 0, 0]
-    v[robot_index * 2] = 1  # add a robot
-    for i, cost in enumerate(costs):
-        v[(i * 2) + 1] = -cost
+@dataclass
+class Inventory:
+    ore_bots: int
+    ore: int
+    clay_bots: int
+    clay: int
+    obs_bots: int
+    obs: int
+    geo_bots: int
+    geo: int
 
-    return np.array(v)
+    @property
+    def total(self) -> int:
+        return self.ore_bots + self.ore + self.clay_bots + self.clay + self.obs_bots + self.obs + self.geo_bots + self.geo
 
-def _best_result(action: _ACTIONS, minutes_left: int, v: np.typing.NDArray, actions: dict[_ACTIONS, np.typing.NDArray], max_costs: tuple[int, int, int]) -> int:
-    if minutes_left == 0:
-        return v[7]
+    def dominates(self, other: Inventory) -> bool:
+        return (self.ore_bots >= other.ore_bots and
+            self.ore >= other.ore and
+            self.clay_bots >= other.clay_bots and
+            self.clay >= other.clay and
+            self.obs_bots >= other.obs_bots and
+            self.obs >= other.obs and
+            self.geo_bots >= other.geo_bots and
+            self.geo >= other.geo)
 
-    forbidden_acts: set[_ACTIONS] = set()
-    if action == _ACTIONS.NONE:
-        # See what actions were possible. We want to be greedy, so don't follow
-        # a no-op with an action that we could have done earlier
-        for act_name, act_vector in actions.items():
-            if act_name == _ACTIONS.NONE:
-                continue
-            if np.min(v + act_vector) >= 0:
-                # Can afford to make this robot
-                forbidden_acts.add(act_name)
+@dataclass
+class InventoryWithForbiddenActions:
+    inv: Inventory
+    # Our algorithm *must* be greedy. If it's possible to build a bot
+    # in one minute, but instead we do nothing, we can't build the same
+    # bot the following minute.
+    forbidden_actions: set[Action]
 
-    # Allow bots to mine and carry out action
-    new_v = _MINING_MATRIX @ v + actions[action]
+@dataclass
+class Blueprint:
+    ore_bot_ore_cost: int
+    clay_bot_ore_cost: int
+    obs_bot_ore_cost: int
+    obs_bot_clay_cost: int
+    geo_bot_ore_cost: int
+    geo_bot_obs_cost: int
 
-    if np.min(new_v + actions[_ACTIONS.GEODE]) >= 0:
-        # If you can build a geode bot, do it!
-        return _best_result(_ACTIONS.GEODE, minutes_left - 1, new_v, actions, max_costs)
+    @property
+    def max_ore_cost(self) -> int:
+        return max(self.ore_bot_ore_cost, self.clay_bot_ore_cost, self.obs_bot_ore_cost, self.geo_bot_ore_cost)
 
-    max_ore_cost, max_clay_cost, max_obs_cost = max_costs
-    best_result: int = _best_result(_ACTIONS.NONE, minutes_left - 1, new_v, actions, max_costs)  # Do nothing action
-    if (new_v[0] < max_ore_cost) and (_ACTIONS.ORE not in forbidden_acts):
-        # consider building an ore robot
-        best_result = max(best_result, _best_result(_ACTIONS.ORE, minutes_left - 1, new_v, actions, max_costs))
-    if new_v[2] < max_clay_cost and (_ACTIONS.CLAY not in forbidden_acts):
-        # consider building a clay robot
-        best_result = max(best_result, _best_result(_ACTIONS.CLAY, minutes_left - 1, new_v, actions, max_costs))
-    if new_v[4] < max_obs_cost and (_ACTIONS.OBS not in forbidden_acts):
-        # consider building an obsidian robot
-        best_result = max(best_result, _best_result(_ACTIONS.OBS, minutes_left - 1, new_v, actions, max_costs))
+    @property
+    def max_clay_cost(self) -> int:
+        return self.obs_bot_clay_cost
 
-    return best_result
+    @property
+    def max_obs_cost(self) -> int:
+        return self.geo_bot_obs_cost
+
+def _apply_action(inv: Inventory, blueprint: Blueprint, act: Action) -> Inventory:
+    new_inv = replace(inv)
+    new_inv.ore += new_inv.ore_bots
+    new_inv.clay += new_inv.clay_bots
+    new_inv.obs += new_inv.obs_bots
+    new_inv.geo += new_inv.geo_bots
+    match act:
+        case Action.NONE:
+            pass
+        case Action.ORE:
+            new_inv.ore_bots += 1
+            new_inv.ore -= blueprint.ore_bot_ore_cost
+        case Action.CLAY:
+            new_inv.clay_bots += 1
+            new_inv.ore -= blueprint.clay_bot_ore_cost
+        case Action.OBS:
+            new_inv.obs_bots += 1
+            new_inv.ore -= blueprint.obs_bot_ore_cost
+            new_inv.clay -= blueprint.obs_bot_clay_cost
+        case Action.GEO:
+            new_inv.geo_bots += 1
+            new_inv.ore -= blueprint.geo_bot_ore_cost
+            new_inv.obs -= blueprint.geo_bot_obs_cost
+            pass
+    return new_inv
+
+def _possible_actions(inv: Inventory, blueprint: Blueprint) -> set[Action]:
+    """Determine whether we can/should build a bot of any type. We check that:
+        - we have enough resource to build that bot
+        - and there are fewer bots of that resource type than the greatest cost for that resource
+          type (otherwise there's no benefit to building another robot of that type
+        """
+    possible_actions: set[Action] = {Action.NONE}
+    if inv.ore >= blueprint.ore_bot_ore_cost and inv.ore_bots < blueprint.max_ore_cost:
+        possible_actions.add(Action.ORE)
+    if inv.ore >= blueprint.clay_bot_ore_cost and inv.clay_bots < blueprint.max_clay_cost:
+        possible_actions.add(Action.CLAY)
+    if inv.ore >= blueprint.obs_bot_ore_cost and inv.clay >= blueprint.obs_bot_clay_cost and inv.obs_bots < blueprint.max_obs_cost:
+        possible_actions.add(Action.OBS)
+    if inv.ore >= blueprint.geo_bot_ore_cost and inv.obs >= blueprint.geo_bot_obs_cost:
+        possible_actions.add(Action.GEO)
+
+    return possible_actions
 
 
-def get_blueprint_quality(l: str) -> int:
+def get_blueprint_score(blueprint: Blueprint, minutes: int) -> int:
     """Get the best number of geodes possible from a blueprint"""
-    # print("Getting blueprint quality")
-    params = get_numbers(l)
-    blueprint_index = params.pop(0)
-    # print(params)
-    max_ore_cost = max(params[0], params[1], params[2], params[4])
-    max_clay_cost = params[3]
-    max_obs_cost = params[5]
+    # Always start with 1 ord producing robot and nothing else
+    best: list[InventoryWithForbiddenActions] = [InventoryWithForbiddenActions(Inventory(1, 0, 0, 0, 0, 0, 0, 0), set())]
 
-    actions: dict[_ACTIONS, np.typing.NDArray] = {}
-    actions[_ACTIONS.NONE] = np.array([0, 0, 0, 0, 0, 0, 0, 0])  # No-build
-    actions[_ACTIONS.ORE] = _make_robot_building_vector(0, (params[0], 0, 0, 0))  # Ore robot
-    actions[_ACTIONS.CLAY] = _make_robot_building_vector(1, (params[1], 0, 0, 0))  # Clay robot
-    actions[_ACTIONS.OBS] = _make_robot_building_vector(2, (params[2], params[3], 0, 0))  # Obsidian robot
-    actions[_ACTIONS.GEODE] = _make_robot_building_vector(3, (params[4], 0, params[5], 0))  # Geode robot
-    # print(building_vectors)
+    for minute in range(minutes):
+        new_best: list[InventoryWithForbiddenActions] = []
+        for inv in best:
+            possible_actions = _possible_actions(inv.inv, blueprint)
+            if minute == minutes - 1:
+                # Final minute, no point building any more bots:
+                possible_actions &= {Action.NONE}
+            elif minute == minutes - 2:
+                # Penultimate minute - only thing to do is build a geo robot (if we can)
+                possible_actions &= {Action.NONE, Action.GEO}
+            elif minute == minutes - 3:
+                # Anti-penultimate minute - only thing to do is build a geo robot (if we can)
+                possible_actions &= {Action.NONE, Action.GEO}
 
-    # best: list[np.typing.NDArray] = [_STARTING_VECTOR]
-    # for minute in range(_MINUTES):
-    #     new_best: list[np.typing.NDArray] = []
-    #     for v in best:
-    #         if np.min(v + actions[_ACTIONS.GEODE]) >= 0:
-    #             # If you can build a geode bot, do it!
-    #             new_best.append(_MINING_MATRIX @ v + actions[_ACTIONS.GEODE])
-    #         else:
-    #             for act_name, act_vector in actions.items():
-    #                 if v[0] >= max_ore_cost and act_name == _ACTIONS.ORE:
-    #                     # Don't need any more ore robots
-    #                     continue
-    #                 if v[2] >= max_clay_cost and act_name == _ACTIONS.CLAY:
-    #                     # Don't need any more clay robots
-    #                     continue
-    #                 if v[4] >= max_obs_cost and act_name == _ACTIONS.OBS:
-    #                     # Don't need any more obs robots
-    #                     continue
-    #                 if np.min(v + act_vector) < 0:
-    #                     # Can't afford to make this robot
-    #                     continue
-    #                 else:
-    #                     new_best.append(_MINING_MATRIX @ v + act_vector)
-    #     best = new_best
-    #     print(minute)
-    #     print(f"{len(best)} candidates")
+            if Action.GEO in possible_actions:
+                # If you can build a geode bot, do it!
+                new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.GEO), set()))
+            elif Action.OBS in possible_actions:
+                # If you can build a obs bot, do it!
+                new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.OBS), set()))
+            else:
+                for action in possible_actions:
+                    if action == Action.NONE:
+                        new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.NONE), possible_actions - {Action.NONE}))
+                    if action == Action.ORE and Action.ORE not in inv.forbidden_actions:
+                        new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.ORE), set()))
+                    if action == Action.CLAY and Action.CLAY not in inv.forbidden_actions:
+                        new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.CLAY), set()))
+        best = new_best
+        # print(minute)
+        # print(f"{len(best)} candidates")
 
-    #     # Remove a vector if a different vector has componentwise dominance
-    #     # best.sort(key=lambda x: x.sum(), reverse=True)
-    #     # # print(best)
-    #     # i = 0
-    #     # while len(best) > i:
-    #     #     j = i + 1
-    #     #     while len(best) > j:
-    #     #         if np.all(best[i] >= best[j]):
-    #     #             best.pop(j)
-    #     #         else:
-    #     #             j += 1
-    #     #     i += 1
-    #     # print(f"{len(best)} candidates after pruning")
-
-    #     seen = set()
-    #     out = []
-    #     for a in best:
-    #         a = np.asarray(a)
-    #         key = (a.shape, a.dtype.str, a.tobytes())
-    #         if key not in seen:
-    #             seen.add(key)
-    #             out.append(a)
-    #     best = out
-
-    return _best_result(_ACTIONS.NONE, _MINUTES, _STARTING_VECTOR, actions, (max_ore_cost, max_clay_cost, max_obs_cost))
-
-    # return max(g for _, _, _, _, _, _, _, g in best) * blueprint_index
+    # breakpoint()
+    return max(inv.inv.geo for inv in best)
 
 def part1(ll: list[str], args=None) -> str:
     del args
+
+    MINUTES = 24
+
     quality = 0
     for l in ll:
-        quality += get_blueprint_quality(l)
+        params = get_numbers(l)
+        blueprint_index = params[0]
+        blueprint = Blueprint(params[1], params[2], params[3], params[4], params[5], params[6])
+        # print(blueprint)
+        quality += blueprint_index * get_blueprint_score(blueprint, MINUTES)
     return str(quality)
 
 def part2(ll: list[str], args=None) -> str:
     del args
-    exit_not_implemented()
-    del ll
-    return ""
+    MINUTES = 32
+    quality = 1
+    for l in islice(ll, 3):
+        params = get_numbers(l)
+        blueprint = Blueprint(params[1], params[2], params[3], params[4], params[5], params[6])
+        quality *= get_blueprint_score(blueprint, MINUTES)
+    return str(quality)
