@@ -125,15 +125,12 @@ def get_blueprint_score(blueprint: Blueprint, minutes: int) -> int:
                 # Penultimate minute - only thing to do is build a geo robot (if we can)
                 possible_actions &= {Action.NONE, Action.GEO}
             elif minute == minutes - 3:
-                # Anti-penultimate minute - only thing to do is build a geo robot (if we can)
-                possible_actions &= {Action.NONE, Action.GEO}
+                # Anti-penultimate minute - no point in building a clay bot
+                possible_actions &= {Action.NONE, Action.GEO, Action.ORE}
 
             if Action.GEO in possible_actions:
                 # If you can build a geode bot, do it!
                 new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.GEO), set()))
-            elif Action.OBS in possible_actions:
-                # If you can build a obs bot, do it!
-                new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.OBS), set()))
             else:
                 for action in possible_actions:
                     if action == Action.NONE:
@@ -142,33 +139,39 @@ def get_blueprint_score(blueprint: Blueprint, minutes: int) -> int:
                         new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.ORE), set()))
                     if action == Action.CLAY and Action.CLAY not in inv.forbidden_actions:
                         new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.CLAY), set()))
+                    if action == Action.OBS and Action.OBS not in inv.forbidden_actions:
+                        new_best.append(InventoryWithForbiddenActions(_apply_action(inv.inv, blueprint, Action.OBS), set()))
         best = new_best
         # print(minute)
         # print(f"{len(best)} candidates")
 
-    # breakpoint()
-    return max(inv.inv.geo for inv in best)
+    blueprint_score = max(inv.inv.geo for inv in best)
+    # print(blueprint_score)
+    return blueprint_score
+
+def _get_index_and_blueprint(l: str) -> tuple[int, Blueprint]:
+    params = get_numbers(l)
+    index = params[0]
+    blueprint = Blueprint(params[1], params[2], params[3], params[4], params[5], params[6])
+    return index, blueprint
 
 def part1(ll: list[str], args=None) -> str:
     del args
 
     MINUTES = 24
-
-    quality = 0
+    score = 0
     for l in ll:
-        params = get_numbers(l)
-        blueprint_index = params[0]
-        blueprint = Blueprint(params[1], params[2], params[3], params[4], params[5], params[6])
+        index, blueprint = _get_index_and_blueprint(l)
         # print(blueprint)
-        quality += blueprint_index * get_blueprint_score(blueprint, MINUTES)
-    return str(quality)
+        score += index * get_blueprint_score(blueprint, MINUTES)
+    return str(score)
 
 def part2(ll: list[str], args=None) -> str:
     del args
+
     MINUTES = 32
-    quality = 1
+    score = 1
     for l in islice(ll, 3):
-        params = get_numbers(l)
-        blueprint = Blueprint(params[1], params[2], params[3], params[4], params[5], params[6])
-        quality *= get_blueprint_score(blueprint, MINUTES)
-    return str(quality)
+        _, blueprint = _get_index_and_blueprint(l)
+        score *= get_blueprint_score(blueprint, MINUTES)
+    return str(score)
