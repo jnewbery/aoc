@@ -1,3 +1,5 @@
+# TODO: change this to use DFS and pruning of branches. See git log for commit
+# 41ba4299 for more details.
 from utils import get_numbers
 import enum
 from dataclasses import dataclass, replace
