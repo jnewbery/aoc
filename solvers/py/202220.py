@@ -4,36 +4,40 @@ from collections import deque
 def part1(ll: list[str], args=None) -> str:
     del args
 
-    d: deque[tuple[int, int]] = deque([(n, int(x)) for n,x in enumerate(ll)])
-    list_len = len(d)
+    values_list: deque[int] = deque([int(x) for x in ll])
+    list_len = len(values_list)
+    index_list = deque(range(list_len))
 
-    print(d)
+    print(values_list)
 
-    for i in range(len(d)):
-        for current_pos, p in enumerate(d):
-            if p[0] == i:
-                print(f"Moving {p[1]}")
+    for i in range(list_len):
+        index = index_list.index(i)
+        val = values_list[index]
+        # print(f"Moving {val} at index {index}")
 
-                # rotate so that i is at the front
-                d.rotate(-current_pos)
-                # remove the element
-                d.popleft()
-                # rotate the deque
-                d.rotate(-(i + 1))
-                d.appendleft(p)
-                print([p[1] for p in d])
-                break
+        # rotate so that val is at the front
+        values_list.rotate(-index)
+        index_list.rotate(-index)
+        # remove the element
+        values_list.popleft()
+        index_list.popleft()
+        # rotate the deque
+        values_list.rotate(-(val % list_len))
+        index_list.rotate(-(val % list_len))
+        values_list.appendleft(val)
+        index_list.appendleft(index)
+        # print(values_list)
 
-    # print(d)
+    # print(values_list)
 
     zero_index = 0
-    for n, x in enumerate(d):
+    for n, x in enumerate(values_list):
         if x == 0:
             zero_index = n
     # breakpoint()
-    i_1000 = d[(zero_index + 1000) % list_len][1]
-    i_2000 = d[(zero_index + 2000) % list_len][1]
-    i_3000 = d[(zero_index + 3000) % list_len][1]
+    i_1000 = values_list[(zero_index + 1000) % list_len]
+    i_2000 = values_list[(zero_index + 2000) % list_len]
+    i_3000 = values_list[(zero_index + 3000) % list_len]
     print(f"{i_1000=}, {i_2000=}, {i_3000=}")
     sol = i_1000 + i_2000 + i_3000
     return str(sol)
